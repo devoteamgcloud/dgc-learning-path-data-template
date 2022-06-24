@@ -1,0 +1,56 @@
+[
+    {
+        "name": "id_store",
+        "type": "INTEGER",
+        "mode": "REQUIRED",
+        "description": "Unique ID of the store"
+    },
+    {
+        "name": "id_manager",
+        "type": "INTEGER",
+        "mode": "NULLABLE",
+        "description": "Unique ID of the main manager"
+    },
+    {
+        "name": "city",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "City of the store"
+    },
+    {
+        "name": "country",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Country of the store"
+    },
+    {
+        "name": "coordinate",
+        "type": "GEOGRAPHY",
+        "mode": "NULLABLE",
+        "description": "x coordinate of the store"
+    },
+    {
+        "name": "is_closed",
+        "type": "BOOLEAN",
+        "mode": "NULLABLE",
+        "description": "If it is permanently closed"
+    },
+    {
+        "name": "creation_date",
+        "type": "DATE",
+        "mode": "NULLABLE",
+        "description": "Date of store openning"
+    },
+    {
+        "name": "update_time",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE",
+        "description": "Time of record update"
+    },
+    {
+        "name": "insertion_time",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE",
+        "description": "Time of the record insertion"
+    }
+]

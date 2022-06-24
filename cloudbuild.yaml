@@ -1,0 +1,51 @@
+steps:
+- id: 'project Init'
+  name: gcr.io/cloud-builders/gcloud
+  entrypoint: sh
+  args:
+    - '-c'
+    - |
+      echo "***********************"
+      echo "project           : $PROJECT_ID"
+      echo "branch            : $BRANCH_NAME"
+      echo "default_region    : ${_DEFAULT_REGION}"
+      echo "***********************"
+      cd iac/init
+      chmod +x init.sh
+      ./init.sh ${PROJECT_ID}
+
+# [START tf-init]
+- id: 'Layer Data Ingestion - terraform init'
+  name: 'hashicorp/terraform:1.2.1'
+  entrypoint: 'sh'
+  args:
+  - '-c'
+  - |
+    cd iac
+    terraform init -input=false -no-color -upgrade -backend-config=init/backend.tfvars 
+# [END tf-init]
+
+# [START tf-plan]
+- id: 'Terraform plan'
+  name: 'hashicorp/terraform:1.2.1'
+  entrypoint: 'sh'
+  args:
+  - '-c'
+  - |
+      cd iac
+      terraform plan -out changes.tfplan -var project_id=$PROJECT_ID
+# [END tf-plan]
+
+# [START tf-apply]
+- id: 'Layer Data Ingestion - terraform apply'
+  name: 'hashicorp/terraform:1.2.1'
+  entrypoint: 'sh'
+  args:
+  - '-c'
+  - |
+    cd iac
+    terraform apply -input=false -no-color -auto-approve changes.tfplan
+# [END tf-apply]
+timeout: 5400s
+options:
+  logging: CLOUD_LOGGING_ONLY
