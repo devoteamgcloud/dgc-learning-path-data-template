@@ -130,20 +130,14 @@ if __name__ == '__main__':
     
     project_id = '<YOUR-PROJECT-ID>'
 
-    realpath = os.path.realpath(__file__)
-    material_path = os.sep.join(['', *realpath.split(os.sep)[:-4], '__materials__'])
-    init_files_path = os.path.join(material_path, 'data', 'init')
-
-    # test your Cloud Function with each of the given files.
-    for file_name in os.listdir(init_files_path):
-        mock_event = {
-            'data': 'store',
-            'attributes': {
-                'bucket': f'{project_id}-magasin-cie-landing',
-                'file_path': 'input/store_20220531.csv'
-
-            }
+    # test your Cloud Function for the store file.
+    mock_event = {
+        'data': 'store',
+        'attributes': {
+            'bucket': f'{project_id}-magasin-cie-landing',
+            'file_path': 'input/store_20220531.csv'
         }
+    }
 
-        mock_context = {}
-        receive_messages(mock_event, mock_context)
+    mock_context = {}
+    receive_messages(mock_event, mock_context)
