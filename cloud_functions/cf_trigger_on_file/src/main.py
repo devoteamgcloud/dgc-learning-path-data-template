@@ -11,13 +11,13 @@ from google.cloud import pubsub_v1
 FILES_AND_EXTENSION_SPEC = {
     'store': 'csv',
     'customer': 'csv',
-    'basket': 'json'
+    'basket': 'json' 
 }
 
 
 def check_file_format(event: dict, context: dict):
     """
-    Triggered by a change to a Cloud Storage bucket.
+    Triggered  by a change to a Cloud Storage bucket.
     Check for the files requirements. Publishes a message to PubSub if the 
     file is verified else movs the files to the invalid/ subfolder.
 
