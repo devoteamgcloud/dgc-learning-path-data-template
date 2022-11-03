@@ -5,7 +5,7 @@ resource "google_storage_bucket" "magasin_cie_landing" {
   lifecycle_rule {
     condition {
       age = 30
-      matches_Prefix = "archive/"
+      matchesPrefix = "archive/"
     }
     action {
       type = "SetStorageClass"
@@ -15,7 +15,7 @@ resource "google_storage_bucket" "magasin_cie_landing" {
   lifecycle_rule {
     condition {
       age = 90
-      matches_Prefix = "archive/"
+      matchesPrefix = "archive/"
     }
     action {
       type = "SetStorageClass"
@@ -25,7 +25,7 @@ resource "google_storage_bucket" "magasin_cie_landing" {
   lifecycle_rule {
     condition {
       age = 365
-      matches_Prefix = "archive/"
+      matchesPrefix = "archive/"
     }
     action {
       type = "SetStorageClass"
@@ -35,7 +35,7 @@ resource "google_storage_bucket" "magasin_cie_landing" {
   lifecycle_rule {
     condition {
       age = 1000
-      matches_Prefix = "archive/"
+      matchesPrefix = "archive/"
     }
     action {
       type = "Delete"
