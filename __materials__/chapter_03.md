@@ -1,7 +1,7 @@
 # Learning Practical Path 
 
 
-**[WORK IN PROGRESS]**
+**[TO BE TESTED]**
 
 ## Chapter 3 - Cloud Function & Python (1-2 days)
 
@@ -25,25 +25,31 @@ We asked for the files:
 
 
 ### The Learning Resources
+
+Here a great course on Cloud Function. Will will have theoritical knowledge on Cloud Function as well as hands-on experience through the labs it provides. Go to the [Google Cloud Functions Deep Dive](https://learn.acloud.guru/course/8bd9dcda-5bb8-4049-bcd9-870d93698486/overview) to be a Cloud Function expert ;)
+
+And of course, nothing is more useful than the [Google Cloud Function documentation](https://cloud.google.com/functions).
 ### Your mission
 
 Complete the list of Python assertions to check the format of the files. 
+The Cloud Function code is in the `cloud_functions/cf_trigger_on_file/` folder.
+
 It will move the invalid files to the `invalid/` subfolder and leave the correct files to the `input/` subfolder to be inserted right after. 
 
 Then it informs as a PubSub Topic Published for the name of the file to insert (as well as the targeted table where to insert. Do not worry about this part, we will see it in the next Chapter.)
 
 **To test your code, please, use the `__materials__/data/init/` files**
 
+#### Deployment with gsutil CLI
 
-**Bonus:**
+If you used the Cloud Console UI in the previous part, you can now try to use the CLI to deploy your Cloud Functions.
 Deploy the Cloud Function with the `gcloud` CLI. Go check by yourself for the documentation.
 
+#### Deployment with Terraform
 
---- 
-
-
-Then, when you are confortable, you have to create the Terraform deployement of the Cloud Function. 
+Then, when you are confortable with Cloud Function, you have to create the Terraform deployement of the Cloud Function in the `iac/cloud_functions.tf` file. 
 Go to the Codelab [Deploy Cloud Functions on GCP with Terraform](https://codelabs.devoteamgcloud.com/codelabs/cloud_function_terraform/index.html). 
 
-Redeploy you GCS part removing the comments of the file `iac/cloud_storage.tf`.
+
+When everything is done and works well, if not already done, you can activate the `move_to_invalid_file_folder()` function in the `cloud_functions/cf_trigger_on_file/src/main.py` file.
 

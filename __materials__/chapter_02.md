@@ -37,6 +37,7 @@ In addition to that, we will certainly need another bucket in which we can place
 
 ![Your mission architecture](img/architecture_gcs.png)
 
+#### Landing CGS Bucket
 
 Create a GCS Bucket named `<your-project-id>_magasin_cie_landing`.
 
@@ -44,12 +45,13 @@ It let you discuss with your awesome colleagues about:
 - the best Location type 
 - the others parameters (maybe one or more parameters is not as suitable as possible with its default value)
 
-
 Create LifeCycle rules as:
 - Set the `archive/`-prefixed objects to `Nearline` when they are in the bucket for 30 days.
 - Set the `archive/`-prefixed objects to `Coldline` when they are in the bucket for 90 days.
 - Set the `archive/`-prefixed objects to `Archive` when they are in the bucket for a year.
 - nice to have: Delete the 5-year-old-`archive/`-prefixed objects.
+
+#### Utils CGS Bucket
 
 Create a GCS bucket named `<your-project-id>_magasin_cie_utils`.
 Is there any need of LifeCycle rules? 
@@ -57,10 +59,16 @@ Is there any need of LifeCycle rules?
 Why do we prefixed our bucket with the project ID? 
 Why did we create a second bucket for the files of the application? Why not to use only one bucket for the received files and for the specific application's files with differnt subfolders? 
 
-**Bonus:**
+#### Deployment with gsutil CLI
 
-Once you created the buckets with the GCP Console (UI), try to create a new version of those buckets with `gsutil`. I let you check by yourself for the documentations. 
+Once you created the buckets with the GCP Console (UI), try to re-create a new version of those buckets with `gsutil`. I let you check by yourself for the [gsutil documentations](https://cloud.google.com/storage/docs/gsutil). 
 
-**Bonus 2:**
-If you are confortable with the notions you have just seen. See the `terraform` part in the `iac/` folder. If not, you will see it later. You can uncomment the code to see what happens in the Cloud Build Trigger.
+#### Deployment with Terraform
+
+If you are confortable with the notions you have just seen. See the `terraform` part in the `iac/` folder. 
+
+You can uncomment the code to see what happens in the Cloud Build Trigger.
+
+At least one bucket configuration is missing in the Terraform. Your last task is to find this and fix it.
+The [Storage Bucket documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket) of Terraform will help you.
 

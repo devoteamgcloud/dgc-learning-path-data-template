@@ -56,6 +56,7 @@ If you have VS Code install on your machine I highly recommend you the following
 - Git Graph
 - GitLens
 - Terraform
+- (PyLint)
 
 ### The Learning Resources
 
