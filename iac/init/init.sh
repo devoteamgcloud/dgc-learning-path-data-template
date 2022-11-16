@@ -5,9 +5,9 @@
 # ./init.sh PROJECT_ID
 
 # But for local test or deployment, uncomment the next line
-#export PROJECT_ID=$(gcloud info --format='value(config.project)')
+export PROJECT_ID=$(gcloud info --format='value(config.project)')
 # and comment the next line PROJECT_ID=$1
-PROJECT_ID=sandbox-athevenot
+# PROJECT_ID=sandbox-athevenot
 
 TERRAFORM_BUCKET=$PROJECT_ID-gcs-tfstate-sbx
 
