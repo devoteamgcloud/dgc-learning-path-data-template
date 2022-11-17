@@ -27,7 +27,8 @@ You can also check for [Workflows samples](https://cloud.google.com/workflows/do
 Of course, the GCP gem is BigQuery, so do not try to rush, go through the [Google Certified Professional Data Engineer](https://learn.acloud.guru/course/gcp-certified-professional-data-engineer/overview) course Chapter 9 on A Cloud Guru. 
 
 Do not hesitate to multiplicate the sources for instance:
-- [Skills Boost catalog about Bigquery](https://www.cloudskillsboost.google/catalog?keywords=BigQuery).
+- [Skills Boost catalog about Bigquery](https://www.cloudskillsboost.google/catalog?keywords=BigQuery). (For instance:
+[Loading Your Own Data into BigQuery](https://www.cloudskillsboost.google/focuses/17816) or [BigQuery Soccer Data Ingestion](https://www.cloudskillsboost.google/focuses/23114))
 - Articles on [Medium about Bigquery](https://medium.com/search?q=bigquery) if you have an account.
 - and of couuuuuurse, the Google [BigQuery documentation](https://cloud.google.com/bigquery) if really great.
 
