@@ -1,8 +1,8 @@
 # Generates an archive of the source code compressed as a .zip file.
 data "archive_file" "source" {
     type        = "zip"
-    source_dir  = "../src"
-    output_path = "/tmp/function.zip"
+    source_dir  = "../cloud_functions/cf_trigger_on_file/src"
+    output_path = "tmp/function.zip"
 }
 
 # Add source code zip to the Cloud Function's bucket
@@ -22,8 +22,11 @@ resource "google_storage_bucket_object" "zip" {
     ]
 }
 
+
 # Create the Cloud function triggered by a `Finalize` event on the bucket
 resource "google_cloudfunctions_function" "function" {
+    project               = var.project_id
+    region                = var.region
     name                  = "function-trigger-on-gcs"
     runtime               = "python310"  # of course changeable
 
