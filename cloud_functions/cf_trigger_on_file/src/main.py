@@ -1,5 +1,5 @@
 import os
-import datetime
+from datetime import datetime
 from google.cloud import storage
 from google.cloud import pubsub_v1
 
@@ -36,7 +36,7 @@ def check_file_format(event: dict, context: dict):
     blob_path = blob_event['name']
 
     # get the subfolder, the file name and its extension
-    *subfolder, file = blob_path.split('/')  
+    *subfolder, file = blob_path.split(os.sep)  
     subfolder =  os.path.join(*subfolder) if subfolder != [] else ''
     file_name, file_extention = file.split('.') 
 
@@ -52,12 +52,21 @@ def check_file_format(event: dict, context: dict):
     
     # check if the file name has the good format
     try:
-        # TODO: 
-        # create some assertions here to validate your file. It is:
-        #     - required to have two parts
-        #     - the first part is required to be an accepted table name
-        #     - the second part is required to be a 'YYYYMMDD'-formatted date 
-        #     - required to have the expected extension
+        filename = len(file_name.split('_'))
+        firstpart,secondpart = file_name.split('_')
+        
+        # verify if the file has two parts
+        assert filename == 2 , f"File name required two parts, got: {file_name}"
+        
+        # verify if the date is in the good format
+        assert secondpart == datetime.strptime(secondpart ,'%Y%m%d').strftime('%Y%m%d'), 'File name is required to be in the format YYYYMMDD'  
+
+        # verify if the first part is an accepted table name
+        assert firstpart in FILES_AND_EXTENSION_SPEC , f"File name is required to be basket, store or customer, got: {firstpart}"  
+        
+        # verify if the extension is good
+        if  firstpart in FILES_AND_EXTENSION_SPEC :
+            assert file_extention == FILES_AND_EXTENSION_SPEC[firstpart] , 'The extension is not good '
 
         ...
 
@@ -151,7 +160,7 @@ if __name__ == '__main__':
     init_files_path = os.path.join(material_path, 'data', 'init')
 
     # test your Cloud Function with each of the given files.
-    for file_name in os.listdir(init_files_path):
+    for file_name in os.listdir(init_files_path[1:]):
         print(f'\nTesting your file {file_name}')
         mock_event = {
             'bucket': f'{project_id}-magasin-cie-landing',
