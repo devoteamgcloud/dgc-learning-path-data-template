@@ -36,7 +36,7 @@ def check_file_format(event: dict, context: dict):
     blob_path = blob_event['name']
 
     # get the subfolder, the file name and its extension
-    *subfolder, file = blob_path.split('/')
+    *subfolder, file = blob_path.split(os.sep)
     subfolder = os.path.join(*subfolder) if subfolder != [] else ''
     file_name, file_extention = file.split('.')
 
@@ -60,13 +60,12 @@ def check_file_format(event: dict, context: dict):
         #     - required to have the expected extension
 
         file_parts = file_name.split("_")
-        
+
         # check if there are two parts, the table and the date
         assert len(file_parts) == 2, "There is not two parts as required"
 
         table, date = file_parts
 
-        
         # check if the date has the good format
         datetime.datetime.strptime(date, '%Y%m%d')
 
@@ -75,8 +74,6 @@ def check_file_format(event: dict, context: dict):
 
         # check if the extension is the one expected
         assert file_extention == FILES_AND_EXTENSION_SPEC[table], "The extension is not accepted"
-        
-
 
         table_name = table
 
