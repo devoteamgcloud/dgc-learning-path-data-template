@@ -131,11 +131,8 @@ def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
     ## remove this part when you are ready to deploy your Cloud Function. 
     ## [start simulation]
     print('Your file is considered as invalid. It will be moved to invalid/.')
-    return
-    ## [end simulation]
     
-    
-    # connect to the Cloud Storage client
+     # connect to the Cloud Storage client
     storage_client = storage.Client()
 
     # move the file to the invalid/ subfolder
@@ -145,6 +142,12 @@ def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
     bucket.rename_blob(blob, new_blob_path)
 
     print(f'{blob.name} moved to {new_blob_path}')
+    
+    return
+    ## [end simulation]
+    
+    
+   
 
 
 if __name__ == '__main__':
