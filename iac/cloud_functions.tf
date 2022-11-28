@@ -1,7 +1,7 @@
 data "archive_file" "source" {
     type        = "zip"
     source_dir  = "../cloud_functions/cf_trigger_on_file/src"
-    output_path = "/tmp/function.zip"
+    output_path = "tmp/function.zip"
 }
 
 resource "google_storage_bucket_object" "zip" {
