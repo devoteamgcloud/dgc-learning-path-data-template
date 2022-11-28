@@ -52,12 +52,6 @@ def check_file_format(event: dict, context: dict):
 
     # check if the file name has the good format
     try:
-        # TODO:
-        # create some assertions here to validate your file. It is:
-        #     - required to have two parts
-        #     - the first part is required to be an accepted table name
-        #     - the second part is required to be a 'YYYYMMDD'-formatted date
-        #     - required to have the expected extension
 
         file_parts = file_name.split("_")
 

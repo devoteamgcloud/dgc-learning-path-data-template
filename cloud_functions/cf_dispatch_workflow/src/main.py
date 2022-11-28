@@ -74,7 +74,13 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     # 
     # note: this is not a small function. Take the day or more if you have to. 
 
-    pass
+    # connection to the cloud storage client
+    storage_client = storage.Client()
+
+    #getting the util bucket object
+    bucket = os.environ['util_bucket_suffix']
+
+    #loading the schema of the table
 
    
 def trigger_worflow(table_name: str):
@@ -119,7 +125,24 @@ def move_file(bucket_name, blob_path, new_subfolder):
     #     - move you file inside the bucket to its destination
     #     - print the actual move you made
 
-    pass
+    # connection to the Cloud storage client
+    storage_client = storage.Client()
+
+    # get the bucket and the blob object
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(blob_path)
+
+    # splitting the blop path to get the subfolder and the file name
+    subfolder, file_name = blob_path.split(os.sep)
+
+    # creating the new blob path from the new subsfolder
+    new_blob_path = blob_path.replace(subfolder, new_subfolder)
+
+    # moving the file inside the bucket to the new subfolder
+    bucket.rename_blob(blob, new_blob_path)
+
+    print(f'{blob.name} moved to {new_blob_path}' )
+    
 
 
 if __name__ == '__main__':
