@@ -52,25 +52,22 @@ def check_file_format(event: dict, context: dict):
     
     # check if the file name has the good format
     try:
-        filename = len(file_name.split('_'))
-        firstpart,secondpart = file_name.split('_')
-        
+        file_parts = len(file_name.split('_'))
+
         # verify if the file has two parts
-        assert filename == 2 , f"File name required two parts, got: {file_name}"
+        assert file_parts == 2, f"File name required two parts, got: {file_name}"
         
         # verify if the date is in the good format
-        assert secondpart == datetime.strptime(secondpart ,'%Y%m%d').strftime('%Y%m%d'), 'File name is required to be in the format YYYYMMDD'  
+        first_part, second_part = file_name.split('_')
+        datetime.strptime(second_part,'%Y%m%d')  # Native error   
 
         # verify if the first part is an accepted table name
-        assert firstpart in FILES_AND_EXTENSION_SPEC , f"File name is required to be basket, store or customer, got: {firstpart}"  
+        assert first_part in FILES_AND_EXTENSION_SPEC, f"File name is required to be basket, store or customer, got: {first_part}"  
         
         # verify if the extension is good
-        if  firstpart in FILES_AND_EXTENSION_SPEC :
-            assert file_extention == FILES_AND_EXTENSION_SPEC[firstpart] , 'The extension is not good '
+        assert file_extention == FILES_AND_EXTENSION_SPEC[first_part], 'The extension is not good '
 
-        ...
-
-        table_name = "<YOUR_TABLE_NAME>"
+        table_name = first_part
 
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(

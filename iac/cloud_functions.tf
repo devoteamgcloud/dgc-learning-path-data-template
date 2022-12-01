@@ -21,8 +21,8 @@ resource "google_storage_bucket_object" "zip" {
 }
 
 resource "google_cloudfunctions_function" "function" {
-    project  = var.project_id
-    region = var.region
+    project               = var.project_id
+    region                = var.region
     name                  = "function-trigger-on-gcs"
     runtime               = "python37"  # of course changeable
 
