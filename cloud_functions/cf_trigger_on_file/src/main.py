@@ -2,6 +2,7 @@ import os
 import datetime
 from google.cloud import storage
 from google.cloud import pubsub_v1
+import base64
 
 # This dictionary gives your the requirements and the specifications of the kind
 # of files you can receive.
@@ -72,8 +73,9 @@ def check_file_format(event: dict, context: dict):
         table_name = table
 
         # if all checks are succesful then publish it to the PubSub topic
+        # ! you should add base64 to encode the table
         publish_to_pubsub(
-            data=table_name.encode('utf-8'),
+            data=base64.b64encode(table_name.encode('utf-8')),
             attributes={
                 'bucket_name': bucket_name,
                 'blob_path': blob_path

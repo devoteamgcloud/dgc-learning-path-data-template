@@ -4,38 +4,38 @@ resource "google_storage_bucket" "magasin_cie_landing" {
   location = var.location
   lifecycle_rule {
     condition {
-      age = 30
-      matches_prefix = [ "archive/" ]
+      age            = 30
+      matches_prefix = ["archive/"]
     }
     action {
-      type = "SetStorageClass"
+      type          = "SetStorageClass"
       storage_class = "NEARLINE"
     }
   }
   lifecycle_rule {
     condition {
-      age = 90
-      matches_prefix = [ "archive/" ]
+      age            = 90
+      matches_prefix = ["archive/"]
     }
     action {
-      type = "SetStorageClass"
+      type          = "SetStorageClass"
       storage_class = "COLDLINE"
     }
   }
   lifecycle_rule {
     condition {
-      age = 365
-      matches_prefix = [ "archive/" ]
+      age            = 365
+      matches_prefix = ["archive/"]
     }
     action {
-      type = "SetStorageClass"
+      type          = "SetStorageClass"
       storage_class = "ARCHIVE"
     }
   }
   lifecycle_rule {
     condition {
-      age = 1000
-      matches_prefix = [ "archive/" ]
+      age            = 1000
+      matches_prefix = ["archive/"]
     }
     action {
       type = "Delete"
@@ -54,10 +54,10 @@ locals {
 }
 resource "google_storage_bucket_object" "queries" {
   for_each = local.all_files
-  name = trim(each.value,"../")
-  source = each.value
-  bucket = google_storage_bucket.magasin_cie_utils.name
-  
+  name     = trim(each.value, "../")
+  source   = each.value
+  bucket   = google_storage_bucket.magasin_cie_utils.name
+
 }
 
 resource "google_storage_bucket" "cloud_functions_sources" {
