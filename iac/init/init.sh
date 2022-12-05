@@ -9,7 +9,7 @@ export PROJECT_ID=$(gcloud info --format='value(config.project)')
 # and comment the next line PROJECT_ID=$1
 # PROJECT_ID=sandbox-athevenot
 
-TERRAFORM_BUCKET=$PROJECT_ID-gcs-tfstate-sbx
+TERRAFORM_BUCKET=$PROJECT_ID-gcs-tfstate-sbx-s
 
 echo "******"
 echo "ProjectID value: $PROJECT_ID"
