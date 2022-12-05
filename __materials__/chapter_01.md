@@ -5,7 +5,7 @@
 
 
 ## Chapter 1 - Quick introduction to Data processing fundamentals. (2-3 days) 
-
+test ss
 ### The Context
 
 In a **retail** context, we were chosen by the company Magasin & Cie to meet the **needs of managers**. The latter would like to have a **daily** overview of the sales and customers who bought in their store via a **personalized dashboard**. 
