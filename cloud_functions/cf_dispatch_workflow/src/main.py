@@ -2,8 +2,6 @@ import os
 import time
 import json
 import base64
-import yaml
-from yaml.loader import SafeLoader
 
 from google.cloud import storage
 from google.cloud import bigquery
@@ -27,7 +25,6 @@ def receive_messages(event: dict, context: dict):
     print(pubsub_event)
 
     # decode the data giving the targeted table name
-    # ? À Quoi sert ce bout de code ?
     table_name = base64.b64decode(pubsub_event['data']).decode('utf-8')
 
     # get the blob infos from the attributes
@@ -137,7 +134,30 @@ def trigger_worflow(table_name: str):
     #     - wait for the result (with exponential backoff delay will be better)
     #     - be verbose where you think you have to
 
-    raise NotImplementedError()
+    execution_client = executions_v1.ExecutionsClient()
+    parent = execution_client.workflow_path(
+        project=os.environ['project_id'],
+        location=os.environ['wkf_location'],
+        workflow=os.environ['workflowId'])
+    
+    response = execution_client.create_execution(request={"parent": parent})
+    print(f"Created execution: {response.name}")
+
+    execution_finished = False
+    backoff_delay = 1
+    print('Poll every second for result...')
+    while (not execution_finished):
+        execution = execution_client.get_execution(request={"name": response.name})
+        execution_finished = execution.state != execution.Execution.State.ACTIVE
+
+        if not execution_finished:
+            print('- Waiting for results...')
+            time.sleep(backoff_delay)
+            backoff_delay *= 2
+        else:
+            print('- Execution finished with state: {execution.state.name')
+            print(execution.result)
+            return execution.result
 
 
 def move_file(bucket_name, blob_path, new_subfolder):
