@@ -1,5 +1,7 @@
 import os
 import datetime
+import re
+
 from google.cloud import storage
 from google.cloud import pubsub_v1
 
@@ -36,7 +38,7 @@ def check_file_format(event: dict, context: dict):
     blob_path = blob_event['name']
 
     # get the subfolder, the file name and its extension
-    *subfolder, file = blob_path.split('/')  
+    *subfolder, file = blob_path.split(os.sep)  
     subfolder =  os.path.join(*subfolder) if subfolder != [] else ''
     file_name, file_extention = file.split('.') 
 
@@ -59,9 +61,12 @@ def check_file_format(event: dict, context: dict):
         #     - the second part is required to be a 'YYYYMMDD'-formatted date 
         #     - required to have the expected extension
 
-        ...
+        if(file_extention in FILES_AND_EXTENSION_SPEC):
+            print("Correct extension")
+        else:
+            print("Incorrect Extension")
 
-        table_name = "<YOUR_TABLE_NAME>"
+        table_name = "sandbox-lhanot_magasin_cie_landing"
 
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(
@@ -151,7 +156,7 @@ if __name__ == '__main__':
     init_files_path = os.path.join(material_path, 'data', 'init')
 
     # test your Cloud Function with each of the given files.
-    for file_name in os.listdir(init_files_path):
+    for file_name in os.listdir(init_files_path[1:]):
         print(f'\nTesting your file {file_name}')
         mock_event = {
             'bucket': f'{project_id}-magasin-cie-landing',
