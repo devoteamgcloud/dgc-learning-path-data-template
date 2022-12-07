@@ -58,8 +58,13 @@ def check_file_format(event: dict, context: dict):
         # create some assertions here to validate your file. It is:
         #     - required to have two parts
         #     - the first part is required to be an accepted table name
-        #     - the second part is required to be a 'YYYYMMDD'-formatted date 
+        #     - the second part is required to be a 'YYYYMMDD'- formatted date 
         #     - required to have the expected extension
+
+        try:
+            datetime.datetime.strptime(file_name, '%Y-%m-%d')
+        except ValueError:
+            raise ValueError("Incorrect date format, should be YYYYMMDD")
 
         if(file_extention in FILES_AND_EXTENSION_SPEC):
             print("Correct extension")
@@ -149,7 +154,7 @@ if __name__ == '__main__':
     # it will have no impact on the Cloud Function when deployed.
     import os
     
-    project_id = '<YOUR-PROJECT-ID>'
+    project_id = 'sandbox-lhanot'
 
     realpath = os.path.realpath(__file__)
     material_path = os.sep.join(['', *realpath.split(os.sep)[:-4], '__materials__'])
