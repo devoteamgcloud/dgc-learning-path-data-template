@@ -20,7 +20,7 @@
       body:
         configuration:
           query:
-            query: ${text.replace_all(cleaned_store_response.body, "{ project_id }", project_id)}
+            query: ${text.replace_all(cleaned_store_response.body, "{{ project_id }}", project_id)}
             destinationTable:
               projectId: ${project_id}
               datasetId: cleaned
