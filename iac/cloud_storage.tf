@@ -43,17 +43,17 @@ resource "google_storage_bucket" "magasin_cie_landing" {
   }
 }
 
-# resource "google_storage_bucket" "magasin_cie_utils" {
-#   project  = var.project_id
-#   name     = "${var.project_id}_magasin_cie_utils"
-#   location = var.location
-# }
+resource "google_storage_bucket" "magasin_cie_utils" {
+  project  = var.project_id
+  name     = "${var.project_id}_magasin_cie_utils"
+  location = var.location
+}
 
-# resource "google_storage_bucket" "cloud_functions_sources" {
-#   project                     = var.project_id
-#   name                        = "${var.project_id}_cloud_functions_sources"
-#   location                    = var.location
-#   force_destroy               = true
-#   uniform_bucket_level_access = true
-# }
+resource "google_storage_bucket" "cloud_functions_sources" {
+  project                     = var.project_id
+  name                        = "${var.project_id}_cloud_functions_sources"
+  location                    = var.location
+  force_destroy               = true
+  uniform_bucket_level_access = true
+}
 
