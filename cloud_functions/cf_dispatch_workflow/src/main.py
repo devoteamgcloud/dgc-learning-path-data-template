@@ -134,12 +134,18 @@ def trigger_worflow(table_name: str):
     #     - wait for the result (with exponential backoff delay will be better)
     #     - be verbose where you think you have to
 
+    # connection to the cloud workflows client
     execution_client = executions_v1.ExecutionsClient()
+
+    # create the fully workflow
+    # projects/{project}/locations/{location}/workflows/{workflow}
     parent = execution_client.workflow_path(
         project=os.environ['project_id'],
         location=os.environ['wkf_location'],
         workflow=os.environ['workflowId'])
+    print(f'the fully workflow: {parent}')
     
+    # Make the request
     response = execution_client.create_execution(request={"parent": parent})
     print(f"Created execution: {response.name}")
 
@@ -148,14 +154,14 @@ def trigger_worflow(table_name: str):
     print('Poll every second for result...')
     while (not execution_finished):
         execution = execution_client.get_execution(request={"name": response.name})
-        execution_finished = execution.state != execution.Execution.State.ACTIVE
+        execution_finished = execution.state != execution.State.ACTIVE
 
         if not execution_finished:
             print('- Waiting for results...')
             time.sleep(backoff_delay)
-            backoff_delay *= 2
+            backoff_delay *= 5
         else:
-            print('- Execution finished with state: {execution.state.name')
+            print(f'- Execution finished with state: {execution.state.name}')
             print(execution.result)
             return execution.result
 
