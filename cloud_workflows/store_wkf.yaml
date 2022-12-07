@@ -7,7 +7,7 @@
 - get_cleaned_store_query:
     call: http.get
     args:
-      url: ${"https://storage.googleapis.com/" + project_id + "-" + util_bucket_suffix + "/queries/cleaned/store.sql"}
+      url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/cleaned/store.sql"}
       headers:
         Content-Type: "text/plain"
       auth:
@@ -20,7 +20,7 @@
       body:
         configuration:
           query:
-            query: ${text.replace_all(cleaned_store_response.body, "{ project_id }", project_id)}
+            query: ${text.replace_all(cleaned_store_response.body, "{{ project_id }}", project_id)}
             destinationTable:
               projectId: ${project_id}
               datasetId: cleaned

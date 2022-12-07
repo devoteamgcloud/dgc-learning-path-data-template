@@ -1,4 +1,3 @@
--- INSERT INTO `{{ project_id }}.cleaned.store`
 SELECT 
   CAST(id_store   AS INTEGER)              AS `id_store`,
   CAST(id_manager AS INTEGER)              AS `id_manager`,
