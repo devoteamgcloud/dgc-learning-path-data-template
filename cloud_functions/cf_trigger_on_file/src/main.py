@@ -73,7 +73,6 @@ def check_file_format(event: dict, context: dict):
         table_name = table
 
         # if all checks are succesful then publish it to the PubSub topic
-        # ! you should add base64 to encode the table
         publish_to_pubsub(
             data=base64.b64encode(table_name.encode('utf-8')),
             attributes={
@@ -100,7 +99,7 @@ def publish_to_pubsub(data: bytes, attributes: dict):
     # remove this part when you are ready to deploy your Cloud Function.
     # [start simulation]
     print('Your file is considered as valid. It will be published to Pubsub.')
-    return
+    #return
     # [end simulation]
 
     # retrieve the GCP_PROJECT from the reserved environment variables

@@ -152,18 +152,16 @@ def trigger_worflow(table_name: str):
     execution_finished = False
     backoff_delay = 1
     print('Poll every second for result...')
-    while (not execution_finished):
+    while not execution_finished:
         execution = execution_client.get_execution(request={"name": response.name})
         execution_finished = execution.state != execution.State.ACTIVE
-
-        if not execution_finished:
-            print('- Waiting for results...')
-            time.sleep(backoff_delay)
-            backoff_delay *= 5
-        else:
-            print(f'- Execution finished with state: {execution.state.name}')
-            print(execution.result)
-            return execution.result
+        print('- Waiting for results...')
+        time.sleep(backoff_delay)
+        backoff_delay *= 5
+    
+    print(f'- Execution finished with state: {execution.state.name}')
+    print(execution.result)
+    return execution.result
 
 
 def move_file(bucket_name, blob_path, new_subfolder):
