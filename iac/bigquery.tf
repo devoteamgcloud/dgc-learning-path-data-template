@@ -19,6 +19,7 @@ resource "google_bigquery_table" "raw_store" {
   dataset_id = google_bigquery_dataset.raw.dataset_id
   table_id   = "store"
   schema     = file("../schemas/raw/store.json")
+  deletion_protection = false
 }
 
 resource "google_bigquery_table" "cleaned_store" {
@@ -26,4 +27,5 @@ resource "google_bigquery_table" "cleaned_store" {
   dataset_id = google_bigquery_dataset.cleaned.dataset_id
   table_id   = "store"
   schema     = file("../schemas/cleaned/store.json")
+  deletion_protection = false
 }
