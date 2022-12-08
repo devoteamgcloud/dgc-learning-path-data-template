@@ -29,9 +29,9 @@ def receive_messages(event: dict, context: dict):
 
     # get the blob infos from the attributes
     # It's not bucket_name but bucket
-    bucket_name = pubsub_event['attributes']['bucket']
+    bucket_name = pubsub_event['attributes']['bucket_name']
     # It's file_path instead of blob_path
-    blob_path = pubsub_event['attributes']['file_path']
+    blob_path = pubsub_event['attributes']['blob_path']
 
     load_completed = False
     try:
@@ -215,8 +215,8 @@ if __name__ == '__main__':
     mock_event = {
         'data': data,
         'attributes': {
-            'bucket': f'{project_id}_magasin_cie_landing',
-            'file_path': 'input/store_20220531.csv'
+            'bucket_name': f'{project_id}_magasin_cie_landing',
+            'blob_path': 'input/store_20220531.csv'
         }
     }
 
