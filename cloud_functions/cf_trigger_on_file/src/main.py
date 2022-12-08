@@ -40,38 +40,53 @@ def check_file_format(event: dict, context: dict):
     # get the subfolder, the file name and its extension
     *subfolder, file = blob_path.split(os.sep)  
     subfolder =  os.path.join(*subfolder) if subfolder != [] else ''
-    file_name, file_extention = file.split('.') 
+    file_name, file_extension = file.split('.') 
 
     print(f'Bucket name: {bucket_name}')
     print(f'File path: {blob_path}')
     print(f'Subfolder: {subfolder}')
     print(f'Full file name: {file}')
     print(f'File name: {file_name}')
-    print(f'File Extension: {file_extention}')
+    print(f'File Extension: {file_extension}')
 
     # Check if the file is in the subfolder `input/` to avoid infinite loop
     assert subfolder == 'input', 'File must be in `input/ subfolder to be processed`'
     
     # check if the file name has the good format
     try:
-        # TODO: 
+        # TO DO:
         # create some assertions here to validate your file. It is:
         #     - required to have two parts
         #     - the first part is required to be an accepted table name
         #     - the second part is required to be a 'YYYYMMDD'- formatted date 
         #     - required to have the expected extension
 
-        if(file_name in FILES_AND_EXTENSION_SPEC.keys):
+        print("\nOn est dans le TRY \n")
+
+        file_name_parts = file_name.split('_')
+        print(f'Les parties du fichier : {file_name_parts}')
+
+        if(len(file_name_parts) > 2):
+            print("Too many file parts.")
+        else:
+            print("File name parts just right.")        
+
+        if(file_name_parts[0] in FILES_AND_EXTENSION_SPEC.keys()):
             print("Correct filename")
         else:
-            print("Incorrect filename")
+            print(" NIKEMOUK Incorrect filename" )
+
+        print("On a passé les clés \n")
+        print(f'Second part is date: {file_name_parts[1]}')
 
         try:
-            datetime.datetime.strptime(file_name, '%Y-%m-%d')
+            datetime.datetime.strptime(file_name_parts[1], '%Y%m%d')
         except ValueError:
             raise ValueError("Incorrect date format, should be YYYYMMDD")
 
-        if(file_extention in FILES_AND_EXTENSION_SPEC.values):
+        print("On a passé la date \n")
+
+        if(file_extension in FILES_AND_EXTENSION_SPEC.values()):
             print("Correct extension")
         else:
             print("Incorrect Extension")
