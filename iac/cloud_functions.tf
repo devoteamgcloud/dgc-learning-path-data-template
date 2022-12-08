@@ -47,6 +47,7 @@ resource "google_cloudfunctions_function" "function" {
   region  = var.region
   name    = "function-trigger-on-gcs"
   runtime = "python310" # of course changeable
+  environment_variables = yamldecode(file("../cloud_functions/cf_trigger_on_file/env.yaml"))
 
   # Get the source code of the cloud function as a Zip compression
   source_archive_bucket = google_storage_bucket.cloud_functions_sources.name
@@ -73,6 +74,7 @@ resource "google_cloudfunctions_function" "function2" {
   region  = var.region
   name    = "function-dispatch-workflow-on-gcs"
   runtime = "python310"
+  environment_variables = yamldecode(file("../cloud_functions/cf_dispatch_workflow/env.yaml"))
 
   source_archive_bucket = google_storage_bucket.cloud_functions_sources.name
   source_archive_object = google_storage_bucket_object.zip2.name
