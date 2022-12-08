@@ -5,6 +5,12 @@ data "archive_file" "source" {
   output_path = "tmp/function.zip"
 }
 
+data "archive_file" "source2" {
+  type        = "zip"
+  source_dir  = "../cloud_functions/cf_dispatch_workflow/src"
+  output_path = "tmp/function2.zip"
+}
+
 # Add source code zip to the Cloud Function's bucket
 resource "google_storage_bucket_object" "zip" {
   source       = data.archive_file.source.output_path
@@ -19,6 +25,18 @@ resource "google_storage_bucket_object" "zip" {
   depends_on = [
     google_storage_bucket.cloud_functions_sources, # declared in `storage.tf`
     data.archive_file.source
+  ]
+}
+
+resource "google_storage_bucket_object" "zip2" {
+  source       = data.archive_file.source2.output_path
+  content_type = "application/zip"
+  name         = "src-${data.archive_file.source2.output_md5}.zip"
+  bucket       = google_storage_bucket.cloud_functions_sources.name
+
+  depends_on = [
+    google_storage_bucket.cloud_functions_sources,
+    data.archive_file.source2
   ]
 }
 
@@ -48,4 +66,21 @@ resource "google_cloudfunctions_function" "function" {
     google_storage_bucket.cloud_functions_sources, # declared in `storage.tf`
     google_storage_bucket_object.zip
   ]
+}
+
+resource "google_cloudfunctions_function" "function2" {
+  project = var.project_id
+  region  = var.region
+  name    = "function-dispatch-workflow-on-gcs"
+  runtime = "python310"
+
+  source_archive_bucket = google_storage_bucket.cloud_functions_sources.name
+  source_archive_object = google_storage_bucket_object.zip2.name
+
+  entry_point = "receive_messages"
+
+  event_trigger {
+    event_type = "providers/cloud.pubsub/eventTypes/topic.publish"
+    resource   = google_pubsub_topic.topic_valid.name
+  }
 }

@@ -209,7 +209,7 @@ if __name__ == '__main__':
     # it will have no impact on the Cloud Function when deployed.
     import os
 
-    project_id = 'sandbox-ymarcel'
+    project_id = os.environ['project_id']
     data = base64.b64encode('store'.encode('utf-8'))
     # test your Cloud Function for the store file.
     mock_event = {
