@@ -61,12 +61,17 @@ def check_file_format(event: dict, context: dict):
         #     - the second part is required to be a 'YYYYMMDD'- formatted date 
         #     - required to have the expected extension
 
+        if(file_name in FILES_AND_EXTENSION_SPEC.keys):
+            print("Correct filename")
+        else:
+            print("Incorrect filename")
+
         try:
             datetime.datetime.strptime(file_name, '%Y-%m-%d')
         except ValueError:
             raise ValueError("Incorrect date format, should be YYYYMMDD")
 
-        if(file_extention in FILES_AND_EXTENSION_SPEC):
+        if(file_extention in FILES_AND_EXTENSION_SPEC.values):
             print("Correct extension")
         else:
             print("Incorrect Extension")
