@@ -45,6 +45,8 @@ Then it informs as a PubSub Topic Published for the name of the file to insert (
 If you used the Cloud Console UI in the previous part, you can now try to use the CLI to deploy your Cloud Functions.
 Deploy the Cloud Function with the `gcloud` CLI. Go check by yourself for the documentation.
 
+gcloud functions deploy file_checking --region=europe-west1 --runtime python310 --source=src/ --entry-point=check_file_format --trigger-bucket=gs://sandbox-lhanot_magasin_cie_landing --allow-unauthenticated
+
 #### Deployment with Terraform
 
 Then, when you are confortable with Cloud Function, you have to create the Terraform deployement of the Cloud Function in the `iac/cloud_functions.tf` file. 
