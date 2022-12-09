@@ -25,7 +25,9 @@ def receive_messages(event: dict, context: dict):
     print(pubsub_event)
 
     # decode the data giving the targeted table name
+    print(f"the table name before the decode : {pubsub_event['data']}")
     table_name = base64.b64decode(pubsub_event['data']).decode('utf-8')
+    print(f'the table name after the decode :  {table_name}')
 
     # get the blob infos from the attributes
     # It's not bucket_name but bucket

@@ -2,7 +2,6 @@ import os
 import datetime
 from google.cloud import storage
 from google.cloud import pubsub_v1
-import base64
 
 # This dictionary gives your the requirements and the specifications of the kind
 # of files you can receive.
@@ -71,10 +70,9 @@ def check_file_format(event: dict, context: dict):
         assert file_extention == FILES_AND_EXTENSION_SPEC[table], "The extension is not accepted"
 
         table_name = table
-
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(
-            data=base64.b64encode(table_name.encode('utf-8')),
+            data=table_name.encode('utf-8'),
             attributes={
                 'bucket_name': bucket_name,
                 'blob_path': blob_path
@@ -140,7 +138,9 @@ def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
     # move the file to the invalid/ subfolder
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(blob_path)
+    print(f'blob = {blob}')
     new_blob_path = blob_path.replace('input', 'invalid')
+    print(f'new_blob_path = {new_blob_path}')
     bucket.rename_blob(blob, new_blob_path)
 
     print(f'{blob.name} moved to {new_blob_path}')
@@ -152,7 +152,7 @@ if __name__ == '__main__':
     # it will have no impact on the Cloud Function when deployed.
     import os
 
-    project_id = '<YOUR-PROJECT-ID>'
+    project_id = os.environ['project_id']
 
     realpath = os.path.realpath(__file__)
     material_path = os.sep.join(
