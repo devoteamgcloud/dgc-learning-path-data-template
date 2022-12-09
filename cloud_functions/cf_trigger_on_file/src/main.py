@@ -1,6 +1,5 @@
 import os
-import datetime
-import re
+from datetime import datetime
 
 from google.cloud import storage
 from google.cloud import pubsub_v1
@@ -64,34 +63,48 @@ def check_file_format(event: dict, context: dict):
         print("\nOn est dans le TRY \n")
 
         file_name_parts = file_name.split('_')
+
         print(f'Les parties du fichier : {file_name_parts}')
 
-        if(len(file_name_parts) > 2):
-            print("Too many file parts.")
-        else:
-            print("File name parts just right.")        
+        assert len(file_name_parts) == 2, 'File name parts invalid.'
 
-        if(file_name_parts[0] in FILES_AND_EXTENSION_SPEC.keys()):
-            print("Correct filename")
-        else:
-            print(" NIKEMOUK Incorrect filename" )
+        file_type, file_date = file_name_parts
+
+        # try:
+        #     if(len(file_name_parts) > 2):
+        #         print("Too many file parts.")
+        # except ValueError:
+        #     print("File name parts just right.") 
+
+        assert file_type in FILES_AND_EXTENSION_SPEC.keys(), 'Incorrect filename'       
+
+        # if(file_type in FILES_AND_EXTENSION_SPEC.keys()):
+        #     print("Correct filename")
+        # else:
+        #     print("Incorrect filename" )
 
         print("On a passé les clés \n")
-        print(f'Second part is date: {file_name_parts[1]}')
+        print(f'Second part is date: {file_date}')
 
-        try:
-            datetime.datetime.strptime(file_name_parts[1], '%Y%m%d')
-        except ValueError:
-            raise ValueError("Incorrect date format, should be YYYYMMDD")
+        
+        datetime.strptime(file_date, '%Y%m%d')
+
+        # Works too (sends an error natively):
+        # try:
+        #     datetime.strptime(file_date, '%Y%m%d')
+        # except ValueError:
+        #     raise ValueError("Incorrect date format, should be YYYYMMDD")
 
         print("On a passé la date \n")
 
-        if(file_extension in FILES_AND_EXTENSION_SPEC.values()):
-            print("Correct extension")
-        else:
-            print("Incorrect Extension")
+        assert file_extension in FILES_AND_EXTENSION_SPEC[file_type], 'Incorrect Extension'  
 
-        table_name = "sandbox-lhanot_magasin_cie_landing"
+        # if(file_extension in FILES_AND_EXTENSION_SPEC.values()):
+        #     print("Correct extension")
+        # else:
+        #     print("Incorrect Extension")
+
+        table_name = file_type
 
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(
