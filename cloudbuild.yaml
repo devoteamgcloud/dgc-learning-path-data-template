@@ -44,7 +44,7 @@ steps:
   - '-c'
   - |
     cd iac
-    terraform apply -input=false -no-color -auto-approve changes.tfplan -lock=false
+    terraform apply -input=false -lock=false -auto-approve changes.tfplan 
 # [END tf-apply]
 timeout: 5400s
 options:
