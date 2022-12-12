@@ -13,7 +13,7 @@ resource "google_storage_bucket" "magasin_cie_utils" {
 data "archive_file" "source" {
     type        = "zip"
     source_dir  = "../cloud_functions/cf_trigger_on_file/src"
-    output_path = "/tmp/function.zip"
+    output_path = "tmp/function.zip"
 }
 
 # Add source code zip to the Cloud Function's bucket
