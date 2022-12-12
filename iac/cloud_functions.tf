@@ -41,7 +41,7 @@ resource "google_cloudfunctions_function" "function" {
     # Get the source code of the cloud function as a Zip compression
     source_archive_bucket = google_storage_bucket.cloud_functions_sources.name
     source_archive_object = google_storage_bucket_object.zip.name
-
+    project = var.project_id
     # Must match the function name in the cloud function `main.py` source code
     entry_point           = "check_file_format"
     
