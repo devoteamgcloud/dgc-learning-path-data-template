@@ -66,16 +66,26 @@ def check_file_format(event: dict, context: dict):
         assert len(file_name_parts) == 2, 'File name must have two parts'
 
         assert file_name_parts[0] in FILES_AND_EXTENSION_SPEC, 'File name must be in the dictioanry FILES_AND_EXTENSION_SPEC'
+       
+        assert file_name_parts[1] in FILES_AND_EXTENSION_SPEC, 'File name must be in the dictioanry FILES_AND_EXTENSION_SPEC'
 
         # check if the file extension is valid
         assert file_extention in FILES_AND_EXTENSION_SPEC, 'File extension must be in file_extention'
 
-        # check if the file is in the subfolder `input/` to avoid infinite loop 
+        # check if the file is in the subfolder `input/` to avoid infinite loop
         assert subfolder == 'input', 'File must be in `input/ subfolder to be processed`'
 
+        # Check if the date has the correct forme 'YYYYMMDD'
+        assert file_name_parts[1] == datetime.datetime.now().strftime('%Y%m%d'), 'File name must be in the dictioanry YYYYMMDD-formatted date'
 
+        # Check if the file has the expected extension
+        assert file_extention in FILES_AND_EXTENSION_SPEC, 'File extension must be in file_extention'
 
-
+        print(f'File name: {file_name}')
+        print(f'File Extension: {file_extention}')
+        print(f'File Name: {file_name_parts[0]}')
+        print(f'File Name: {file_name_parts[1]}')
+        
         ...
 
         table_name = "<YOUR_TABLE_NAME>"
