@@ -36,7 +36,7 @@ def check_file_format(event: dict, context: dict):
     blob_path = blob_event['name']
 
     # get the subfolder, the file name and its extension
-    *subfolder, file = blob_path.split('/')  
+    *subfolder, file = blob_path.split(os.sep)  
     subfolder =  os.path.join(*subfolder) if subfolder != [] else ''
     file_name, file_extention = file.split('.') 
 
@@ -58,6 +58,23 @@ def check_file_format(event: dict, context: dict):
         #     - the first part is required to be an accepted table name
         #     - the second part is required to be a 'YYYYMMDD'-formatted date 
         #     - required to have the expected extension
+        
+        ## split the file name 
+        file_name_parts = file_name.split('_')
+
+        ## Test if the file name has the correct format
+        assert len(file_name_parts) == 2, 'File name must have two parts'
+
+        assert file_name_parts[0] in FILES_AND_EXTENSION_SPEC, 'File name must be in the dictioanry FILES_AND_EXTENSION_SPEC'
+
+        # check if the file extension is valid
+        assert file_extention in FILES_AND_EXTENSION_SPEC, 'File extension must be in file_extention'
+
+        # check if the file is in the subfolder `input/` to avoid infinite loop 
+        assert subfolder == 'input', 'File must be in `input/ subfolder to be processed`'
+
+
+
 
         ...
 
