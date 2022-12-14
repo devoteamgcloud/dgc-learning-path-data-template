@@ -86,7 +86,7 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     bucket_util = storage_client.bucket(bucket_title)
 
     # load the schema from the bucket_util
-    blob = bucket_util.blob("schemas/raw/store.json")
+    blob = bucket_util.blob(f"schemas/raw/{table_name}.json")
     schema = json.loads(blob.download_as_string())
 
     # store the blob uri path
