@@ -39,7 +39,7 @@ resource "google_bigquery_table" "staging_customer" {
   project = var.project_id
   dataset_id = google_bigquery_dataset.staging.dataset_id
   table_id = "customer"
-  schema = file("../schema/staging/customer.json")
+  schema = file("../schemas/staging/customer.json")
   deletion_protection = false
 }
 resource "google_bigquery_table" "cleaned_store" {
