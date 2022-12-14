@@ -7,7 +7,7 @@
 - get_staging_customer_query:
     call: http.get
     args:
-      url: ${"https://storage.googleapis.com/" + project_id + util_bucket_suffix + "/queries/staging/customer.sql"}
+      url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/staging/customer.sql"}
       headers:
         Content-Type: "text/plain"
       auth:
