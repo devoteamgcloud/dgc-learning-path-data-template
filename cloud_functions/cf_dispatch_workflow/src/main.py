@@ -142,9 +142,10 @@ def trigger_worflow(table_name: str):
     # create the fully workflow
     # projects/{project}/locations/{location}/workflows/{workflow}
     parent = execution_client.workflow_path(
-        project=os.environ['project_id'],
-        location=os.environ['wkf_location'],
-        workflow=os.environ[f'{table_name}_wkf'])
+        project     = os.environ['project_id'],
+        location    = os.environ['wkf_location'],
+        workflow    = f'{table_name}_wkf')
+    
     print(f'the fully workflow: {parent}')
     
     # Make the request
@@ -155,8 +156,8 @@ def trigger_worflow(table_name: str):
     backoff_delay = 1
     print('Poll every second for result...')
     while not execution_finished:
-        execution = execution_client.get_execution(request={"name": response.name})
-        execution_finished = execution.state != execution.State.ACTIVE
+        execution               = execution_client.get_execution(request={"name": response.name})
+        execution_finished      = execution.state != execution.State.ACTIVE
         print('- Waiting for results...')
         time.sleep(backoff_delay)
         backoff_delay *= 5
@@ -190,8 +191,8 @@ def move_file(bucket_name, blob_path, new_subfolder):
     storage_client = storage.Client()
 
     # get the bucket and the blob object
-    bucket = storage_client.bucket(bucket_name)
-    blob = bucket.blob(blob_path)
+    bucket  = storage_client.bucket(bucket_name)
+    blob    = bucket.blob(blob_path)
 
     # splitting the blop path to get the subfolder and the file name
     subfolder, file_name = blob_path.split(os.sep)
