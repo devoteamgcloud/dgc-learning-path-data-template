@@ -1,5 +1,5 @@
 MERGE `{{ project_id }}.cleaned.customer` AS T
-USING `{{ project_id }.staging.customer` AS S
+USING `{{ project_id }}.staging.customer` AS S
 ON S.id_customer = T.id_customer
 
 --For inserts
