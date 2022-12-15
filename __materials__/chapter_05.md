@@ -82,3 +82,7 @@ Of course, everything must be deployed with Terraform at the end (even if it is 
 Did you miss the deduplication ?
 If yes, maybe the keywords `QUALIFY` and `ROW_NUMBER` will help you ;)
 
+Check for this article on deduplication. 
+[Deduplication in BigQuery Tables: A Comparative Study of 7 Approaches](https://medium.com/google-cloud/deduplication-in-bigquery-tables-a-comparative-study-of-7-approaches-f48966eeea2b?sk=674696a12c2a2f805ba885466773353b)
+
+Why do we deduplicate our data in this delta integration ? Why not for the full integration of stores ?
