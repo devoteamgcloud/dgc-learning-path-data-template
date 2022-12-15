@@ -45,10 +45,18 @@ gcloud auth login
 ## Configure your Cloud Build Trigger
 
 
-Create your `PROJECT_ID` environment variable
+Create your `PROJECT_ID` environment variable.
+
+### For Linux/MacOS
 
 ```bash
 export PROJECT_ID=$(gcloud info --format='value(config.project)')
+```
+
+### For Windows
+
+```bash
+set PROJECT_ID=$(gcloud info --format='value(config.project)')
 ```
 
 Activate GCP APIs
@@ -71,4 +79,3 @@ Then Go to the GCP Console to the [Cloud Build interface](https://console.cloud.
 - In `Source -> Repository`, connect to the repository.
 - In `Source -> Branch`, add your branch name.
 - leave everything as default and click on `CREATE`.
-
