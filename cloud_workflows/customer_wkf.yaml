@@ -46,10 +46,6 @@
         configuration:
           query:
             query: ${text.replace_all(cleaned_customer_response.body, "{{ project_id }}", project_id)}
-            destinationTable:
-              projectId: ${project_id}
-              datasetId: cleaned
-              tableId: customer
             create_disposition: ${create_disposition}
             write_disposition: ${write_disposition}
             allowLargeResults: true

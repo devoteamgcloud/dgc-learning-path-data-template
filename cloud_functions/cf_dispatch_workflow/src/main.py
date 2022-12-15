@@ -96,7 +96,7 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     bigquery_client = bigquery.Client()
 
     # store the table id
-    table_id = f"{os.environ['project_id']}.{os.environ['datasetId']}.{table_name}"
+    table_id = f"{os.environ['project_id']}.{os.environ['raw_dataset_id']}.{table_name}"
 
     # creating the LoadJobConfig
     job_config = bigquery.LoadJobConfig(
@@ -144,7 +144,7 @@ def trigger_worflow(table_name: str):
     parent = execution_client.workflow_path(
         project=os.environ['project_id'],
         location=os.environ['wkf_location'],
-        workflow=os.environ['workflowId'])
+        workflow=os.environ[f'{table_name}_wkf'])
     print(f'the fully workflow: {parent}')
     
     # Make the request

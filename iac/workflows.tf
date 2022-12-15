@@ -7,7 +7,7 @@ resource "google_workflows_workflow" "store_workflow" {
 
 resource "google_workflows_workflow" "customer_staging_workflow" {
   project = var.project_id
-  name = "customer_staging_wkf"
+  name = "customer_wkf"
   region = var.region
   source_contents = file("../cloud_workflows/customer_wkf.yaml")  
 }
