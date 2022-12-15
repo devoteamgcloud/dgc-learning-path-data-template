@@ -24,7 +24,6 @@ resource "google_bigquery_table" "raw_store" {
   dataset_id          = google_bigquery_dataset.raw.dataset_id
   table_id            = "store"
   schema              = file("../schemas/raw/store.json")
-  deletion_protection = false
 }
 
 resource "google_bigquery_table" "raw_customer" {
@@ -32,7 +31,6 @@ resource "google_bigquery_table" "raw_customer" {
   dataset_id = google_bigquery_dataset.raw.dataset_id
   table_id = "customer"
   schema = file("../schemas/raw/customer.json")
-  deletion_protection = false
 }
 
 resource "google_bigquery_table" "staging_customer" {
@@ -40,14 +38,12 @@ resource "google_bigquery_table" "staging_customer" {
   dataset_id = google_bigquery_dataset.staging.dataset_id
   table_id = "customer"
   schema = file("../schemas/staging/customer.json")
-  deletion_protection = false
 }
 resource "google_bigquery_table" "cleaned_store" {
   project             = var.project_id
   dataset_id          = google_bigquery_dataset.cleaned.dataset_id
   table_id            = "store"
   schema              = file("../schemas/cleaned/store.json")
-  deletion_protection = false
 }
 
 resource "google_bigquery_table" "cleaned_customer" {
@@ -55,6 +51,5 @@ resource "google_bigquery_table" "cleaned_customer" {
   dataset_id          = google_bigquery_dataset.cleaned.dataset_id
   table_id            = "customer"
   schema              = file("../schemas/cleaned/customer.json")
-  deletion_protection = false
 }
 
