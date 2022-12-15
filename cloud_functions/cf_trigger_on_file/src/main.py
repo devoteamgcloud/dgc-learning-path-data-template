@@ -36,7 +36,7 @@ def check_file_format(event: dict, context: dict):
     blob_path = blob_event['name']
 
     # get the subfolder, the file name and its extension
-    *subfolder, file = blob_path.split('/')  
+    *subfolder, file = blob_path.split(os.sep)  
     subfolder =  os.path.join(*subfolder) if subfolder != [] else ''
     file_name, file_extention = file.split('.') 
 
@@ -51,17 +51,18 @@ def check_file_format(event: dict, context: dict):
     assert subfolder == 'input', 'File must be in `input/ subfolder to be processed`'
     
     # check if the file name has the good format
+    # required format: <table_name>_<date>.<extension>
     try:
         # TODO: 
         # create some assertions here to validate your file. It is:
-        #     - required to have two parts
+        #     - required to have two parts.
         #     - the first part is required to be an accepted table name
         #     - the second part is required to be a 'YYYYMMDD'-formatted date 
         #     - required to have the expected extension
 
         ...
 
-        table_name = "<YOUR_TABLE_NAME>"
+        table_name = "<to_replace_with_your_first_file_part_variable>"
 
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(

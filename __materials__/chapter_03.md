@@ -17,11 +17,12 @@ The requirements given to Magasin & Cie to have a pipeline ready to use is to ha
 
 We asked for the files:
 - to be put in a subfolder `input/`.
-- to be prefixed with the corresponding data it contains. (`store`, `customer`, `basket`)
-- to be suffixed with the sending date as `YYYYMMDD`. (example: `20220301` for March, 1st of 2022.)
-- to have the correct extension:
-    - CSV for stores and customer files.
-    - JSON for the basket files.
+- to have a `<table_name>_<date>.<extension>` format: 
+    - to be prefixed with the corresponding targeted table name for data items it contains. (`store`, `customer`, `basket`)
+    - to be suffixed with the sending date as `YYYYMMDD`. (example: `20220301` for March, 1st of 2022.)
+    - to have the correct extension:
+        - CSV for stores and customer files.
+        - JSON for the basket files.
 
 
 ### The Learning Resources
@@ -52,4 +53,3 @@ Go to the Codelab [Deploy Cloud Functions on GCP with Terraform](https://codelab
 
 
 When everything is done and works well, if not already done, you can activate the `move_to_invalid_file_folder()` function in the `cloud_functions/cf_trigger_on_file/src/main.py` file.
-
