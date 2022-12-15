@@ -193,6 +193,8 @@ if __name__ == '__main__':
     material_path = os.sep.join(['', *realpath.split(os.sep)[:-4], '__materials__'])
     init_files_path = os.path.join(material_path, 'data', 'init')
 
+    print("Axel le GOAT")
+
     # test your Cloud Function with each of the given files.
     for file_name in os.listdir(init_files_path[1:]):
         print(f'\nTesting your file {file_name}')
