@@ -79,7 +79,7 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
    
 def trigger_worflow(table_name: str):
     """
-    Triggers a Cloud Workflows pipeline from the table name which has been updated.
+    Triggers and waits for a `<table_name>_wkf` Workflows pipeline's result within the project ID.
     
     Args:
          table_name (str): BigQuery raw table name.
