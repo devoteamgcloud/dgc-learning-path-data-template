@@ -26,9 +26,9 @@ WHEN NOT MATCHED BY Target THEN
 
 --For updates
 WHEN MATCHED THEN UPDATE SET
-  T.first_name = S.first_name,
-  T.last_name = S.last_name,
-  T.email = S.email,
-  T.creation_date = S.creation_date,
-  T.update_time = S.update_time,
+  T.first_name     = S.first_name,
+  T.last_name      = S.last_name,
+  T.email          = S.email,
+  T.creation_date  = S.creation_date,
+  T.update_time    = S.update_time,
   T.insertion_time = CURRENT_TIMESTAMP()
