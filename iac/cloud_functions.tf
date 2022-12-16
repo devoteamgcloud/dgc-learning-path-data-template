@@ -43,10 +43,10 @@ resource "google_storage_bucket_object" "zip2" {
 
 # Create the Cloud function triggered by a `Finalize` event on the bucket
 resource "google_cloudfunctions_function" "function" {
-  project = var.project_id
-  region  = var.region
-  name    = "function-trigger-on-gcs"
-  runtime = "python310" # of course changeable
+  project               = var.project_id
+  region                = var.region
+  name                  = "function-trigger-on-gcs"
+  runtime               = "python310" # of course changeable
   environment_variables = yamldecode(file("../cloud_functions/cf_trigger_on_file/env.yaml"))
 
   # Get the source code of the cloud function as a Zip compression
@@ -70,10 +70,10 @@ resource "google_cloudfunctions_function" "function" {
 }
 
 resource "google_cloudfunctions_function" "function2" {
-  project = var.project_id
-  region  = var.region
-  name    = "function-dispatch-workflow-on-gcs"
-  runtime = "python310"
+  project               = var.project_id
+  region                = var.region
+  name                  = "function-dispatch-workflow-on-gcs"
+  runtime               = "python310"
   environment_variables = yamldecode(file("../cloud_functions/cf_dispatch_workflow/env.yaml"))
 
   source_archive_bucket = google_storage_bucket.cloud_functions_sources.name
