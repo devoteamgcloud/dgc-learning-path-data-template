@@ -91,7 +91,10 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
 
     # store the blob uri path
     data_uri = f'gs://{bucket_name}/{blob_path}'
+    first_part, extension = blob_path.split(".")
+    print(f"the extension: {extension.upper()} and the first part: {first_part}")
 
+    
     # connection to bigquery
     bigquery_client = bigquery.Client()
 
@@ -99,11 +102,18 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     table_id = f"{os.environ['project_id']}.{os.environ['raw_dataset_id']}.{table_name}"
 
     # creating the LoadJobConfig
-    job_config = bigquery.LoadJobConfig(
-        schema=schema,
-        skip_leading_rows=1,
-        source_format=bigquery.SourceFormat.CSV,
-    )
+    if extension.upper() == "CSV":
+        job_config = bigquery.LoadJobConfig(
+            schema=schema,
+            skip_leading_rows=1,
+            source_format=bigquery.SourceFormat.CSV,
+        )
+    
+    if extension.upper() == "JSON":
+        job_config = bigquery.LoadJobConfig(
+            schema=schema,
+            source_format=bigquery.SourceFormat.NEWLINE_DELIMITED_JSON, 
+        )
 
     # load the job
     load_job = bigquery_client.load_table_from_uri(
