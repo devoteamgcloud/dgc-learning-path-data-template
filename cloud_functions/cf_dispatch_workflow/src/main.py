@@ -8,6 +8,7 @@ from google.cloud import bigquery
 from google.cloud.workflows import executions_v1
 
 
+
 def receive_messages(event: dict, context: dict):
     """
     Triggered from a message on a Cloud Pub/Sub topic.
@@ -92,7 +93,6 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     # store the blob uri path
     data_uri = f'gs://{bucket_name}/{blob_path}'
     first_part, extension = blob_path.split(".")
-    print(f"the extension: {extension.upper()} and the first part: {first_part}")
 
     
     # connection to bigquery
@@ -109,11 +109,14 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
             source_format=bigquery.SourceFormat.CSV,
         )
     
-    if extension.upper() == "JSON":
+    elif extension.upper() == "JSON":
         job_config = bigquery.LoadJobConfig(
             schema=schema,
             source_format=bigquery.SourceFormat.NEWLINE_DELIMITED_JSON, 
         )
+    
+    else:
+        raise NotImplementedError
 
     # load the job
     load_job = bigquery_client.load_table_from_uri(
