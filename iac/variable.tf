@@ -21,3 +21,8 @@ variable "region" {
   type        = string
   default     = "europe-west1"
 }
+
+locals {
+  all_files   = fileset(path.module, "../{queries,schemas}/**")
+  all_files_t = fileset(path.module, "../cloud_workflows/**")
+}
