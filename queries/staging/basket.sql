@@ -1,7 +1,3 @@
--- a variable to get the max of id
-DECLARE max_id INT64;
-SET max_id = (SELECT max(id_basket_header) FROM `{{ project_id }}.cleaned.basket_header`);
-
 WITH basket_temp AS (
   /*
   * 1-1 basic transformation
@@ -29,7 +25,7 @@ WITH basket_temp AS (
   PARSE_DATETIME("%d-%m-%Y %H:%M:%S", purchase_date)   AS `purchase_date`,
   update_time,
   CURRENT_TIMESTAMP()                                  AS `insertion_time` 
-FROM `raw.basket`
+FROM `{{ project_id }}.raw.basket`
 QUALIFY ROW_NUMBER() OVER(
   PARTITION BY
     id_store,
@@ -56,13 +52,26 @@ QUALIFY ROW_NUMBER() OVER(
   FROM basket_temp 
   LEFT JOIN `{{ project_id }}.cleaned.basket_header` cleaned_header 
     USING(id_store, id_cash_desk, id_customer, purchase_date)
+), maximum AS (
+  /*
+  * a view to get the max of id
+  * 0 if there is no data 
+  * else max of id_basket_header
+  */
+  SELECT
+    CASE
+      WHEN max(id_basket_header) IS NULL
+      THEN 0 
+      ELSE max(id_basket_header)
+    END                                                 AS `max_id`
+  FROM `{{ project_id }}.cleaned.basket_header`
 )
  
 SELECT
   CASE 
     WHEN id_basket_header IS NULL
     -- increment only on call
-    THEN ROW_NUMBER() OVER() + max_id
+    THEN ROW_NUMBER() OVER() + maximum.max_id
     ELSE id_basket_header
   END                                                   AS `id_basket_header`,
   id_store,
@@ -73,5 +82,5 @@ SELECT
   purchase_date,
   update_time,
   insertion_time
-FROM basket 
+FROM basket, maximum
 
