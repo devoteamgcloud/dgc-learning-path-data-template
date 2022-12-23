@@ -126,7 +126,7 @@ resource "google_bigquery_table" "view_open_store" {
   dataset_id = google_bigquery_dataset.aggregated.dataset_id
   table_id = "open_store"
   view {
-    query = file("../quries/aggregated/open_store.sql")
+    query = file("../queries/aggregated/open_store.sql")
     use_legacy_sql = false
   }
 }
