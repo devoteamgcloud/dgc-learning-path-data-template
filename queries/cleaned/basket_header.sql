@@ -10,7 +10,7 @@ USING (
     (SELECT SUM(d.quantity * d.unit_price) FROM UNNEST(detail) d) AS `total_price`,
     payment_mode,
     purchase_date,
-    update_time                                                   AS `creation_time`,
+    DATETIME(update_time,"Europe/Paris")                          AS `creation_time`,
     update_time,
     CURRENT_TIMESTAMP()                                           AS `insertion_time`
   FROM `{{ project_id }}.staging.basket`
