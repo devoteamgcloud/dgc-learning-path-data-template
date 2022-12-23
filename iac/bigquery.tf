@@ -19,6 +19,13 @@ resource "google_bigquery_dataset" "staging" {
   location    = var.location
 }
 
+resource "google_bigquery_dataset" "aggregated" {
+  project     = var.project_id
+  dataset_id  = "aggregated"
+  description = "A dataset for aggregated data"
+  location    = var.location
+}
+
 resource "google_bigquery_table" "raw_store" {
   project             = var.project_id
   dataset_id          = google_bigquery_dataset.raw.dataset_id
@@ -95,6 +102,22 @@ resource "google_bigquery_table" "cleaned_basket_header" {
   dataset_id          = google_bigquery_dataset.cleaned.dataset_id
   table_id            = "basket_header"
   schema              = file("../schemas/cleaned/basket_header.json")
+  deletion_protection = false
+}
+
+resource "google_bigquery_table" "aggregated_day_sale" {
+  project             = var.project_id
+  dataset_id          = google_bigquery_dataset.aggregated.dataset_id
+  table_id            = "day_sale"
+  schema              = file("../schemas/aggregated/day_sale.json")
+  deletion_protection = false
+}
+
+resource "google_bigquery_table" "aggregated_best_product_sale" {
+  project             = var.project_id
+  dataset_id          = google_bigquery_dataset.aggregated.dataset_id
+  table_id            = "best_product_sale"
+  schema              = file("../schemas/aggregated/best_product_sale.json")
   deletion_protection = false
 }
 
