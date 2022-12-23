@@ -21,7 +21,7 @@ Thus, we provide you only the Data Studio Help page where you can find he answer
 
 ### Your mission
 
-Well, actually, we did not tell you everything ! We indeed already created all the tables in BigQuery and the managers already presented us with a few use cases. Therefore we have already designed some dashboards that allow the managers to gain data insight. You will find some of these examples here : ... @todo
+Well, actually, we did not tell you everything ! We indeed already created all the tables in BigQuery and the managers already presented us with a few use cases. Therefore we have already designed some dashboards that allow the managers to gain data insight. You will find some of these examples here : ... [https://datastudio.google.com/u/0/reporting/2e2630e4-7369-4db1-b936-c5ef6a0eb40a/page/p_zjzwde7hzc]
 After having seen these and trying to understand how it got implemented. You will have different missions.  
 Must to have :  
 - Reproduce the best you can the dashboards already created  
