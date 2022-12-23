@@ -1,0 +1,20 @@
+[
+    {
+      "name": "day",
+      "type": "DATE",
+      "mode": "NULLABLE",
+      "description": "Day"
+    },
+    {
+      "name": "total_product",
+      "type": "INTEGER",
+      "mode": "NULLABLE",
+      "description": "Total product sold"
+    },
+    {
+      "name": "total_sale",
+      "type": "FLOAT",
+      "mode": "NULLABLE",
+      "description": "Total price sold"
+    }
+]
