@@ -121,3 +121,13 @@ resource "google_bigquery_table" "aggregated_best_product_sale" {
   deletion_protection = false
 }
 
+resource "google_bigquery_table" "view_open_store" {
+  project = var.project_id
+  dataset_id = google_bigquery_dataset.aggregated.dataset_id
+  table_id = "open_store"
+  view {
+    query = file("../quries/aggregated/open_store.sql")
+    use_legacy_sql = false
+  }
+}
+
