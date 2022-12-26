@@ -14,7 +14,6 @@ FILES_AND_EXTENSION_SPEC = {
     'basket': 'json'
 }
 
-
 def check_file_format(event: dict, context: dict):
     """
     Triggered by a change to a Cloud Storage bucket.
@@ -28,6 +27,7 @@ def check_file_format(event: dict, context: dict):
     """
 
     # rename the variable to be more specific and write it to the logs
+
     blob_event = event
     print(f'Processing blob: {blob_event["name"]}.')
 
@@ -36,7 +36,7 @@ def check_file_format(event: dict, context: dict):
     blob_path = blob_event['name']
 
     # get the subfolder, the file name and its extension
-    *subfolder, file = blob_path.split(os.sep)  
+    *subfolder, file = blob_path.split('/')  
     subfolder =  os.path.join(*subfolder) if subfolder != [] else ''
     file_name, file_extention = file.split('.') 
 
@@ -51,18 +51,25 @@ def check_file_format(event: dict, context: dict):
     assert subfolder == 'input', 'File must be in `input/ subfolder to be processed`'
     
     # check if the file name has the good format
-    # required format: <table_name>_<date>.<extension>
+    from pathlib import Path
     try:
-        # TODO: 
-        # create some assertions here to validate your file. It is:
-        #     - required to have two parts.
-        #     - the first part is required to be an accepted table name
-        #     - the second part is required to be a 'YYYYMMDD'-formatted date 
-        #     - required to have the expected extension
+        # the first part is required to be an accepted table name
+        prefixed = file_name.split("_", 1)[0]
+        assert prefixed in ["store", "customer", "basket"]
+        
+        # the second part is required to be a 'YYYYMMDD'-formatted date 
+        suffixed = file_name.rsplit("_", 1)[-1]
+        try:
+            datetime.datetime.strptime(suffixed, '%Y%m%d')
+        except:
+            raise Exception(f"{file_name} is not suffixed by YYYYMMDD")
+        # required to have the expected extension
+        if prefixed == "store":
+            assert file_extention == "csv"
+        if prefixed == "basket":
+            assert file_extention == "json"
 
-        ...
-
-        table_name = "<to_replace_with_your_first_file_part_variable>"
+        table_name = "<YOUR_TABLE_NAME>"
 
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(
@@ -137,15 +144,16 @@ def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
     bucket.rename_blob(blob, new_blob_path)
 
     print(f'{blob.name} moved to {new_blob_path}')
+print("je suis ici0")
 
 
 if __name__ == '__main__':
-    
+
     # here you can test with mock data the function in your local machine
     # it will have no impact on the Cloud Function when deployed.
     import os
     
-    project_id = '<YOUR-PROJECT-ID>'
+    project_id = 'sandbox-nbrami'
 
     realpath = os.path.realpath(__file__)
     material_path = os.sep.join(['', *realpath.split(os.sep)[:-4], '__materials__'])
