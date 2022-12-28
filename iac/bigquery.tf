@@ -141,3 +141,13 @@ resource "google_bigquery_table" "view_customer_purchase" {
   }
 }
 
+resource "google_bigquery_table" "view_cash_desk_transaction" {
+  project             = var.project_id
+  dataset_id          = google_bigquery_dataset.aggregated.dataset_id
+  table_id            = "cash_desk_transaction"
+  view {
+    query             = file("../queries/aggregated/cash_desk_transaction.sql")
+    use_legacy_sql    = false
+  }
+  
+}

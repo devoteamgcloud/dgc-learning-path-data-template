@@ -24,7 +24,7 @@ WITH basket_temp AS (
   END                                                  AS `payment_mode`,
   PARSE_DATETIME("%d-%m-%Y %H:%M:%S", purchase_date)   AS `purchase_date`,
   update_time,
-  CURRENT_TIMESTAMP()                                  AS `insertion_time` 
+  CURRENT_TIMESTAMP()                                  AS `insertion_time`, 
 FROM `{{ project_id }}.raw.basket`
 QUALIFY ROW_NUMBER() OVER(
   PARTITION BY
@@ -48,7 +48,7 @@ QUALIFY ROW_NUMBER() OVER(
     basket_temp.payment_mode,
     purchase_date,
     basket_temp.update_time,
-    basket_temp.insertion_time
+    basket_temp.insertion_time,
   FROM basket_temp 
   LEFT JOIN `{{ project_id }}.cleaned.basket_header` cleaned_header 
     USING(id_store, id_cash_desk, id_customer, purchase_date)
@@ -63,7 +63,7 @@ QUALIFY ROW_NUMBER() OVER(
       WHEN max(id_basket_header) IS NULL
       THEN 0 
       ELSE max(id_basket_header)
-    END                                                 AS `max_id`
+    END                                                 AS `max_id`,
   FROM `{{ project_id }}.cleaned.basket_header`
 )
  
@@ -81,6 +81,6 @@ SELECT
   payment_mode,
   purchase_date,
   update_time,
-  insertion_time
+  insertion_time,
 FROM basket, maximum
-
+;

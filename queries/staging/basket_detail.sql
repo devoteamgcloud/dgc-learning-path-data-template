@@ -4,7 +4,7 @@ SELECT
   detail.quantity,
   detail.unit_price,
   update_time,
-  CURRENT_TIMESTAMP()         AS `insertion_time`
+  CURRENT_TIMESTAMP()         AS `insertion_time`,
 FROM `{{ project_id }}.staging.basket`
 CROSS JOIN UNNEST(detail) detail
 ;

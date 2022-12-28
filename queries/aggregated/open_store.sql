@@ -2,5 +2,5 @@ SELECT
   city,
   country,
   coordinate,
-  creation_date
+  creation_date,
 FROM `sandbox-ymarcel.cleaned.store`

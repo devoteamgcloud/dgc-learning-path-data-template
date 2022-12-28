@@ -12,4 +12,5 @@ QUALIFY ROW_NUMBER() OVER(
     id_customer
   ORDER BY
     update_time DESC
-) = 1;
+) = 1
+;
