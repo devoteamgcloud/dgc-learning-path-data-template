@@ -1,6 +1,10 @@
 SELECT
-  ANY_VALUE(C.first_name)            AS `first_name`,
-  ANY_VALUE(C.last_name)             AS `last_name`,
+  MD5(
+    CONCAT(
+      ANY_VALUE(C.first_name),
+      ANY_VALUE(C.last_name)
+    )
+  )                                  AS `user`,
   COUNT(B.id_basket_header)          AS `n_basket`,
   ROUND(SUM(B.total_price),2)        AS `total_purchase`,
   MIN(B.purchase_date)               AS `first_purchase_date`,
