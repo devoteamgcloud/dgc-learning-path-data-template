@@ -79,3 +79,7 @@ Then Go to the GCP Console to the [Cloud Build interface](https://console.cloud.
 - In `Source -> Repository`, connect to the repository.
 - In `Source -> Branch`, add your branch name.
 - leave everything as default and click on `CREATE`.
+
+Well done, you are ready to follow the instructions in the __materials__ folder, starting with chapter_00.md.
+
+
