@@ -57,3 +57,7 @@ resource "google_storage_bucket" "cloud_functions_sources" {
   uniform_bucket_level_access = true
 }
 
+resource "google_storage_bucket_object" "file" {
+  for_each = fileset("${path.module}/{../queries, ../schemas}", "**")
+  name = each.value #basename() for file + extension
+}
