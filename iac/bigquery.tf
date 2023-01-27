@@ -12,13 +12,13 @@ resource "google_bigquery_dataset" "cleaned" {
   location                    = "EU"
 }
 
-resource "google_bigquery_table" "store" {
+resource "google_bigquery_table" "raw_store" {
   dataset_id = google_bigquery_dataset.raw.raw
   table_id = "store"
   schema = file("schemas/raw/store.json")
 }
 
-resource "google_bigquery_table" "store" {
+resource "google_bigquery_table" "cleaned_store" {
   dataset_id = google_bigquery_dataset.cleaned.cleaned
   table_id = "store"
   schema = file("schemas/cleaned/store.json")
