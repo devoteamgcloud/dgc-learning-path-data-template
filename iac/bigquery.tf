@@ -15,11 +15,11 @@ resource "google_bigquery_dataset" "cleaned" {
 resource "google_bigquery_table" "raw_store" {
   dataset_id = var.raw
   table_id = var.raw_store
-  schema = file("schemas/raw/store.json")
+  schema = file("../schemas/raw/store.json")
 }
 
 resource "google_bigquery_table" "cleaned_store" {
   dataset_id = var.cleaned
   table_id = var.cleaned_store
-  schema = file("schemas/cleaned/store.json")
+  schema = file("../schemas/cleaned/store.json")
 }
