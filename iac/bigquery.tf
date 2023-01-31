@@ -1,25 +1,25 @@
 resource "google_bigquery_dataset" "raw" {
-  dataset_id                  = "raw"
+  dataset_id                  = var.raw
   friendly_name               = "raw"
   description                 = "This is a RAW dataset"
-  location                    = "EU"
+  location                    = var.location
 }
 
 resource "google_bigquery_dataset" "cleaned" {
-  dataset_id                  = "cleaned"
+  dataset_id                  = var.cleaned
   friendly_name               = "cleaned"
   description                 = "This is a cleaned dataset"
-  location                    = "EU"
+  location                    = var.location
 }
 
 resource "google_bigquery_table" "raw_store" {
-  dataset_id = google_bigquery_dataset.raw.raw
-  table_id = "store"
+  dataset_id = var.raw
+  table_id = var.raw_store
   schema = file("schemas/raw/store.json")
 }
 
 resource "google_bigquery_table" "cleaned_store" {
-  dataset_id = google_bigquery_dataset.cleaned.cleaned
-  table_id = "store"
+  dataset_id = var.cleaned
+  table_id = var.cleaned_store
   schema = file("schemas/cleaned/store.json")
 }
