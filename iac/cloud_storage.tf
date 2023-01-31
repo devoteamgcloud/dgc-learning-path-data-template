@@ -58,6 +58,9 @@ resource "google_storage_bucket" "cloud_functions_sources" {
 }
 
 resource "google_storage_bucket_object" "file" {
+  project  = var.project_id
+  location = var.location
   for_each = fileset("${path.module}/{../queries, ../schemas}", "**")
   name = each.value #basename() for file + extension
+  bucket = "${var.project_id}_magasin_cie_utils"
 }
