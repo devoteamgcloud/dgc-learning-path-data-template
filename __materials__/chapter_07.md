@@ -1,25 +1,34 @@
 ## Learning Practical Path 
 
-## Chapter 7 - Data Studio & Data Visualization Fundamentals (1-2 days)
+## Chapter 7 - Looker Studio & Data Visualization Fundamentals (1-2 days)
 
 ![Your mission architecture](img/architecture_datastudio.png)
 
 ### The Context
 
 Fantastic ! You should have now the aggregated tables you need. However, the task is not completely done yet. Indeed, you can't imagine a Magasin & Cie manager using only your tables (some of them with thousands and thousands rows of data), to have a great overview of the status of their store or take crucial decisions. 
+
+Last step of the full pipeline: Looker Studio (previously known as Data Studio)
+
 As precised in the first chapter, you will need to implement for them some dashboards. A dashboard is a visual representation of the data that could be used by some non tech collaborators. It often takes the form of different graphs and charts (from time series chart, to pie chart, or even geographic charts).
-What a nice coincidence it exists different Google tools for designing such dahsboards. One of the most frequent and easy to learn is called Data Studio. But that not the only one as you will for example discover a more advanced and fine-grained (and more expensive) tool in chapter 12 which is called Looker.
-But let's go back to Data Studio for now, you will have already many things to learn and experiment !
+
+What a nice coincidence it exists different Google tools for designing such dahsboards. One of the most frequent and easy to learn is called Looker Studio. But that not the only one as you will for example discover a more advanced and fine-grained (and more expensive) tool in chapter 12 which is called Looker.
+
+But let's go back to Looker Studio for now, you will have already many things to learn and experiment !
 
 ### The Learning Resources
 
 Normally, you should have already followed along several chapters. You should be now able to be quite autonomous.
-Thus, we provide you only the Data Studio Help page where you can find he answer to pretty every question you could have. If you really need more help, connect with your colleagues or search for the answer online. I am sure that you are now able to handle it on your own ! 💪
+Thus, we provide you only the Looker Studio Help page where you can find he answer to pretty every question you could have. If you really need more help, connect with your colleagues or search for the answer online. I am sure that you are now able to handle it on your own ! 💪
 
-[Data Studio Help](https://support.google.com/datastudio/)
+[Looker Studio Help](https://support.google.com/looker-studio/)
 
 
 ### Your mission
+
+To begin with Looker Studio, you can copy and paste the template below to your personal Google Drive.
+https://datastudio.google.com/reporting/2e2630e4-7369-4db1-b936-c5ef6a0eb40a
+(some pages are only available when the edit mode is activated)
 
 Well, actually, we did not tell you everything ! We indeed already created all the tables in BigQuery and the managers already presented us with a few use cases. Therefore we have already designed some dashboards that allow the managers to gain data insight. You will find some of these examples here : ... @todo
 After having seen these and trying to understand how it got implemented. You will have different missions.  
@@ -40,4 +49,4 @@ Tip 3: For example, do you think the dashboard(s) you designed for Aziz is/are r
 
 #### To go further
 
-What are the limitations of Data Studio? 
+What are the limitations of Looker Studio? 

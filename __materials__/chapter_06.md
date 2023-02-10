@@ -1,9 +1,5 @@
 # Learning Practical Path 
 
-
-**[TO BE TESTED]**
-
-
 ## Chapter 6 - Advanced SQL & GDPR (3 days)
 
 ![Your mission architecture](img/architecture_bigquery.png)
@@ -67,8 +63,8 @@ Maybe you will have to rework your second Cloud Function to be able to load all 
 #### Staging basket table
 
 The `staging.basket` table is really hard to make.
-
-- first create a `staging.basket_temp` table only with 1-1 transformation from `raw.basket`.
+We therefore advise you to follow the following steps to create it.
+- start by creating a `staging.basket_temp` table with only the simple transformations from `raw.basket` (the transformations that are not specified just below). For now set id_basket_header to NULL.
 - then dedupicate the detail on `product_name` updating the `staging.basket_temp` table in place (really, really hard). 
 - create `staging.basket` table joining with `cleaned.basket_header` table to retrieve existing basket headers ids and keep the new header as `NULL`. 
 - and update the `staging.basket` table in place to fill the NULL (new) basket headers with an incremental value starting from the last id known in the `cleaned.basket_header` table.
@@ -154,10 +150,10 @@ If you have finished your pipeline, your folder may seems like the following.
 │       └── customer.sql
 └── schemas/
     ├── aggregated/
-    │   ├── best_product_sale.sql
-    │   ├── customer_purchase.sql (no need)
-    │   ├── day_sale.sql
-    │   └── open_store.sql (no need)
+    │   ├── best_product_sale.json
+    │   ├── customer_purchase.json (no need)
+    │   ├── day_sale.json
+    │   └── open_store.json (no need)
     ├── cleaned/
     │   ├── basket_detail.json
     │   ├── basket_header.json

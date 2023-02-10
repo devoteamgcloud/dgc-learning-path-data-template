@@ -1,9 +1,5 @@
 # Learning Practical Path 
 
-
-**[TO BE TESTED]**
-
-
 ## Chapter 4 - Cloud PubSub & Cloud Client Libraries (1-3 days)
 
 ![Your mission architecture](img/architecture_first_wkf.png)
@@ -53,7 +49,7 @@ Before we start, we need to introduce what an "Interface Contract" is (also name
 
 An interface agreement is a document that defines an interface between two teams/sites/functional responsibilities. In other words and in this example, it is the document, which provides the format and the structure of the file we are receiving. For Magasin & Cie, it is the format and the structure of the files sent. It is a contract to establishes and guarantee the connection between us to serve as a reference and prevent errors.
 
-The mappings and the interface contracts were made by your Tech Lead so you can see them in the [Interface Contracts & Mappings](https://docs.google.com/spreadsheets/d/1hprnjaLq3v4GDfckOW3QHVKN8b9EOMtS6kLVJc-U7KQ/edit?usp=sharing) file in the `Interface Contracts` tab.
+The mappings and the interface contracts were made by your Tech Lead so you can see them in the [Interface Contracts & Mappings](https://docs.google.com/spreadsheets/d/1zjTwMemC_Qvyq7Xg9YABHeRZzoA9SBGV9J7-MBlJAIo/edit?usp=sharing) file in the `Interface Contracts` tab.
 
 (A "mapping" is also a document which will be seen in the next chapters)
 
@@ -94,5 +90,3 @@ You can `CRTL+F` on `TODO: 1` then `TODO: 2` and `TODO: 3`.
 When everything it done and works well, if not already done, you can activate the `publish_to_pubsub()` function in the `cloud_functions/cf_trigger_on_file/src/main.py` file. And try the full Cloud Function to BigQuery pipeline. You will see your cleaned data ingested in the BigQuery table `<project_id>.cleaned.store`.
 
 (You also can intergrate the `__materials__/data/init/store_20220531.csv`)
-
-

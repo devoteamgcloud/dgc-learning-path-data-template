@@ -1,9 +1,5 @@
 # Learning Practical Path 
 
-
-**[WORK IN PROGRESS]**
-
-
 ## Chapter 1 - Quick introduction to Data processing fundamentals. (2-3 days) 
 
 ### The Context
@@ -74,5 +70,3 @@ Go to the [Google Certified Associate Cloud Engineer 2020](https://learn.acloud.
 - Then, a really, **really**, **REALLY** important concept on GCP is IAM (no, no, not the Hip hop group 😜). Complete the Chapter 10 to know more.
 
 **Bonus**: [Google Cloud Developer Cheat Sheet](https://googlecloudcheatsheet.withgoogle.com/)
-
-

@@ -1,9 +1,5 @@
 # Learning Practical Path 
 
-
-**[TO BE TESTED]**
-
-
 ## Chapter 5 - Cloud Workflows & BigQuery Fundamentals (2 days)
 
 ![Your mission architecture](img/architecture_wkf.png)
@@ -50,7 +46,7 @@ Your mission here is to create the customer worfkflow to ingest and clean the da
 Before to start, we need to introduce what a "Mapping" is.
 The same way a Interface Contract is an aggreement and documents/rules the way the data is sent between two teams or applications, a mapping documents and rules the way data tables are related. It can takes a lot of forms (here a Google Sheet). But the idea is to centralized how the data is transformed or related between different tables. 
 
-In the [Interface Contracts & Mappings](https://docs.google.com/spreadsheets/d/1hprnjaLq3v4GDfckOW3QHVKN8b9EOMtS6kLVJc-U7KQ/edit?usp=sharing), you will see the tables in the `raw` dataset are defined by the Interface Contract tab. Then for each other dataset (cleaned or staging), you have a Mapping where you can see the fields of the tables. For instance, you know:
+In the [Interface Contracts & Mappings](https://docs.google.com/spreadsheets/d/1zjTwMemC_Qvyq7Xg9YABHeRZzoA9SBGV9J7-MBlJAIo/edit?usp=sharing), you will see the tables in the `raw` dataset are defined by the Interface Contract tab. Then for each other dataset (cleaned or staging), you have a Mapping where you can see the fields of the tables. For instance, you know:
 - what is the name of the fields and their type, mode, description etc.
 - from which table do the data come from.
 - if some transformation is applied.

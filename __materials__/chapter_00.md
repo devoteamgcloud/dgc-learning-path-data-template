@@ -1,8 +1,5 @@
 # Learning Practical Path 
 
-**[TO BE TESTED]**
-
-
 ## Chapter 0 - You Said "Learning Path" ? 
 
 This README is here to explain the step by step learning path from Zero to Hero as a Data Engineer. 
@@ -56,5 +53,3 @@ So the main external ressource will be the [Google Certified Professional Data E
 
 Your manager has probably asked you to begin with the** Cloud Digital Leader** or the **Associate Cloud Engineer**. That is fine and the right path. 
 This Learning Path will not give you all the knowledge to pass the Professional Data Engineer certification, but it will help you a lot when you will have to pass it the nexts months. 
-
-

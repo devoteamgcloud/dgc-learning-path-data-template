@@ -1,8 +1,5 @@
 # Learning Practical Path 
 
-
-**[TO BE TESTED]**
-
 ## Chapter 3 - Cloud Function & Python (1-2 days)
 
 ![Your mission architecture](img/architecture_cf.png)
