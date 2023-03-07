@@ -57,12 +57,25 @@ def check_file_format(event: dict, context: dict):
         # create some assertions here to validate your file. It is:
         #     - required to have two parts.
         #     - the first part is required to be an accepted table name
-        #     - the second part is required to be a 'YYYYMMDD'-formatted date 
+        #1:
+        prefix= file_name.split("_")[0] #we retrieve first part 
+        suffix= file_name.split("_")[1] #we retrieve the date
+        
+        assert prefix in FILES_AND_EXTENSION_SPEC.keys(), "Table name not accepted"
+            
+        #2:  - the second part is required to be a 'YYYYMMDD'-formatted date  
+        try:
+            datetime.datetime.strptime(suffix, '%Y%m%d')
+        except:
+            raise Exception(f"{file_name} does not have the right format : YYYYMMDD")
+
+        ...  
         #     - required to have the expected extension
+        #3: we assign the extension according to the prefix
+        assert file_extention in FILES_AND_EXTENSION_SPEC[prefix], "File extension not correct"
+        
 
-        ...
-
-        table_name = "<to_replace_with_your_first_file_part_variable>"
+        table_name = prefix
 
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(
@@ -90,8 +103,8 @@ def publish_to_pubsub(data: bytes, attributes: dict):
     ## this small part is here to be able to simulate the function but
     ## remove this part when you are ready to deploy your Cloud Function. 
     ## [start simulation]
-    print('Your file is considered as valid. It will be published to Pubsub.')
-    return
+    #print('Your file is considered as valid. It will be published to Pubsub.')
+    r#eturn
     ## [end simulation]
 
 
@@ -145,7 +158,7 @@ if __name__ == '__main__':
     # it will have no impact on the Cloud Function when deployed.
     import os
     
-    project_id = '<YOUR-PROJECT-ID>'
+    project_id = 'sandbox-achmiel' 
 
     realpath = os.path.realpath(__file__)
     material_path = os.sep.join(['', *realpath.split(os.sep)[:-4], '__materials__'])
