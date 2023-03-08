@@ -174,3 +174,4 @@ if __name__ == '__main__':
 
         mock_context = {}
         check_file_format(mock_event, mock_context)
+#has successfully passed the tests
