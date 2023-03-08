@@ -53,3 +53,14 @@ resource "google_storage_bucket" "cloud_functions_sources" {
   uniform_bucket_level_access = true
 }
 
+#2 GCS buckets to store the code of the cloud function and to upload files
+
+resource "google_storage_bucket" "function_bucket" {
+    name     = "${var.project_id}-function"
+    location = var.region
+}
+
+resource "google_storage_bucket" "input_bucket" {
+    name     = "${var.project_id}-input"
+    location = var.region
+}
