@@ -43,6 +43,6 @@ resource "google_cloudfunctions_function" "function" {
     # Dependencies are automatically inferred so these lines can be deleted
     depends_on            = [
         google_storage_bucket.function_bucket,  # declared in `storage.tf`
-        google_storage_bucket_object.zip
+        google_storage_bucket_object.zip #zip for tf
     ]
 }

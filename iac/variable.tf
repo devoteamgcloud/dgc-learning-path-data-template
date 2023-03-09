@@ -1,7 +1,7 @@
 variable "project_id" {
   type        = string
   description = "Project identifier"
-   default = "sandbox-achmiel"
+  default = "sandbox-achmiel"
 }
 
 variable "location"{
