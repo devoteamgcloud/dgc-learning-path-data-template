@@ -6,10 +6,12 @@ terraform {
       version = "~> 4.10"
     }
   }
-  backend "gcs" {
-    bucket = "${var.project_id}-gcs-tfstate-sbx"
-    prefix = "terraform-states"
-  }
+  terraform {
+  backend "local" {}
+}
+    #backend "gcs" {
+    #bucket = "${var.project_id}-gcs-tfstate-sbx"
+    #prefix = "terraform-states" }
 }
 
 
