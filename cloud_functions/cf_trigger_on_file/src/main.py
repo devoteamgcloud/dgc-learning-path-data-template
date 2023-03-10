@@ -15,7 +15,7 @@ FILES_AND_EXTENSION_SPEC = {
 }
 
 
-def check_file_format(event: dict, context: dict):
+def hello_gcs(event: dict, context: dict):
     """
     Triggered by a change to a Cloud Storage bucket.
     Check for the files requirements. Publishes a message to PubSub if the 
@@ -59,10 +59,20 @@ def check_file_format(event: dict, context: dict):
         #     - the first part is required to be an accepted table name
         #     - the second part is required to be a 'YYYYMMDD'-formatted date 
         #     - required to have the expected extension
+        first_part = file_name.split('_')[0] 
+        second_part = file_name.split('_')[1] 
+        
+        assert first_part in FILES_AND_EXTENSION_SPEC(), "Table name not accepted"
+        
+        try:
+            datetime.datetime.strptime(second_part,"%Y%M%D")
+        except:
+            raise Exception("The file name does not have the correct format")
 
         ...
 
-        table_name = "<to_replace_with_your_first_file_part_variable>"
+        assert file_extention in FILES_AND_EXTENSION_SPEC[first_part], "File extension -> false"
+        table_name = first_part
 
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(
