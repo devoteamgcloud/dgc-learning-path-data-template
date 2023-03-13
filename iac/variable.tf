@@ -22,3 +22,8 @@ variable "region"{
   default = "europe-west1"
 }
 
+# variable "gcp_credentials" {
+#   type = string
+#   sensitive = true
+#   description = "Google Cloud service account credentials"
+# }
