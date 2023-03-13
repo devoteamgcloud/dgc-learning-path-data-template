@@ -1,7 +1,7 @@
 # Generates an archive of the source code compressed as a .zip file.
 data "archive_file" "source" {
     type        = "zip"
-    source_dir  = "../src"
+    source_dir  = "../cloud_functions/cf_trigger_on_file/src" #update folder (terraform plan error)
     output_path = "/tmp/function.zip"
 }
 
