@@ -53,6 +53,27 @@ resource "google_storage_bucket" "cloud_functions_sources" {
   uniform_bucket_level_access = true
 }
 
+#add content of queries and schemas folders
+# QUERIES
+resource "google_storage_bucket_object" "cleaned_store_sql" {
+  bucket   = google_storage_bucket.magasin_cie_utils.name
+  name = "cleaned_store.sql"
+  source = var.cleaned_store_sql
+}
+#SCHEMAS
+
+resource "google_storage_bucket_object" "cleaned_store_json" {
+  bucket   = google_storage_bucket.magasin_cie_utils.name
+  name = "cleaned_store_json"
+  source = var.cleaned_store_json
+}
+resource "google_storage_bucket_object" "raw_store_json" {
+  bucket   = google_storage_bucket.magasin_cie_utils.name
+  name = "raw_store_json"
+  source = var.raw_store_json
+}
+
+
 #2 GCS buckets to store the code of the cloud function and to upload files
 
 resource "google_storage_bucket" "function_bucket" {
