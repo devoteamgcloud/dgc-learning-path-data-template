@@ -70,8 +70,7 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     blob = bucket_util.blob("schemas/raw/store.json")
     schema = json.load(blob.download_as_string) 
     #     - store in a string variable the blob uri path of the data to load (gs://your-bucket/your/path/to/data)
-    blob_link = blob.path_helper('sandbox-cselmene_magasin_cie_utils', blob)
-    blob_uri = f'gs://{blob_link}'
+    blob_uri = f"gs://{bucket_name}/{blob_path}"
     #     - connect to the BigQuery Client
     bq_client = bigquery.client()
     #     - store in a string variable the table id with the bigquery client. (project_id.dataset_id.table_name)
