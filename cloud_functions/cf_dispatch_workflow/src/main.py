@@ -62,21 +62,41 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     # Please, refer yourself to the documentation and StackOverflow is still your friend ;)
     # As an help, you can follow those instructions:
     #     - connect to the Cloud Storage client
+    storage_client = storage.Client()
     #     - get the util bucket object using the os environments
+    bucket_title = f"{os.environ['project_id']}_{os.environ['util_bucket_suffix']}"
+    bucket_util = storage_client.bucket(bucket_title)
     #     - loads the schema of the table as a json (dictionary) from the bucket
+    blob = bucket_util.blob("schemas/raw/store.json")
+    schema = json.load(blob.download_as_string) 
     #     - store in a string variable the blob uri path of the data to load (gs://your-bucket/your/path/to/data)
+    blob_link = blob.path_helper('sandbox-cselmene_magasin_cie_utils', blob)
+    blob_uri = f'gs://{blob_link}'
     #     - connect to the BigQuery Client
+    bq_client = bigquery.client()
     #     - store in a string variable the table id with the bigquery client. (project_id.dataset_id.table_name)
+    table_id = f"{os.environ['project_id']}.{os.environ['datasetId']}.{table_name}"
     #     - create your LoadJobConfig object from the BigQuery librairy
+    job_config = bigquery.LoadJobConfig(
+        schema=schema,
+        skip_leading_rows=1,
+        source_format=bigquery.SourceFormat.CSV,
+    )
     #     - (maybe you will need more variables according to the type of the file - csv, json - so it can be good to see the documentation)
     #     - and run your loading job from the blob uri to the destination raw table
+    load_job = bq_client.load_table_from_uri(
+        blob_uri,
+        table_id, 
+        job_config=job_config
+    )
     #     - waits the job to finish and print the number of rows inserted
-    # 
+    load_job.result()
     # note: this is not a small function. Take the day or more if you have to. 
+    table = bq_client.get_table(table_id)
+    print(f'Numbers of rows inserted : {table.num_rows}')
 
     pass
 
-   
 def trigger_worflow(table_name: str):
     """
     Triggers and waits for a `<table_name>_wkf` Workflows pipeline's result within the project ID.
@@ -94,10 +114,33 @@ def trigger_worflow(table_name: str):
     #     - wait for the result (with exponential backoff delay will be better)
     #     - be verbose where you think you have to 
     
+    execution_client = executions_v1.ExecutionsClient()
+    parent = execution_client.workflow_path(
+        project = os.environ['project_id'], 
+        location = os.environ['wkf_location'],
+        workflow = os.environ['workflowId']
+    )
+    response = execution_client.create_execution(request={"parent": parent})
+    print(f"Created execution: {response.name}")
 
+    execution_finished = False
+    backoff_delay = 1  # Start wait with delay of 1 second
+    print('Poll every second for result...')
+    while (not execution_finished):
+        execution = execution_client.get_execution(request={"name": response.name})
+        execution_finished = execution.state != executions.Execution.State.ACTIVE
+
+    # If we haven't seen the result yet, wait a second.
+        if not execution_finished:
+            print('- Waiting for results...')
+            time.sleep(backoff_delay)
+            backoff_delay *= 2  # Double the delay to provide exponential backoff.
+        else:
+            print(f'Execution finished with state: {execution.state.name}')
+            print(execution.result)
+            return execution.result
+        
     raise NotImplementedError()
-
-
 
 def move_file(bucket_name, blob_path, new_subfolder):
     """
@@ -113,11 +156,18 @@ def move_file(bucket_name, blob_path, new_subfolder):
     # Now you are confortable with the first Cloud Function you wrote. 
     # Inspire youreslf from this first Cloud Function and:
     #     - connect to the Cloud Storage client
+    storage_client = storage.Client()
     #     - get the bucket object and the blob object
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(blob_path)
     #     - split the blob path to isolate the file name 
+    subfolder, file_name = blob_path.split(os.sep)
     #     - create your new blob path with the correct new subfolder given from the arguments
+    new_blob_path = blob_path.replace(subfolder, new_subfolder)
     #     - move you file inside the bucket to its destination
+    bucket.rename_blob(blob, new_blob_path)
     #     - print the actual move you made
+    print(f'{blob.name} moved to {new_blob_path}')
 
     pass
 
@@ -128,13 +178,13 @@ if __name__ == '__main__':
     # it will have no impact on the Cloud Function when deployed.
     import os
     
-    project_id = '<YOUR-PROJECT-ID>'
+    project_id = 'sandbox-cselmene'
 
     # test your Cloud Function for the store file.
     mock_event = {
         'data': 'store',
         'attributes': {
-            'bucket': f'{project_id}-magasin-cie-landing',
+            'bucket': f'{project_id}-magasin_cie_landing',
             'file_path': os.path.join('input', 'store_20220531.csv'),
         }
     }
