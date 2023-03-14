@@ -5,6 +5,7 @@ import base64
 
 from google.cloud import storage
 from google.cloud import bigquery
+#pip3 install 
 from google.cloud.workflows import executions_v1
 
 
@@ -47,23 +48,15 @@ def receive_messages(event: dict, context: dict):
         trigger_worflow(table_name)
 
 
-def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
-    """
-    Insert a file into the correct BigQuery raw table.
-    
-    Args:
-         table_name (str): BigQuery raw table name.
-         bucket_name (str): Bucket name of the file.
-         blob_path (str): Path of the blob inside the bucket.
-    """
-
     # TODO: 2
     # You have to try to insert the file into the correct raw table using the python BigQuery Library. 
     # Please, refer yourself to the documentation and StackOverflow is still your friend ;)
     # As an help, you can follow those instructions:
-    #     - connect to the Cloud Storage client
-    #     - get the util bucket object using the os environments
-    #     - loads the schema of the table as a json (dictionary) from the bucket
+    
+     
+    
+   
+    
     #     - store in a string variable the blob uri path of the data to load (gs://your-bucket/your/path/to/data)
     #     - connect to the BigQuery Client
     #     - store in a string variable the table id with the bigquery client. (project_id.dataset_id.table_name)
@@ -74,8 +67,34 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     # 
     # note: this is not a small function. Take the day or more if you have to. 
 
-    pass
+    
+def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
+    """
+    Insert a file into the correct BigQuery raw table.
+    
+    Args:
+         table_name (str): BigQuery raw table name.
+         bucket_name (str): Bucket name of the file.
+         blob_path (str): Path of the blob inside the bucket.
+    """
+   
+ #connect to the Cloud Storage client: OK
+    storage_client= storage.Client('sandbox-achmiel')
 
+#get the util bucket object using the os environments 
+    bucket_util =  f'{storage_client.project}_magasin_cie_utils'
+    
+ #loads the schema of the table as a json (dictionary) from the bucket
+#file format contained in bucket: table name + date .json 
+# get the subfolder, the file name and its extension
+   
+    *subfolder, file = blob_path.split(os.sep)  
+    subfolder =  os.path.join(*subfolder) if subfolder != [] else ''
+    file_name, file_extention = file.split('.') 
+
+    project_id = os.environ['GCP_PROJECT']
+    util_bucket_suffix = os.environ['util_bucket_suffix']
+    raw_store = os.environ['raw_store']
    
 def trigger_worflow(table_name: str):
     """
@@ -128,7 +147,7 @@ if __name__ == '__main__':
     # it will have no impact on the Cloud Function when deployed.
     import os
     
-    project_id = '<YOUR-PROJECT-ID>'
+    project_id = 'sandbox-achmiel'
 
     # test your Cloud Function for the store file.
     mock_event = {
