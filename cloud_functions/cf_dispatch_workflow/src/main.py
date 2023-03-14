@@ -185,7 +185,7 @@ if __name__ == '__main__':
         'data': 'store',
         'attributes': {
             'bucket': f'{project_id}-magasin_cie_landing',
-            'file_path': os.path.join('input', 'store_20220531.csv'),
+            'file_path': os.path.join('input', 'store_20220601.csv'),
         }
     }
 
