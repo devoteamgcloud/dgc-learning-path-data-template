@@ -123,7 +123,7 @@ def publish_to_pubsub(data: bytes, attributes: dict):
     ## remove this part when you are ready to deploy your Cloud Function. 
     ## [start simulation]
     #print('Your file is considered as valid. It will be published to Pubsub.')
-    r#eturn
+    #return
     ## [end simulation]
 
 
@@ -160,7 +160,7 @@ def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
     
     
     # connect to the Cloud Storage client
-    storage_client = storage.Client()
+    storage_client = storage.Client('sandbox-achmiel')
 
     # move the file to the invalid/ subfolder
     bucket = storage_client.bucket(bucket_name)

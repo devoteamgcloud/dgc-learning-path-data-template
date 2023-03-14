@@ -7,6 +7,7 @@ from google.cloud import storage
 from google.cloud import bigquery
 #pip3 install 
 from google.cloud.workflows import executions_v1
+from pathlib import Path
 
 
 def receive_messages(event: dict, context: dict):
@@ -53,20 +54,6 @@ def receive_messages(event: dict, context: dict):
     # Please, refer yourself to the documentation and StackOverflow is still your friend ;)
     # As an help, you can follow those instructions:
     
-     
-    
-   
-    
-    #     - store in a string variable the blob uri path of the data to load (gs://your-bucket/your/path/to/data)
-    #     - connect to the BigQuery Client
-    #     - store in a string variable the table id with the bigquery client. (project_id.dataset_id.table_name)
-    #     - create your LoadJobConfig object from the BigQuery librairy
-    #     - (maybe you will need more variables according to the type of the file - csv, json - so it can be good to see the documentation)
-    #     - and run your loading job from the blob uri to the destination raw table
-    #     - waits the job to finish and print the number of rows inserted
-    # 
-    # note: this is not a small function. Take the day or more if you have to. 
-
     
 def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     """
@@ -81,21 +68,30 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
  #connect to the Cloud Storage client: OK
     storage_client= storage.Client('sandbox-achmiel')
 
-#get the util bucket object using the os environments 
-    bucket_util =  f'{storage_client.project}_magasin_cie_utils'
-    
- #loads the schema of the table as a json (dictionary) from the bucket
-#file format contained in bucket: table name + date .json 
-# get the subfolder, the file name and its extension
-   
-    *subfolder, file = blob_path.split(os.sep)  
-    subfolder =  os.path.join(*subfolder) if subfolder != [] else ''
-    file_name, file_extention = file.split('.') 
-
+#get the util bucket object using the os environments  (ok)
+    #bucket_util =  f'{storage_client.project}_magasin_cie_utils'
+    #retrieve project id first
     project_id = os.environ['GCP_PROJECT']
-    util_bucket_suffix = os.environ['util_bucket_suffix']
-    raw_store = os.environ['raw_store']
+    bucket_util= os.environ['util_bucket_suffix']
+    bucket = storage_client.bucket(f"{project_id}_{bucket_util}")
+    
+ #loads the schema of the table as a json (dictionary) from the bucket (ok)
+    #because we will use raw dataset !!
+    raw_schema = os.environ['raw_schema']
+    source_blob = bucket.blob(raw_schema)
+    content_bucket = source_blob.download_as_string().decode("utf-8")
+    schema = json.loads(content_bucket)
    
+#     - store in a string variable the blob uri path of the data to load (gs://your-bucket/your/path/to/data)
+    #     - connect to the BigQuery Client
+    #     - store in a string variable the table id with the bigquery client. (project_id.dataset_id.table_name)
+    #     - create your LoadJobConfig object from the BigQuery librairy
+    #     - (maybe you will need more variables according to the type of the file - csv, json - so it can be good to see the documentation)
+    #     - and run your loading job from the blob uri to the destination raw table
+    #     - waits the job to finish and print the number of rows inserted
+    # 
+    # note: this is not a small function. Take the day or more if you have to. 
+    
 def trigger_worflow(table_name: str):
     """
     Triggers and waits for a `<table_name>_wkf` Workflows pipeline's result within the project ID.
@@ -132,12 +128,39 @@ def move_file(bucket_name, blob_path, new_subfolder):
     # Now you are confortable with the first Cloud Function you wrote. 
     # Inspire youreslf from this first Cloud Function and:
     #     - connect to the Cloud Storage client
+    cloud_storage= storage.Client("sandbox-achmiel")
+    
     #     - get the bucket object and the blob object
+    bucket= cloud_storage.bucket_name()
+    source_blob= bucket.blob_path()
+    
     #     - split the blob path to isolate the file name 
+    #pip3 install pathlib
+    #only retrieve the filename from the path:
+    blob_filename=Path(blob_path).name 
+    
     #     - create your new blob path with the correct new subfolder given from the arguments
-    #     - move you file inside the bucket to its destination
+    new_blob_path= str(Path(new_subfolder/blob_filename))
+    
+    #     - move you file inside the bucket to its destination 
+    #Copy from one blob to another blob in the same bucket 
+    
+    new_blob = bucket.copy_blob(
+        source_blob, bucket, new_blob_path
+    )
+    
     #     - print the actual move you made
+    print(
+        "Blob {} in bucket {} copied to blob {} in bucket {}.".format(
+            source_blob.name,
+            bucket.name,
+            new_blob.name,
+            bucket.name
+        ))
 
+    #delete old blob
+    bucket.delete_blob(source_blob.name)
+    
     pass
 
 
