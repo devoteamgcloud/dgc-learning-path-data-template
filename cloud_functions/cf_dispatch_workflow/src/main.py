@@ -8,6 +8,7 @@ from google.cloud import bigquery
 #pip3 install 
 from google.cloud.workflows import executions_v1
 from pathlib import Path
+from google.cloud.exceptions import NotFound
 
 
 def receive_messages(event: dict, context: dict):
@@ -27,11 +28,13 @@ def receive_messages(event: dict, context: dict):
     print(pubsub_event)
     
     # decode the data giving the targeted table name
-    table_name = base64.b64decode(pubsub_event['data']).decode('utf-8')
+    table_name = pubsub_event['data']
+    #table_name = base64.b64decode(pubsub_event['data']).decode('utf-8')
 
     # get the blob infos from the attributes
-    bucket_name = pubsub_event['attributes']['bucket_name']
-    blob_path = pubsub_event['attributes']['blob_path']
+    bucket_name = pubsub_event['attributes']['bucket']
+    #path
+    blob_path = pubsub_event['attributes']['file_path']
 
     load_completed = False
     try:
@@ -65,32 +68,71 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
          blob_path (str): Path of the blob inside the bucket.
     """
    
- #connect to the Cloud Storage client: OK
+ #connect to the Cloud Storage client
     storage_client= storage.Client('sandbox-achmiel')
 
-#get the util bucket object using the os environments  (ok)
+#get the util bucket object using the os environments  
     #bucket_util =  f'{storage_client.project}_magasin_cie_utils'
     #retrieve project id first
     project_id = os.environ['GCP_PROJECT']
     bucket_util= os.environ['util_bucket_suffix']
     bucket = storage_client.bucket(f"{project_id}_{bucket_util}")
     
- #loads the schema of the table as a json (dictionary) from the bucket (ok)
-    #because we will use raw dataset !!
+ #loads the schema of the table as a json (dictionary) from the bucket 
     raw_schema = os.environ['raw_schema']
     source_blob = bucket.blob(raw_schema)
     content_bucket = source_blob.download_as_string().decode("utf-8")
     schema = json.loads(content_bucket)
    
 #     - store in a string variable the blob uri path of the data to load (gs://your-bucket/your/path/to/data)
+    blob_uri= f"gs://{bucket_name}/{blob_path}"
+    
     #     - connect to the BigQuery Client
+    client= bigquery.Client('sandbox-achmiel')
+    
     #     - store in a string variable the table id with the bigquery client. (project_id.dataset_id.table_name)
+
+    table= client.get_dataset("raw")  # Make an API request.
+    table_id= table.table_id 
+
+    #print info
+    print("Table {} contains {} columns".format(table_id, len(table.schema)))
+        
     #     - create your LoadJobConfig object from the BigQuery librairy
     #     - (maybe you will need more variables according to the type of the file - csv, json - so it can be good to see the documentation)
-    #     - and run your loading job from the blob uri to the destination raw table
+     
+    extension= Path(blob_path).suffix 
+    if extension == ".csv":
+        job_config = bigquery.LoadJobConfig(
+            source_format=bigquery.SourceFormat.CSV,
+            skip_leading_rows=1,
+            autodetect=True,
+            field_delimiter="\t",
+            ignore_unknown_values=True,
+            quote_character="",
+            schema=schema,
+            write_disposition = 'WRITE_TRUNCATE'
+        )
+    elif extension =='.json':
+        job_config=bigquery.LoadConfig(
+            source_format=bigquery.SourceFormat.NEWLINE_DELIMITED_JSON,
+            schema=schema,
+            write_disposition = 'WRITE_TRUNCATE'
+        )
+    else: 
+        #raise error 
+        raise NotImplementedError
+    
+    # - and run your loading job from the blob uri to the destination raw table
+    load_job = client.load_table_from_uri(
+        source_uris=blob_uri,
+        destination=table_id,
+        job_config=job_config
+    )# API request 
     #     - waits the job to finish and print the number of rows inserted
-    # 
-    # note: this is not a small function. Take the day or more if you have to. 
+    results = load_job.result()  # Wait for query to complete.
+    print("Got {} rows.".format(results.total_rows))
+    
     
 def trigger_worflow(table_name: str):
     """
@@ -131,8 +173,8 @@ def move_file(bucket_name, blob_path, new_subfolder):
     cloud_storage= storage.Client("sandbox-achmiel")
     
     #     - get the bucket object and the blob object
-    bucket= cloud_storage.bucket_name()
-    source_blob= bucket.blob_path()
+    bucket= cloud_storage.bucket(bucket_name)
+    source_blob= bucket.blob(blob_path)
     
     #     - split the blob path to isolate the file name 
     #pip3 install pathlib
@@ -140,7 +182,7 @@ def move_file(bucket_name, blob_path, new_subfolder):
     blob_filename=Path(blob_path).name 
     
     #     - create your new blob path with the correct new subfolder given from the arguments
-    new_blob_path= str(Path(new_subfolder/blob_filename))
+    new_blob_path= str(Path(new_subfolder)/blob_filename)
     
     #     - move you file inside the bucket to its destination 
     #Copy from one blob to another blob in the same bucket 
