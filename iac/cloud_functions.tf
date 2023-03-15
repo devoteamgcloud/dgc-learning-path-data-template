@@ -54,7 +54,7 @@ resource "google_cloudfunctions_function" "function" {
 # Generates an archive of the source code compressed as a .zip file.
 data "archive_file" "source_dispatch" {
     type        = "zip"
-    source_dir  = "../cloud_functions/cd_dispatch_workflow/src"
+    source_dir  = "../cloud_functions/cf_dispatch_workflow/src"
     output_path = "tmp/dsipatch_function.zip"
 }
 
