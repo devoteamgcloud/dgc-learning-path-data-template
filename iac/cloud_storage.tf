@@ -41,8 +41,11 @@
    }
  }
 resource "google_storage_bucket" "function_bucket" {
+    project = var.project_id
     name     = "${var.project_id}-function"
     location = var.region
+    force_destroy = true 
+    uniform_bucket_level_access = true 
 }
 
 resource "google_storage_bucket" "input_bucket" {
