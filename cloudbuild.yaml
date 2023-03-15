@@ -33,8 +33,7 @@ steps:
   - '-c'
   - |
       cd iac
-    #  terraform plan -out changes.tfplan -var project_id=$PROJECT_ID
-    terraform plan -destroy 
+      terraform plan -out changes.tfplan -var project_id=$PROJECT_ID 
 # [END tf-plan]
 
 # [START tf-apply]
