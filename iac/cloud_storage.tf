@@ -67,21 +67,7 @@ resource "google_storage_bucket" "cloud_functions_sources" {
    force_destroy               = true
    uniform_bucket_level_access = true
 }
-#resource "google_storage_bucket_object" "insert_object1" {
-#  name = "queries"
-#  source = "../queries/cleaned/store.sql"
-#  bucket = google_storage_bucket.magasin_cie_utils.name
-#}
-#resource "google_storage_bucket_object" "insert_object2" {
-#  name = "schemas_cleaned_store"
-#  source = "../schemas/cleaned/store.json"
-#  bucket = google_storage_bucket.magasin_cie_utils.name
-#}
-#resource "google_storage_bucket_object" "insert_object3" {
-#  name = "schemas_raw_store"
-#  source = "../schemas/raw/store.json"
-#  bucket = google_storage_bucket.magasin_cie_utils.name
-#}
+
 resource "google_storage_bucket_object" "queries" {
   for_each = local.all_files
   name     = trim(each.value, "../")
@@ -89,4 +75,6 @@ resource "google_storage_bucket_object" "queries" {
   bucket   = google_storage_bucket.magasin_cie_utils.name
 
 }
+
+
 
