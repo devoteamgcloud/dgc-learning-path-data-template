@@ -79,18 +79,54 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     dataset_id = table.dataset_id
     table_id = f"{project_id}.{dataset_id}.{table_name}"
     #     - create your LoadJobConfig object from the BigQuery librairy
-    job_config = bigquery.LoadJobConfig(
-        schema=schema,
-        skip_leading_rows=1,
-        source_format=bigquery.SourceFormat.CSV,
-    )
+    #job_config = bigquery.LoadJobConfig(
+    #    schema=schema,
+    #    skip_leading_rows=1,
+    #    source_format=bigquery.SourceFormat.CSV,
+    #)
     #     - (maybe you will need more variables according to the type of the file - csv, json - so it can be good to see the documentation)
     #     - and run your loading job from the blob uri to the destination raw table
-    load_job = bq_client.load_table_from_uri(
-        blob_uri,
-        table_id, 
-        job_config=job_config
-    )
+    #load_job = bq_client.load_table_from_uri(
+    #    blob_uri,
+    #    table_id, 
+    #    job_config=job_config
+    #)
+
+    try:
+        file_extension = blob_path.split('.')[-1].lower()
+    except:
+        raise Exception(f"Cannot find file extension for {blob_path}")
+    
+    if file_extension == "csv":
+        print("Ingest csv file")
+        job_config = bigquery.LoadJobConfig(
+            schema=schema,
+            skip_leading_rows=1,
+            source_format=bigquery.SourceFormat.CSV,
+            # estination=table
+        )
+    elif file_extension == "json":
+        print("Ingest json file")
+        job_config = bigquery.LoadJobConfig(
+            schema=schema,
+            source_format=bigquery.SourceFormat.NEWLINE_DELIMITED_JSON, 
+            # destination=table
+        )
+    else:
+        raise Exception(f"Unvalid extension {file_extension}")
+
+    print("Created load job config")
+
+    #     - and run your loading job from the blob uri to the destination raw table
+    try:
+        load_job = bq_client.load_table_from_uri(
+            blob_uri, table_id, job_config=job_config
+        )  # Make an API request.
+        print("Running job")
+    except Exception as e:
+        print(f"Cannot load blob : {e}")
+
+
     #     - waits the job to finish and print the number of rows inserted
     load_job.result()
     # note: this is not a small function. Take the day or more if you have to. 
@@ -119,11 +155,11 @@ def trigger_worflow(table_name: str):
     execution_client = executions_v1beta.ExecutionsClient()
     workflows_client = workflows_v1beta.WorkflowsClient()
 
-    parent = execution_client.workflow_path(
-        project = os.environ['project_id'], 
-        location = os.environ['wkf_location'],
-        workflow = os.environ['workflowId']
-    )
+    parent = workflows_client.workflow_path(project, location, workflow)
+    #    project = os.environ['project_id'], 
+    #    location = os.environ['wkf_location'],
+    #    workflow = os.environ['workflowId']
+    #)
     response = execution_client.create_execution(request={"parent": parent})
     print(f"Created execution: {response.name}")
 
@@ -165,11 +201,13 @@ def move_file(bucket_name, blob_path, new_subfolder):
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(blob_path)
     #     - split the blob path to isolate the file name 
-    subfolder, file_name = blob_path.split(os.sep)
+    #subfolder, file_name = blob_path.split(os.sep)
     #     - create your new blob path with the correct new subfolder given from the arguments
-    new_blob_path = blob_path.replace(subfolder, new_subfolder)
+    current_subfolder = os.path.dirname(blob_path)
+    new_blob_path = blob_path.replace(current_subfolder, new_subfolder)    
     #     - move you file inside the bucket to its destination
-    bucket.rename_blob(blob, new_blob_path)
+    new_blob = bucket.copy_blob(blob, bucket, new_blob_path)
+    bucket.delete_blob(blob.name)    
     #     - print the actual move you made
     print(f'{blob.name} moved to {new_blob_path}')
 
