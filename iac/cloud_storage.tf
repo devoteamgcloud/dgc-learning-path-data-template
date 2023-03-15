@@ -47,6 +47,7 @@ resource "google_storage_bucket" "function_bucket" {
 
 resource "google_storage_bucket" "input_bucket" {
     name     = "${var.project_id}-input"
+    #force_destroy = true
     location = var.region
 }
 
