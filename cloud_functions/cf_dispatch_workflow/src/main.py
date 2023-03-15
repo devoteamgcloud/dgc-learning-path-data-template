@@ -6,6 +6,7 @@ import base64
 from google.cloud import storage
 from google.cloud import bigquery
 from google.cloud.workflows import executions_v1
+from google.cloud import workflows_v1beta
 
 
 def receive_messages(event: dict, context: dict):
@@ -72,9 +73,11 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     #     - store in a string variable the blob uri path of the data to load (gs://your-bucket/your/path/to/data)
     blob_uri = f"gs://{bucket_name}/{blob_path}"
     #     - connect to the BigQuery Client
-    bq_client = bigquery.client()
+    bq_client = bigquery.Client(project_id)
     #     - store in a string variable the table id with the bigquery client. (project_id.dataset_id.table_name)
-    table_id = f"{os.environ['project_id']}.{os.environ['datasetId']}.{table_name}"
+    table = bq_client.get_dataset("raw")
+    dataset_id = table.dataset_id
+    table_id = f"{project_id}.{dataset_id}.{table_name}"
     #     - create your LoadJobConfig object from the BigQuery librairy
     job_config = bigquery.LoadJobConfig(
         schema=schema,
@@ -91,8 +94,8 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     #     - waits the job to finish and print the number of rows inserted
     load_job.result()
     # note: this is not a small function. Take the day or more if you have to. 
-    table = bq_client.get_table(table_id)
-    print(f'Numbers of rows inserted : {table.num_rows}')
+    table_num = bq_client.get_table(table_id)
+    print(f'Numbers of rows inserted : {table_num.num_rows}')
 
     pass
 
@@ -113,7 +116,9 @@ def trigger_worflow(table_name: str):
     #     - wait for the result (with exponential backoff delay will be better)
     #     - be verbose where you think you have to 
     
-    execution_client = executions_v1.ExecutionsClient()
+    execution_client = executions_v1beta.ExecutionsClient()
+    workflows_client = workflows_v1beta.WorkflowsClient()
+
     parent = execution_client.workflow_path(
         project = os.environ['project_id'], 
         location = os.environ['wkf_location'],
