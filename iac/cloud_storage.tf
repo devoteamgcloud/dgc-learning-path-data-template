@@ -76,5 +76,22 @@ resource "google_storage_bucket_object" "queries" {
 
 }
 
+resource "google_storage_bucket_object" "folder_upload" {
+  name = "input/"
+  bucket = "sandbox-cselmene_magasin_cie_landing_test"
+}
 
+resource "google_storage_bucket_object" "folder_upload" {
+  name = "archive/"
+  bucket = "sandbox-cselmene_magasin_cie_landing_test"
+}
 
+resource "google_storage_bucket_object" "folder_upload" {
+  name = "invalid/"
+  bucket = "sandbox-cselmene_magasin_cie_landing_test"
+}
+
+resource "google_storage_bucket_object" "folder_upload" {
+  name = "reject/"
+  bucket = "sandbox-cselmene_magasin_cie_landing_test"
+}
