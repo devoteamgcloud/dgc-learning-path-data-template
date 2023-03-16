@@ -17,7 +17,7 @@ resource "google_workflows_workflow" "workflows_store" {
   source_contents = file("../cloud_workflows/store_wkf.yaml")
   depends_on = [google_project_service.workflows]
 }
-
+# -migrate à voir 
 #resource "google_workflows_workflow" "store_workflow" {
 #  project         = var.project_id
 #  name            = "store_wkf"

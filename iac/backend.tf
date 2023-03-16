@@ -11,6 +11,6 @@ terraform {
     prefix = "terraform-states"
   }
 }
-#terraform {
-# backend "local" {}
-#}
+# terraform {
+#  backend "local" {}
+# }

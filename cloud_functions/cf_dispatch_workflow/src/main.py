@@ -5,7 +5,8 @@ import base64
 
 from google.cloud import storage
 from google.cloud import bigquery
-from google.cloud.workflows import executions_v1
+from google.cloud.workflows import executions_v1beta
+#from google.cloud.workflows import executions
 from google.cloud import workflows_v1beta
 
 
@@ -26,7 +27,7 @@ def receive_messages(event: dict, context: dict):
     print(pubsub_event)
     
     # decode the data giving the targeted table name
-    table_name = base64.b64decode(pubsub_event['data']).decode('utf-8')
+    table_name = pubsub_event['data'] #base64.b64decode(pubsub_event['data']).decode('utf-8')
 
     # get the blob infos from the attributes
     bucket_name = pubsub_event['attributes']['bucket_name']
@@ -64,18 +65,20 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     # As an help, you can follow those instructions:
     #     - connect to the Cloud Storage client
     storage_client = storage.Client()
+    project_id = "sandbox-cselmene"
     #     - get the util bucket object using the os environments
-    bucket_title = f"{os.environ['project_id']}_{os.environ['util_bucket_suffix']}"
+    bucket_title = f"{project_id}_magasin_cie_utils"
     bucket_util = storage_client.bucket(bucket_title)
     #     - loads the schema of the table as a json (dictionary) from the bucket
     blob = bucket_util.blob("schemas/raw/store.json")
-    schema = json.load(blob.download_as_string) 
+    content_bucket = blob.download_as_string()
+    schema = json.loads(content_bucket) 
     #     - store in a string variable the blob uri path of the data to load (gs://your-bucket/your/path/to/data)
     blob_uri = f"gs://{bucket_name}/{blob_path}"
     #     - connect to the BigQuery Client
     bq_client = bigquery.Client(project_id)
     #     - store in a string variable the table id with the bigquery client. (project_id.dataset_id.table_name)
-    table = bq_client.get_dataset("raw")
+    table = bq_client.get_dataset("raw_dataset")
     dataset_id = table.dataset_id
     table_id = f"{project_id}.{dataset_id}.{table_name}"
     #     - create your LoadJobConfig object from the BigQuery librairy
@@ -128,10 +131,10 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
 
 
     #     - waits the job to finish and print the number of rows inserted
-    load_job.result()
+    #load_job.result()
     # note: this is not a small function. Take the day or more if you have to. 
-    table_num = bq_client.get_table(table_id)
-    print(f'Numbers of rows inserted : {table_num.num_rows}')
+    #table_num = bq_client.get_table(table_id)
+    #print(f'Numbers of rows inserted : {table_num.num_rows}')
 
     pass
 
@@ -142,7 +145,9 @@ def trigger_worflow(table_name: str):
     Args:
          table_name (str): BigQuery raw table name.
     """
-    
+    project = "sandbox-cselmene"
+    location = "europe-west1"
+    workflow = "store-workflow"
 
     # TODO: 3
     # This is your final function to implement. 
@@ -168,7 +173,7 @@ def trigger_worflow(table_name: str):
     print('Poll every second for result...')
     while (not execution_finished):
         execution = execution_client.get_execution(request={"name": response.name})
-        execution_finished = execution.state != executions.Execution.State.ACTIVE
+        execution_finished = execution.state != executions_v1beta.Execution.State.ACTIVE
 
     # If we haven't seen the result yet, wait a second.
         if not execution_finished:
@@ -226,8 +231,8 @@ if __name__ == '__main__':
     mock_event = {
         'data': 'store',
         'attributes': {
-            'bucket': f'{project_id}-magasin_cie_landing',
-            'file_path': os.path.join('input', 'store_20220601.csv'),
+            'bucket_name': f'{project_id}_magasin_cie_landing_test',
+            'blob_path': os.path.join('input','store_20220601.csv'),
         }
     }
 

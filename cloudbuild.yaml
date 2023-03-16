@@ -22,7 +22,7 @@ steps:
   - '-c'
   - |
     cd iac
-    terraform -reconfigure init -input=false -no-color -upgrade -backend-config=init/backend.tfvars 
+    terraform init -reconfigure -input=false -no-color -upgrade -backend-config=init/backend.tfvars 
 # [END tf-init]
 
 # [START tf-plan]
@@ -33,8 +33,8 @@ steps:
   - '-c'
   - |
       cd iac
-      terraform plan -destroy 
-    #terraform plan -out changes.tfplan -var project_id=$PROJECT_ID
+      terraform plan -out changes.tfplan -var project_id=$PROJECT_ID
+  #terraform plan -destroy 
 # [END tf-plan]
 
 # [START tf-apply]
@@ -45,8 +45,8 @@ steps:
   - '-c'
   - |
     cd iac
-    terraform apply -destroy
-  #terraform apply -input=false -no-color -auto-approve changes.tfplan
+    terraform apply -input=false -no-color -auto-approve changes.tfplan
+  #terraform apply -destroy
 # [END tf-apply]
 timeout: 5400s
 options:
