@@ -6,7 +6,7 @@ import base64
 from google.cloud import storage
 from google.cloud import bigquery
 from google.cloud.workflows import executions_v1beta
-#from google.cloud.workflows import executions
+from google.cloud.workflows import executions
 from google.cloud import workflows_v1beta
 
 
@@ -173,7 +173,7 @@ def trigger_worflow(table_name: str):
     print('Poll every second for result...')
     while (not execution_finished):
         execution = execution_client.get_execution(request={"name": response.name})
-        execution_finished = execution.state != executions_v1beta.Execution.State.ACTIVE
+        execution_finished = execution.state != executions.Execution.State.ACTIVE
 
     # If we haven't seen the result yet, wait a second.
         if not execution_finished:

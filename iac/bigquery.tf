@@ -17,7 +17,7 @@ resource "google_bigquery_dataset" "cleaned_dataset" {
 }
 resource "google_bigquery_table" "json" {
     dataset_id = google_bigquery_dataset.raw_dataset.dataset_id
-    table_id = "raw"
+    table_id = "store"
     
     labels = {
         env = "default"
