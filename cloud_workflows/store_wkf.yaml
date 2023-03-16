@@ -24,7 +24,7 @@
             destinationTable:
               projectId: ${project_id}
               datasetId: cleaned_dataset
-              tableId: sandbox-cselmene.cleaned_dataset.cleaned
+              tableId: cleaned
             create_disposition: ${create_disposition}
             write_disposition: ${write_disposition}
             allowLargeResults: true
