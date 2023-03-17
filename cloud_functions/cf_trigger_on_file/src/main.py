@@ -138,7 +138,6 @@ def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
     ## remove this part when you are ready to deploy your Cloud Function. 
     ## [start simulation]
     print('Your file is considered as invalid. It will be moved to invalid/.')
-    return
     ## [end simulation]
     
     
