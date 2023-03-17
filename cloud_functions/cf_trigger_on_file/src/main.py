@@ -61,8 +61,23 @@ def check_file_format(event: dict, context: dict):
         #     - required to have the expected extension
 
         ...
-
-        table_name = "<to_replace_with_your_first_file_part_variable>"
+        #assert 2 parts: <table_name>_<date>
+        assert len(file_name.split('_')) == 2, 'File name should have 2 parts: <table_name>_<date>'
+        #assert table name
+        table_name = file_name.split('_')[0] 
+        assert table_name in FILES_AND_EXTENSION_SPEC.keys(), 'Table name should be either store, customer, basket'
+        #assert date format
+        date = file_name.split('_')[1]
+        def validate_date(date_string):
+            try:
+                datetime.datetime.strptime(date_string,'%Y%m%d')
+                return True
+            except:
+                return False
+        
+        assert  validate_date(date), 'Date should be in YYYYMMDD format'
+        #assert file extention
+        assert file_extention == FILES_AND_EXTENSION_SPEC[table_name], 'Should be CSV for stores and customer files or JSON for the basket files'
 
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(
