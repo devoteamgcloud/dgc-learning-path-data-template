@@ -83,6 +83,7 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     schemas_raw_blob = bucket_utils.blob(f'schemas/raw/{table_name}.json')
     #load schema json file
     schemas_raw = json.loads(schemas_raw_blob.download_as_string(client=None))
+    print(schemas_raw)
     #bucket landing
     bucket = storage_client.bucket(bucket_name)
     #landing data uri
@@ -92,6 +93,8 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     #full table id 
     dataset_id = 'raw'
     table_id = f"{project_id}.{dataset_id}.{table_name}"
+    print(table_id)
+    print(data_uri)
     #
     job_config = bigquery.LoadJobConfig()
     job_config.schema = schemas_raw
@@ -162,7 +165,7 @@ def move_file(bucket_name, blob_path, new_subfolder):
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(blob_path)
     file_name = blob_path.split('/')[-1]
-    new_blob_path = new_subfolder+file_name
+    new_blob_path = new_subfolder+'/'+file_name
     blob.name = new_blob_path
     print(
         "In bucket {} Blob {}  moved to folder {}.".format(
