@@ -61,27 +61,60 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     # You have to try to insert the file into the correct raw table using the python BigQuery Library. 
     # Please, refer yourself to the documentation and StackOverflow is still your friend ;)
     # As an help, you can follow those instructions:
-    #     - connect to the Cloud Storage client
-    #     - get the util bucket object using the os environments
-    #     - loads the schema of the table as a json (dictionary) from the bucket
-    #     - store in a string variable the blob uri path of the data to load (gs://your-bucket/your/path/to/data)
-    #     - connect to the BigQuery Client
-    #     - store in a string variable the table id with the bigquery client. (project_id.dataset_id.table_name)
-    #     - create your LoadJobConfig object from the BigQuery librairy
+    #     - connect to the Cloud Storage client: ok
+    #     - get the util bucket object using the os environments: ok
+    #     - loads the schema of the table as a json (dictionary) from the bucket: ok
+    #     - store in a string variable the blob uri path of the data to load (gs://your-bucket/your/path/to/data): ok
+    #     - connect to the BigQuery Client : ok
+    #     - store in a string variable the table id with the bigquery client. (project_id.dataset_id.table_name) : ok
+    #     - create your LoadJobConfig object from the BigQuery librairy : ok
     #     - (maybe you will need more variables according to the type of the file - csv, json - so it can be good to see the documentation)
     #     - and run your loading job from the blob uri to the destination raw table
     #     - waits the job to finish and print the number of rows inserted
     # 
     # note: this is not a small function. Take the day or more if you have to. 
+    
     #connect to the Cloud Storage client
     storage_client = storage.Client()
     #util bucket object 
-    bucket_name = 'sandbox-avestu_magasin_cie_utils'
+    bucket_utils_name = f'{project_id}_magasin_cie_utils'
+    #get utils bucket
+    bucket_utils = storage_client.bucket(bucket_utils_name)
+    #get file
+    schemas_raw_blob = bucket_utils.blob(f'schemas/raw/{table_name}.json')
+    #load schema json file
+    schemas_raw = json.loads(schemas_raw_blob.download_as_string(client=None))
+    #bucket landing
     bucket = storage_client.bucket(bucket_name)
-    res = []
-    for path, dirs, files in os.walk('schemas/'):
-        for file in files:
-            res.append(os.path.join(path,file))
+    #landing data uri
+    data_uri = f"gs://{bucket_name}/{blob_path}"
+    #connect to the bigquery client
+    client = bigquery.Client()
+    #full table id 
+    dataset_id = 'raw'
+    table_id = f"{project_id}.{dataset_id}.{table_name}"
+    #
+    job_config = bigquery.LoadJobConfig()
+    job_config.schema = schemas_raw
+
+
+    
+    file_type= data_uri[-4]
+    if file_type == 'json':
+        job_config.source_format = bigquery.SourceFormat.CSV
+    elif file_type == '.csv':  
+        job_config.skip_leading_rows = 1
+        job_config.source_format = bigquery.SourceFormat.NEWLINE_DELIMITED_JSON
+
+    job = client.load_table_from_uri(
+        data_uri,
+        table_id,
+        job_config=job_config,
+    )  # API request
+    job.result()
+    destination_table = client.get_table(table_id)
+    print("Loaded {} rows.".format(destination_table.num_rows))
+
     pass
 
    
