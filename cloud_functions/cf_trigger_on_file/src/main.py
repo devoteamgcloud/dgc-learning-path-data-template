@@ -111,8 +111,8 @@ def publish_to_pubsub(data: bytes, attributes: dict):
 
     # retrieve the GCP_PROJECT from the reserved environment variables
     # more: https://cloud.google.com/functions/docs/configuring/env-var#python_37_and_go_111
-    project_id = os.environ['GCP_PROJECT']
-    topic_id = os.environ['pubsub_topic_id']
+    project_id ="sandbox-avestu"
+    topic_id = "valid_file"
     
     # connect to the PubSub client
     publisher = pubsub_v1.PublisherClient()
