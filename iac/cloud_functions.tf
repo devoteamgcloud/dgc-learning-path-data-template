@@ -22,7 +22,7 @@ resource "google_cloudfunctions_function" "function_trigger_on_file" {
     name                  = "cf_trigger_on_file"
     project = var.project_id
     region = var.region
-    runtime               = "python311"  # of course changeable
+    runtime               = "python37"  # of course changeable
 
     # Get the source code of the cloud function as a Zip compression
     source_archive_bucket = google_storage_bucket.cloud_functions_sources.name
@@ -58,7 +58,7 @@ resource "google_cloudfunctions_function" "function_dispatch_workflow" {
     name                  = "cf_dispatch_workflow"
     project = var.project_id
     region = var.region
-    runtime = "python311"  # of course changeable
+    runtime = "python37"  # of course changeable
 
     # Get the source code of the cloud function as a Zip compression
     source_archive_bucket = google_storage_bucket.cloud_functions_sources.name
