@@ -19,7 +19,6 @@ def receive_messages(event: dict, context: dict):
          event (dict): Event payload.
          context (google.cloud.functions.Context): Metadata for the event.
     """
-
     # rename the variable to be more specific and write it to the logs
     pubsub_event = event
     print(pubsub_event)
@@ -73,7 +72,7 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     #     - waits the job to finish and print the number of rows inserted
     # 
     # note: this is not a small function. Take the day or more if you have to. 
-    
+    project_id = "sandbox-avestu"
     #connect to the Cloud Storage client
     storage_client = storage.Client()
     #util bucket object 
