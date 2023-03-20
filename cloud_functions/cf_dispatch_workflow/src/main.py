@@ -99,9 +99,9 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     job_config = bigquery.LoadJobConfig()
     job_config.schema = schemas_raw
 
-
     
-    file_type= data_uri[-4]
+    file_type= data_uri[-4:]
+    print("file_type"+file_type)
     if file_type == 'json':
         print('format:json')
         job_config.source_format = bigquery.SourceFormat.NEWLINE_DELIMITED_JSON
