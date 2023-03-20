@@ -69,7 +69,7 @@ resource "google_cloudfunctions_function" "function_dispatch_workflow" {
     
     # 
     event_trigger {
-        event_type = "google.cloud.pubsub.topic.v1.messagePublished"
+        event_type = "providers/cloud.pubsub/eventTypes/topic.publish"
         pubsub_topic   = google_pubsub_topic.topic_vaild_file.name
     }
 }

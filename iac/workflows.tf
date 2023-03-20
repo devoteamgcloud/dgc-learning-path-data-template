@@ -1,8 +1,14 @@
+# enable the workflow API
+resource "google_project_service" "workflows" {
+  service            = "workflows.googleapis.com"
+  disable_on_destroy = false
+}
 resource "google_service_account" "workflow_account" {
-  account_id   = "wkf_sa"
+  account_id   = "wkf-sa"
   display_name = "Workflow Service Account"
 }
 resource "google_workflows_workflow" "store_workflow" {
+  project = var.project_id
   name          = "store_wkf"
   region        = var.region
   description   = "Workflow source data"
