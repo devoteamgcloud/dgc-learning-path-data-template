@@ -1,9 +1,11 @@
 # enable the workflow API
 resource "google_project_service" "workflows" {
+  
   service            = "workflows.googleapis.com"
   disable_on_destroy = false
 }
 resource "google_service_account" "workflows_service_account" {
+  project = var.project_id
   account_id   = "sample-workflows-sa"
   display_name = "Sample Workflows Service Account"
 }
