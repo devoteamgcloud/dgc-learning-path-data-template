@@ -59,3 +59,12 @@ resource "google_storage_bucket" "cloud_functions_sources" {
   uniform_bucket_level_access = true
 }
 
+locals {
+  files = fileset("${path.module}/../","{queries,schemas}/**")
+}
+resource "google_storage_bucket_object" "queries_schemas" {
+for_each = local.files
+  name   = each.value
+  source = "../${each.value}"
+  bucket = google_storage_bucket.magasin_cie_utils.name
+}

@@ -73,7 +73,15 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     #     - waits the job to finish and print the number of rows inserted
     # 
     # note: this is not a small function. Take the day or more if you have to. 
-
+    #connect to the Cloud Storage client
+    storage_client = storage.Client()
+    #util bucket object 
+    bucket_name = 'sandbox-avestu_magasin_cie_utils'
+    bucket = storage_client.bucket(bucket_name)
+    res = []
+    for path, dirs, files in os.walk('schemas/'):
+        for file in files:
+            res.append(os.path.join(path,file))
     pass
 
    
@@ -118,7 +126,18 @@ def move_file(bucket_name, blob_path, new_subfolder):
     #     - create your new blob path with the correct new subfolder given from the arguments
     #     - move you file inside the bucket to its destination
     #     - print the actual move you made
-
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(blob_path)
+    file_name = blob_path.split('/')[-1]
+    new_blob_path = new_subfolder+file_name
+    blob.name = new_blob_path
+    print(
+        "In bucket {} Blob {}  moved to folder {}.".format(
+            bucket_name,
+            blob_path,
+            new_blob_path,
+        ))
     pass
 
 
