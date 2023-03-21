@@ -152,7 +152,7 @@ def trigger_worflow(table_name: str):
     print('Poll every second for result...')
     while (not execution_finished):
         execution = execution_client.get_execution(request={"name": response.name})
-        execution_finished = execution.state != executions_v1.type.Execution.State.ACTIVE
+        execution_finished = execution.state != executions_v1.types.Execution.State.ACTIVE
         # If we haven't seen the result yet, wait a second.
         if not execution_finished:
             print('- Waiting for results...')
