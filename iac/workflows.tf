@@ -5,7 +5,4 @@ resource "google_workflows_workflow" "store_workflow" {
   region        = var.region
   description   = "Workflow source data"
   source_contents = file("../cloud_workflows/store_wkf.yaml")
-  depends_on = [
-    google_project_service.workflows
-  ]
 }
