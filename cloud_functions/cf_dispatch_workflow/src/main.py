@@ -101,7 +101,7 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     job_config = bigquery.LoadJobConfig()
     job_config.schema = schemas_raw
 
-    
+    #config for csv or json
     file_type= data_uri[-4:]
     print("file_type"+file_type)
     if file_type == 'json':
@@ -111,7 +111,7 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
         print('format:csv')
         job_config.skip_leading_rows = 1
         job_config.source_format = bigquery.SourceFormat.CSV
-
+    #create job
     job = client.load_table_from_uri(
         data_uri,
         table_id,
