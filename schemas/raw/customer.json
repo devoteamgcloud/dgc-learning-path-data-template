@@ -1,0 +1,38 @@
+[
+    {
+        "name": "id_customer",
+        "type": "INTEGER",
+        "mode": "REQUIRED",
+        "description": "Unique ID of the customer"
+    },
+    {
+        "name": "first_name",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Customer first name"
+    },
+    {
+        "name": "last_name",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Customer last name"
+    },
+    {
+        "name": "email",
+        "type": "STRING",
+        "mode": "REQUIRED",
+        "description": "Email of the customer"
+    },
+    {
+        "name": "creation_date",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Creation date of the customer"
+    },
+    {
+        "name": "update_time",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE",
+        "description": "Time of record update"
+    }
+]

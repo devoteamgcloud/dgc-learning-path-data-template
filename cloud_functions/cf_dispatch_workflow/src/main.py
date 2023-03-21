@@ -9,7 +9,6 @@ from google.cloud import workflows_v1
 from google.cloud.workflows import executions_v1
 PROJECT_ID = "sandbox-avestu"
 LOCATION = "europe-west1"
-WORKFLOW = "store_wkf"
 DATASET_ID = 'raw'
 
 def receive_messages(event: dict, context: dict):
@@ -143,7 +142,8 @@ def trigger_worflow(table_name: str):
     #     - be verbose where you think you have to 
     execution_client = executions_v1.ExecutionsClient()
     workflows_client = workflows_v1.WorkflowsClient()
-    parent = workflows_client.workflow_path(PROJECT_ID, LOCATION, WORKFLOW)
+    workflow= f"{table_name}_wkf"
+    parent = workflows_client.workflow_path(PROJECT_ID, LOCATION, workflow)
     response = execution_client.create_execution(request={"parent": parent})
     print(f"Created execution: {response.name}")
     # Wait for execution to finish, then print results.
