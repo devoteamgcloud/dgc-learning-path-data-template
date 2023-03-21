@@ -13,7 +13,7 @@
       auth:
         type: OAuth2  
     result: staging_customer_response
-- insert_cleaned_customer:
+- insert_staging_customer:
     call: googleapis.bigquery.v2.jobs.insert
     args:
       projectId: ${project_id}
