@@ -7,7 +7,7 @@
 - get_cleaned_store_query:
     call: http.get
     args:
-      url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/cleaned/store.sql"}
+      url: https://storage.cloud.google.com/sandbox-avestu_magasin_cie_utils/queries/cleaned/store.sql
       headers:
         Content-Type: "text/plain"
       auth:
