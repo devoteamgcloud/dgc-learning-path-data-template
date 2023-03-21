@@ -5,7 +5,7 @@ USING
 ON
   T.id_customer = S.id_customer
   WHEN MATCHED THEN UPDATE SET 
-  T.id_customer = S.id_customer,
+    T.id_customer = S.id_customer,
     T.first_name = S.first_name,
     T.last_name = S.last_name,
     T.email = S.email,
