@@ -43,7 +43,7 @@ resource "google_bigquery_table" "table_customer_raw" {
 
 resource "google_bigquery_table" "table_customer_staging" {
   project = var.project_id
-  dataset_id = google_bigquery_dataset.dataset_raw.dataset_id
+  dataset_id = google_bigquery_dataset.dataset_staging.dataset_id
   table_id   = "customer"
   schema =file("../schemas/staging/customer.json") 
   deletion_protection = false
