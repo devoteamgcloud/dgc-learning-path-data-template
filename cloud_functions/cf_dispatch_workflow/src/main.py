@@ -5,8 +5,12 @@ import base64
 
 from google.cloud import storage
 from google.cloud import bigquery
+from google.cloud import workflows_v1
 from google.cloud.workflows import executions_v1
-
+PROJECT_ID = "sandbox-avestu"
+LOCATION = "europe-west1"
+WORKFLOW = "store_wkf"
+DATASET_ID = 'raw'
 
 def receive_messages(event: dict, context: dict):
     """
@@ -72,11 +76,10 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     #     - waits the job to finish and print the number of rows inserted
     # 
     # note: this is not a small function. Take the day or more if you have to. 
-    project_id = "sandbox-avestu"
     #connect to the Cloud Storage client
     storage_client = storage.Client()
     #util bucket object 
-    bucket_utils_name = f'{project_id}_magasin_cie_utils'
+    bucket_utils_name = f'{PROJECT_ID}_magasin_cie_utils'
     #get utils bucket
     bucket_utils = storage_client.bucket(bucket_utils_name)
     #get file
@@ -91,8 +94,8 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     #connect to the bigquery client
     client = bigquery.Client()
     #full table id 
-    dataset_id = 'raw'
-    table_id = f"{project_id}.{dataset_id}.{table_name}"
+
+    table_id = f"{PROJECT_ID}.{DATASET_ID}.{table_name}"
     print(table_id)
     print(data_uri)
     #
@@ -138,9 +141,28 @@ def trigger_worflow(table_name: str):
     #     - trigger a Cloud Workflows execution according to the table updated
     #     - wait for the result (with exponential backoff delay will be better)
     #     - be verbose where you think you have to 
-    
+    execution_client = executions_v1.ExecutionsClient()
+    workflows_client = workflows_v1.WorkflowsClient()
+    parent = workflows_client.workflow_path(PROJECT_ID, LOCATION, WORKFLOW)
+    response = execution_client.create_execution(request={"parent": parent})
+    print(f"Created execution: {response.name}")
+    # Wait for execution to finish, then print results.
+    execution_finished = False
+    backoff_delay = 1  # Start wait with delay of 1 second
+    print('Poll every second for result...')
+    while (not execution_finished):
+        execution = execution_client.get_execution(request={"name": response.name})
+        execution_finished = execution.state != executions_v1.type.Execution.State.ACTIVE
+        # If we haven't seen the result yet, wait a second.
+        if not execution_finished:
+            print('- Waiting for results...')
+            time.sleep(backoff_delay)
+            backoff_delay *= 2  # Double the delay to provide exponential backoff.
+        else:
+            print(f'Execution finished with state: {execution.state.name}')
+            print(execution.result)
+            return execution.result
 
-    raise NotImplementedError()
 
 
 
