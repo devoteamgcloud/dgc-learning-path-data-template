@@ -92,34 +92,34 @@ resource "google_bigquery_table" "table_basket_raw" {
   deletion_protection = false
 }
 
-# resource "google_bigquery_table" "table_basket_staging" {
-#   project = var.project_id
-#   dataset_id = google_bigquery_dataset.dataset_staging.dataset_id
-#   table_id   = "basket"
-#   schema =file("../schemas/staging/customer.json") 
-#   deletion_protection = false
-# }
-# resource "google_bigquery_table" "table_basket_detail_staging" {
-#   project = var.project_id
-#   dataset_id = google_bigquery_dataset.dataset_staging.dataset_id
-#   table_id   = "basket_detail"
-#   schema =file("../schemas/staging/customer.json") 
-#   deletion_protection = false
-# }
-# resource "google_bigquery_table" "table_basket_detail_cleaned" {
-#   project = var.project_id
-#   dataset_id = google_bigquery_dataset.dataset_staging.dataset_id
-#   table_id   = "basket_detail"
-#   schema =file("../schemas/staging/customer.json") 
-#   deletion_protection = false
-# }
-# resource "google_bigquery_table" "table_basket_header_cleaned" {
-#   project = var.project_id
-#   dataset_id = google_bigquery_dataset.dataset_cleaned.dataset_id
-#   table_id   = "basket_header"
-#   schema =file("../schemas/cleaned/customer.json")
-#   deletion_protection = false
-# }
+resource "google_bigquery_table" "table_basket_staging" {
+  project = var.project_id
+  dataset_id = google_bigquery_dataset.dataset_staging.dataset_id
+  table_id   = "basket"
+  schema =file("../schemas/staging/basket.json") 
+  deletion_protection = false
+}
+resource "google_bigquery_table" "table_basket_detail_staging" {
+  project = var.project_id
+  dataset_id = google_bigquery_dataset.dataset_staging.dataset_id
+  table_id   = "basket_detail"
+  schema =file("../schemas/staging/basket_detail.json") 
+  deletion_protection = false
+}
+resource "google_bigquery_table" "table_basket_detail_cleaned" {
+  project = var.project_id
+  dataset_id = google_bigquery_dataset.dataset_staging.dataset_id
+  table_id   = "basket_detail"
+  schema =file("../schemas/cleaned/basket_detail.json") 
+  deletion_protection = false
+}
+resource "google_bigquery_table" "table_basket_header_cleaned" {
+  project = var.project_id
+  dataset_id = google_bigquery_dataset.dataset_cleaned.dataset_id
+  table_id   = "basket_header"
+  schema =file("../schemas/cleaned/basket_header.json")
+  deletion_protection = false
+}
 # resource "google_bigquery_table" "table_day_sale" {
 #   project = var.project_id
 #   dataset_id = google_bigquery_dataset.dataset_aggregated.dataset_id
