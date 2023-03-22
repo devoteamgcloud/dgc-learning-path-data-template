@@ -108,7 +108,7 @@ resource "google_bigquery_table" "table_basket_detail_staging" {
 }
 resource "google_bigquery_table" "table_basket_detail_cleaned" {
   project = var.project_id
-  dataset_id = google_bigquery_dataset.dataset_staging.dataset_id
+  dataset_id = google_bigquery_dataset.dataset_cleaned.dataset_id
   table_id   = "basket_detail"
   schema =file("../schemas/cleaned/basket_detail.json") 
   deletion_protection = false
