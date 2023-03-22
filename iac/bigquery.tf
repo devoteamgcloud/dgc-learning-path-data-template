@@ -18,7 +18,7 @@ resource "google_bigquery_dataset" "dataset_cleaned" {
 }
 resource "google_bigquery_dataset" "dataset_aggregated" {
   project = var.project_id
-  dataset_id                  = "aggregateed"
+  dataset_id                  = "aggregated"
   description                 = "This is the aggregated dataset"
   location                    = "EU"
 }
