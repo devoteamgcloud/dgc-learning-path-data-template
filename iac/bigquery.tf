@@ -47,6 +47,9 @@ resource "google_bigquery_table" "table_store_aggregated" {
     query = file("../queries/aggregated/open_store.sql")
     use_legacy_sql = false
   }
+  depends_on = [
+    google_bigquery_table.table_store_cleaned
+  ]
 }
 resource "google_bigquery_table" "table_customer_raw" {
   project = var.project_id
