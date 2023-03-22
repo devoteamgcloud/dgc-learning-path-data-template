@@ -88,7 +88,7 @@ resource "google_bigquery_table" "table_basket_raw" {
   project = var.project_id
   dataset_id = google_bigquery_dataset.dataset_raw.dataset_id
   table_id   = "basket"
-  schema =file("../schemas/raw/customer.json") 
+  schema =file("../schemas/raw/basket.json") 
   deletion_protection = false
 }
 
