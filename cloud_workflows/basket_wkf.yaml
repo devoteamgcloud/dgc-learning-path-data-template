@@ -4,7 +4,7 @@
     - util_bucket_suffix: "magasin_cie_utils"
     - create_disposition: "CREATE_NEVER"
     - write_disposition: "WRITE_TRUNCATE"
-- get_staging_bucket_query:
+- get_staging_basket_query:
     call: http.get
     args:
       url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/staging/basket.sql"}
@@ -13,7 +13,7 @@
       auth:
         type: OAuth2  
     result: staging_basket_response
-- insert_staging_bucket:
+- insert_staging_basket:
     call: googleapis.bigquery.v2.jobs.insert
     args:
       projectId: ${project_id}
@@ -29,7 +29,7 @@
             write_disposition: ${write_disposition}
             allowLargeResults: true
             useLegacySql: false
-- get_staging_bucket_query:
+- get_staging_basket_detail_query:
     call: http.get
     args:
       url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/staging/basket_detail.sql"}
@@ -38,7 +38,7 @@
       auth:
         type: OAuth2  
     result: staging_basket_detail_response
-- insert_staging_bucket:
+- insert_staging_basket_detail:
     call: googleapis.bigquery.v2.jobs.insert
     args:
       projectId: ${project_id}
