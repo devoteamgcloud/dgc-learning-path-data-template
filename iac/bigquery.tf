@@ -120,17 +120,17 @@ resource "google_bigquery_table" "table_basket_header_cleaned" {
   schema =file("../schemas/cleaned/basket_header.json")
   deletion_protection = false
 }
-# resource "google_bigquery_table" "table_day_sale" {
-#   project = var.project_id
-#   dataset_id = google_bigquery_dataset.dataset_aggregated.dataset_id
-#   table_id   = "day_sale"
-#   schema =file("../schemas/aggregated/day_sale.json") 
-#   deletion_protection = false
-# }
-# resource "google_bigquery_table" "table_best_product_sale" {
-#   project = var.project_id
-#   dataset_id = google_bigquery_dataset.dataset_aggregated.dataset_id
-#   table_id   = "best_product_sale"
-#   schema =file("../schemas/aggregated/best_product_sale.json")
-#   deletion_protection = false
-# }
+resource "google_bigquery_table" "table_day_sale" {
+  project = var.project_id
+  dataset_id = google_bigquery_dataset.dataset_aggregated.dataset_id
+  table_id   = "day_sale"
+  schema =file("../schemas/aggregated/day_sale.json") 
+  deletion_protection = false
+}
+resource "google_bigquery_table" "table_best_product_sale" {
+  project = var.project_id
+  dataset_id = google_bigquery_dataset.dataset_aggregated.dataset_id
+  table_id   = "best_product_sale"
+  schema =file("../schemas/aggregated/best_product_sale.json")
+  deletion_protection = false
+}
