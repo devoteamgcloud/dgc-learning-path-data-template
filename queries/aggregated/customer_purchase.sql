@@ -10,5 +10,4 @@ SELECT
 FROM `{{ project_id }}.cleaned.customer`              customer
 INNER JOIN `{{ project_id }}.cleaned.basket_header`   basket_header
 ON customer.id_customer = basket_header.id_customer
-GROUP BY customer.id_customer
-;
+GROUP BY customer.id_customer;
