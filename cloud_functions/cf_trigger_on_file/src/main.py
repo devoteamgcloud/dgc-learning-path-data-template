@@ -27,6 +27,8 @@ def check_file_format(event: dict, context: dict):
          context (google.cloud.functions.Context): Metadata for the event.
     """
 
+    print("I'm here : check file format")
+
     # rename the variable to be more specific and write it to the logs
     blob_event = event
     print(f'Processing blob: {blob_event["name"]}.')
@@ -40,6 +42,9 @@ def check_file_format(event: dict, context: dict):
     subfolder =  os.path.join(*subfolder) if subfolder != [] else ''
     file_name, file_extention = file.split('.') 
 
+    # Check if the file is in the subfolder `input/` to avoid infinite loop
+    assert subfolder == 'input', 'File must be in `input/ subfolder to be processed`'
+
     print(f'Bucket name: {bucket_name}')
     print(f'File path: {blob_path}')
     print(f'Subfolder: {subfolder}')
@@ -47,22 +52,39 @@ def check_file_format(event: dict, context: dict):
     print(f'File name: {file_name}')
     print(f'File Extension: {file_extention}')
 
-    # Check if the file is in the subfolder `input/` to avoid infinite loop
-    assert subfolder == 'input', 'File must be in `input/ subfolder to be processed`'
-    
     # check if the file name has the good format
     # required format: <table_name>_<date>.<extension>
     try:
         # TODO: 
         # create some assertions here to validate your file. It is:
         #     - required to have two parts.
+        assert len(file_name.split("_")) == 2
+        print("Passed test 1 : have two parts")
+
+        table_name = file_name.split("_")[0]
+        date = file_name.split("_")[1]
+        
         #     - the first part is required to be an accepted table name
+        assert table_name in list(FILES_AND_EXTENSION_SPEC.keys())
+        print("Passed test 2 : valid table name")
+
         #     - the second part is required to be a 'YYYYMMDD'-formatted date 
+        try:
+            datetime.datetime.strptime(date, '%Y%m%d')
+        except:
+            raise Exception("Unvalid suffix format")
+
         #     - required to have the expected extension
+        assert file_extention in ["csv", "json"]
+        print("Passed test 3 : recognized extension")
 
-        ...
+        if file_extention == 'csv':
+            assert table_name in ["store", "customer"]
+        
+        if file_extention == 'json':
+            assert table_name == "basket"
 
-        table_name = "<to_replace_with_your_first_file_part_variable>"
+        print("Passed test 4 : valid extension")
 
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(
@@ -91,14 +113,14 @@ def publish_to_pubsub(data: bytes, attributes: dict):
     ## remove this part when you are ready to deploy your Cloud Function. 
     ## [start simulation]
     print('Your file is considered as valid. It will be published to Pubsub.')
-    return
+    # return
     ## [end simulation]
 
 
     # retrieve the GCP_PROJECT from the reserved environment variables
     # more: https://cloud.google.com/functions/docs/configuring/env-var#python_37_and_go_111
-    project_id = os.environ['GCP_PROJECT']
-    topic_id = os.environ['pubsub_topic_id']
+    project_id = "sandbox-achaabene"
+    topic_id = "valid_file"
     
     # connect to the PubSub client
     publisher = pubsub_v1.PublisherClient()
@@ -123,7 +145,7 @@ def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
     ## remove this part when you are ready to deploy your Cloud Function. 
     ## [start simulation]
     print('Your file is considered as invalid. It will be moved to invalid/.')
-    return
+    # return
     ## [end simulation]
     
     
@@ -145,7 +167,7 @@ if __name__ == '__main__':
     # it will have no impact on the Cloud Function when deployed.
     import os
     
-    project_id = '<YOUR-PROJECT-ID>'
+    project_id = 'sandbox-achaabene'
 
     realpath = os.path.realpath(__file__)
     material_path = os.sep.join(['', *realpath.split(os.sep)[:-4], '__materials__'])
@@ -155,7 +177,7 @@ if __name__ == '__main__':
     for file_name in os.listdir(init_files_path):
         print(f'\nTesting your file {file_name}')
         mock_event = {
-            'bucket': f'{project_id}-magasin-cie-landing',
+            'bucket': f'{project_id}_magasin_cie_landing',
             'name': os.path.join('input', file_name)
         }
 
