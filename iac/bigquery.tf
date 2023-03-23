@@ -57,7 +57,7 @@ resource "google_bigquery_table" "cleaned_store" {
   deletion_protection = false
 }
 
-resource "google_bigquery_table" "aggregated_open_store" {
+resource "google_bigquery_table" "view_open_store" {
   project  = var.project_id
   dataset_id = google_bigquery_dataset.aggregated.dataset_id
   table_id   = "open_store"
@@ -92,7 +92,7 @@ resource "google_bigquery_table" "cleaned_customer" {
   deletion_protection = false
 }
 
-resource "google_bigquery_table" "aggregated_customer_purchase" {
+resource "google_bigquery_table" "view_customer_purchase" {
   project  = var.project_id
   dataset_id = google_bigquery_dataset.aggregated.dataset_id
   table_id   = "customer_purchase"
