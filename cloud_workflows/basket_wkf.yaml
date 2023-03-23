@@ -7,12 +7,12 @@
 - get_staging_bucket_query:
     call: http.get
     args:
-      url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/staging/bucket.sql"}
+      url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/staging/basket.sql"}
       headers:
         Content-Type: "text/plain"
       auth:
         type: OAuth2  
-    result: staging_bucket_response
+    result: staging_basket_response
 - insert_staging_bucket:
     call: googleapis.bigquery.v2.jobs.insert
     args:
@@ -20,11 +20,36 @@
       body:
         configuration:
           query:
-            query: ${text.replace_all(staging_bucket_response.body, "{{ project_id }}", project_id)}
+            query: ${text.replace_all(staging_basket_response.body, "{{ project_id }}", project_id)}
             destinationTable:
               projectId: ${project_id}
-              datasetId: cleaned
-              tableId: store
+              datasetId: staging
+              tableId: basket
+            create_disposition: ${create_disposition}
+            write_disposition: ${write_disposition}
+            allowLargeResults: true
+            useLegacySql: false
+- get_staging_bucket_query:
+    call: http.get
+    args:
+      url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/staging/basket_detail.sql"}
+      headers:
+        Content-Type: "text/plain"
+      auth:
+        type: OAuth2  
+    result: staging_basket_detail_response
+- insert_staging_bucket:
+    call: googleapis.bigquery.v2.jobs.insert
+    args:
+      projectId: ${project_id}
+      body:
+        configuration:
+          query:
+            query: ${text.replace_all(staging_basket_detail_response.body, "{{ project_id }}", project_id)}
+            destinationTable:
+              projectId: ${project_id}
+              datasetId: staging
+              tableId: basket_detail
             create_disposition: ${create_disposition}
             write_disposition: ${write_disposition}
             allowLargeResults: true
