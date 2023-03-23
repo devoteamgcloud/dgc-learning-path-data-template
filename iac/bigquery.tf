@@ -74,16 +74,16 @@ resource "google_bigquery_table" "table_customer_cleaned" {
   schema =file("../schemas/cleaned/customer.json")
   deletion_protection = false
 }
-# resource "google_bigquery_table" "table_customer_purchase_aggregated" {
-#   project = var.project_id
-#   dataset_id = google_bigquery_dataset.dataset_aggregated.dataset_id
-#   table_id   = "customer_purchase"
-#   deletion_protection = false
-#   view{
-#     query = file("../queries/aggregated/customer_purchase.sql")
-#     use_legacy_sql = false
-#   }
-# }
+resource "google_bigquery_table" "table_customer_purchase_aggregated" {
+  project = var.project_id
+  dataset_id = google_bigquery_dataset.dataset_aggregated.dataset_id
+  table_id   = "customer_purchase"
+  deletion_protection = false
+  view{
+    query = file("../queries/aggregated/customer_purchase.sql")
+    use_legacy_sql = false
+  }
+}
 resource "google_bigquery_table" "table_basket_raw" {
   project = var.project_id
   dataset_id = google_bigquery_dataset.dataset_raw.dataset_id
