@@ -135,7 +135,7 @@ resource "google_bigquery_table" "table_best_product_sale" {
   deletion_protection = false
 }
 
-#Policies
+#Policies try
 resource "google_project_service" "datacatalog_api" {
   project = var.project_id
   service = "datacatalog.googleapis.com"
