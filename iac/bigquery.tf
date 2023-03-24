@@ -141,18 +141,6 @@ resource "google_project_service" "datacatalog_api" {
   service = "datacatalog.googleapis.com"
   disable_on_destroy = false
 }
-resource "google_project_iam_policy" "project" {
-  project     = var.project_id
-  policy_data = data.google_iam_policy.admin.policy_data
-}
-data "google_iam_policy" "admin" {
-  binding {
-    role = "roles/datacatalog.categoryAdmin"
-    members = [
-      "user:362450662442-compute@developer.gserviceaccount.com",
-    ]
-  }
-}
 resource "google_data_catalog_taxonomy" "my_taxonomy" {
   project = var.project_id
   region = var.region
