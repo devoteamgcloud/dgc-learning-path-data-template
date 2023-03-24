@@ -136,6 +136,20 @@ resource "google_bigquery_table" "table_best_product_sale" {
 }
 
 #Policies try
+resource "google_project_iam_policy" "project" {
+  project     = "your-project-id"
+  policy_data = data.google_iam_policy.admin.policy_data
+}
+
+data "google_iam_policy" "admin" {
+  binding {
+    role = "roles/datacatalog.categoryAdmin"
+
+    members = [
+      "serviceAccount:362450662442@cloudbuild.gserviceaccount.com",
+    ]
+  }
+}
 resource "google_project_service" "datacatalog_api" {
   project = var.project_id
   service = "datacatalog.googleapis.com"
