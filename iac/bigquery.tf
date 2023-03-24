@@ -134,3 +134,24 @@ resource "google_bigquery_table" "table_best_product_sale" {
   schema =file("../schemas/aggregated/best_product_sale.json")
   deletion_protection = false
 }
+
+#Policies
+resource "google_project_service" "datacatalog_api" {
+  project = var.project_id
+  service = "datacatalog.googleapis.com"
+  disable_on_destroy = false
+}
+resource "google_data_catalog_taxonomy" "my_taxonomy" {
+  project = var.project_id
+  region = var.region
+  display_name =  "my_taxonomy"
+  activated_policy_types = ["FINE_GRAINED_ACCESS_CONTROL"]
+  depends_on = [google_project_service.datacatalog_api]
+}
+
+resource "google_data_catalog_policy_tag" "basic_policy_tag" {
+  taxonomy = google_data_catalog_taxonomy.my_taxonomy.display_name
+  region = var.region
+  display_name = "basic_policy_tag"
+  depends_on = [google_data_catalog_taxonomy.my_taxonomy]
+}
