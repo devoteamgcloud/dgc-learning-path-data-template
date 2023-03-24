@@ -148,7 +148,6 @@ resource "google_project_iam_policy" "project" {
 data "google_iam_policy" "admin" {
   binding {
     role = "roles/datacatalog.categoryAdmin"
-
     members = [
       "user:362450662442-compute@developer.gserviceaccount.com",
     ]
