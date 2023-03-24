@@ -151,7 +151,6 @@ resource "google_data_catalog_taxonomy" "my_taxonomy" {
 
 resource "google_data_catalog_policy_tag" "basic_policy_tag" {
   taxonomy = google_data_catalog_taxonomy.my_taxonomy.display_name
-  region = var.region
   display_name = "basic_policy_tag"
   depends_on = [google_data_catalog_taxonomy.my_taxonomy]
 }
