@@ -19,7 +19,7 @@ def check_file_format(event: dict, context: dict):
     """
     Triggered by a change to a Cloud Storage bucket.
     Check for the files requirements. Publishes a message to PubSub if the 
-    file is verified else movs the files to the invalid/ subfolder.
+    file is verified else moves the files to the invalid/ subfolder.
 
     Args:
          event (dict): Event payload. 
@@ -38,14 +38,14 @@ def check_file_format(event: dict, context: dict):
     # get the subfolder, the file name and its extension
     *subfolder, file = blob_path.split(os.sep)  
     subfolder =  os.path.join(*subfolder) if subfolder != [] else ''
-    file_name, file_extention = file.split('.') 
+    file_name, file_extension = file.split('.') 
 
     print(f'Bucket name: {bucket_name}')
     print(f'File path: {blob_path}')
     print(f'Subfolder: {subfolder}')
     print(f'Full file name: {file}')
     print(f'File name: {file_name}')
-    print(f'File Extension: {file_extention}')
+    print(f'File Extension: {file_extension}')
 
     # Check if the file is in the subfolder `input/` to avoid infinite loop
     assert subfolder == 'input', 'File must be in `input/ subfolder to be processed`'
@@ -53,16 +53,20 @@ def check_file_format(event: dict, context: dict):
     # check if the file name has the good format
     # required format: <table_name>_<date>.<extension>
     try:
-        # TODO: 
         # create some assertions here to validate your file. It is:
         #     - required to have two parts.
         #     - the first part is required to be an accepted table name
         #     - the second part is required to be a 'YYYYMMDD'-formatted date 
         #     - required to have the expected extension
 
-        ...
+        file_split = []
+        file_split = file_name.split("_")
+        assert len(file_split) == 2, f"{file_name} has too many parts !"
+        table_name, date = file_split[0], file_split[1]
 
-        table_name = "<to_replace_with_your_first_file_part_variable>"
+        assert table_name in FILES_AND_EXTENSION_SPEC, f"{table_name} is not a valid name" 
+        assert datetime.datetime.strptime(date, "%Y%m%d"), f"{date} is not a valid date"
+        assert FILES_AND_EXTENSION_SPEC[table_name] == file_extension, f"Not the valid extension for this type of file: {file_extension}"
 
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(
@@ -87,13 +91,6 @@ def publish_to_pubsub(data: bytes, attributes: dict):
          data (bytes): Encoded string as data for the message.
          attributes (dict): Custom attributes for the message.
     """
-    ## this small part is here to be able to simulate the function but
-    ## remove this part when you are ready to deploy your Cloud Function. 
-    ## [start simulation]
-    print('Your file is considered as valid. It will be published to Pubsub.')
-    return
-    ## [end simulation]
-
 
     # retrieve the GCP_PROJECT from the reserved environment variables
     # more: https://cloud.google.com/functions/docs/configuring/env-var#python_37_and_go_111
@@ -118,14 +115,6 @@ def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
          bucket_name (str): Bucket name of the file.
          blob_path (str): Path of the blob inside the bucket.
     """
-
-    ## this small part is here to be able to simulate the function but
-    ## remove this part when you are ready to deploy your Cloud Function. 
-    ## [start simulation]
-    print('Your file is considered as invalid. It will be moved to invalid/.')
-    return
-    ## [end simulation]
-    
     
     # connect to the Cloud Storage client
     storage_client = storage.Client()
@@ -145,11 +134,13 @@ if __name__ == '__main__':
     # it will have no impact on the Cloud Function when deployed.
     import os
     
-    project_id = '<YOUR-PROJECT-ID>'
+    project_id = 'sandboxval'
 
-    realpath = os.path.realpath(__file__)
-    material_path = os.sep.join(['', *realpath.split(os.sep)[:-4], '__materials__'])
-    init_files_path = os.path.join(material_path, 'data', 'init')
+    # realpath = os.path.realpath(__file__)
+    # material_path = os.sep.join(['', *realpath.split(os.sep)[:-4], '__materials__'])
+    # init_files_path = os.path.join(material_path, 'data', 'init')
+
+    init_files_path = r"C:\Users\vcordonni\Desktop\dgc-learning-path-data-template\__materials__\data\init"
 
     # test your Cloud Function with each of the given files.
     for file_name in os.listdir(init_files_path):
