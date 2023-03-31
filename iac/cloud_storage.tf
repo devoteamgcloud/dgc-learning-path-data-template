@@ -33,7 +33,6 @@ resource "google_storage_bucket" "magasin_cie_landing" {
   lifecycle_rule {
     condition {
       age = 1000
-      matches_prefix = "archive/"
     }
     action {
       type = "Delete"
