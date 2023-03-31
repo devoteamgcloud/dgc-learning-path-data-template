@@ -7,31 +7,35 @@ WITH
   basket_temp AS (
     ----------------------------PART 1-----------------------------------
   SELECT
-    NULL AS `id_basket_header` CAST(SPLIT(id_cash_desk,"-")[
+    NULL AS `id_basket_header`,
+    CAST(SPLIT(id_cash_desk,"-")[
     OFFSET
       (0)] AS INT) AS `id_store`,
     CAST(SPLIT(id_cash_desk,"-")[
     OFFSET
       (1)] AS INT) AS `id_cash_desk`,
-    id_customer AS `id_customer` ARRAY(
+    id_customer AS `id_customer`,
+    ARRAY(
     SELECT
-      AS STRUCT product_name SUM(quatity) AS `quantity` AVG(unit_price) AS `unit_price`
+      AS STRUCT product_name, SUM(quatity) AS `quantity`, AVG(unit_price) AS `unit_price`,
     FROM
       UNNEST(detail)
     GROUP BY
-      detail.product_name )
+      detail.product_name ),
     CASE LOWER(payment_mode)
       WHEN 'cash' THEN 'Cash'
     ELSE
     'Card'
   END
     AS `payment_mode`,
-    PARSE_DATETIME("%d-%m-%Y %H:%M:%S", purchase_date) AS `purchase_date` update_time CURRENT_TIMESTAMP() AS `insertion_time`
+    PARSE_DATETIME("%d-%m-%Y %H:%M:%S", purchase_date) AS `purchase_date`,
+    update_time,
+    CURRENT_TIMESTAMP() AS `insertion_time`,
   FROM
     `{{ project_id }}.raw.basket`
     ----------------------------PART 2-----------------------------------
     --  Here we will use deduplication using Qualifying by row number
-    QUALIFY ROW_NUMBER() OVER(PARTITION BY id_store id_cash_desk id_customer purchase_date ORDER BY update_time DESC, ) = 1 ),
+    QUALIFY ROW_NUMBER() OVER(PARTITION BY id_store, id_cash_desk, id_customer, purchase_date ORDER BY update_time DESC ) = 1 ),
   -- create staging.basket table
   basket AS (
   SELECT
@@ -44,7 +48,7 @@ WITH
     purchase_date,
     b.payment_mode,
     b.update_time,
-    b.insertion_time,
+    b.insertion_time
   FROM
     basket_temp b
   LEFT JOIN
@@ -53,7 +57,7 @@ WITH
     b.id_store = h.id_store
     AND b.id_cash_desk = h.id_cash_desk
     AND b.id_customer = h.id_customer
-    AND b.purchase_date = h.purchase_date; ),
+    AND b.purchase_date = h.purchase_date ),
   maximum AS (
   SELECT
     CASE
