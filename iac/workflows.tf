@@ -37,3 +37,14 @@ resource "google_workflows_workflow" "customer_wkf" {
   source_contents =  file("../cloud_workflows/customer_wkf.yaml")
   depends_on = [google_project_service.workflows]
 }
+
+# Define and deploy the basket workflow
+resource "google_workflows_workflow" "customer_wkf" {
+  project         = var.project_id
+  name            = "customer_wkf"
+  region          = "europe-west1"
+  description     = "A basket workflow"
+  service_account = google_service_account.workflows_service_account.id
+  source_contents =  file("../cloud_workflows/customer_wkf.yaml")
+  depends_on = [google_project_service.workflows]
+}
