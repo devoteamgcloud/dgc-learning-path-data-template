@@ -3,4 +3,5 @@ SELECT
   country,
   coordinate,
   creation_date,
-FROM `sandbox-achaabene.cleaned.store`;
+FROM
+  `sandbox-achaabene.cleaned.store`;
