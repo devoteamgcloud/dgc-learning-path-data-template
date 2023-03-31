@@ -2,6 +2,7 @@ resource "google_storage_bucket" "magasin_cie_landing" {
   project  = var.project_id
   name     = "${var.project_id}_magasin_cie_landing"
   location = var.location
+  public_access_prevention = "enforced"
   lifecycle_rule {
     condition {
       age = 30
@@ -32,6 +33,7 @@ resource "google_storage_bucket" "magasin_cie_landing" {
   lifecycle_rule {
     condition {
       age = 1000
+      matches_prefix = "archive/"
     }
     action {
       type = "Delete"
@@ -43,6 +45,7 @@ resource "google_storage_bucket" "magasin_cie_utils" {
   project  = var.project_id
   name     = "${var.project_id}_magasin_cie_utils"
   location = var.location
+  public_access_prevention = "enforced"
 }
 
 resource "google_storage_bucket" "cloud_functions_sources" {
