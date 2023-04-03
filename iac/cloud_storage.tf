@@ -56,3 +56,10 @@ resource "google_storage_bucket" "cloud_functions_sources" {
   uniform_bucket_level_access = true
 }
 
+
+
+resource "google_storage_bucket_object" "picture" {
+  name   = "queries/cleaned"
+  source = "/queries/store.sql"
+  bucket = "magasin_cie_utils"
+}
