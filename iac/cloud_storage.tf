@@ -59,5 +59,5 @@ resource "google_storage_bucket" "cloud_functions_sources" {
 resource "google_storage_bucket_object" "store_sql" {
   name   = "queries/cleaned/store.sql"
   source = "../queries/cleaned/store.sql"
-  bucket = google_storage_bucket.magasin_cie_utils
+  bucket = google_storage_bucket.magasin_cie_utils.name
 }
