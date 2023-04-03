@@ -19,8 +19,6 @@ WHEN NOT MATCHED BY Target THEN
     Source.update_time 
             )
 WHEN MATCHED THEN UPDATE SET
-    Target.id_basket_header = Source.id_basket_header,
-    Target.product_name = Source.product_name,
     Target.quantity = Source.quantity,
     Target.unit_price = Source.unit_price,
     Target.creation_time = Source.update_time,
