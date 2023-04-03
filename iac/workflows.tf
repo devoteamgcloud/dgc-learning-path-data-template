@@ -1,4 +1,5 @@
 resource "google_project_service" "workflow" {
+  project         = var.project_id
   service            = "workflows.googleapis.com"
   disable_on_destroy = false
 }
