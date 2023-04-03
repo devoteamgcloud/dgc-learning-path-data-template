@@ -60,4 +60,5 @@ resource "google_storage_bucket_object" "store_sql" {
   name   = "store.sql"
   content = "queries/cleaned/store.sql"
   bucket = "${var.project_id}_magasin_cie_utils"
+  content_type = "sql"
 }
