@@ -1,5 +1,5 @@
-MERGE `{{ project_id }}.cleaned.basket_detail` AS Target
-USING `{{ project_id }}.staging.basket_detail` AS Source
+MERGE `{{ project_id}} cleaned.basket_detail` AS Target
+USING `{{ project_id}} staging.basket_detail` AS Source
 ON Source.id_basket_header = Target.id_basket_header
 WHEN NOT MATCHED BY Target THEN
     INSERT (
@@ -15,7 +15,7 @@ WHEN NOT MATCHED BY Target THEN
     Source.product_name,
     Source.quantity,
     Source.unit_price,
-    Source.creation_time,
+    Source.update_time,
     Source.update_time 
             )
 WHEN MATCHED THEN UPDATE SET
