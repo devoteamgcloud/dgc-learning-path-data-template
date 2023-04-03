@@ -25,3 +25,4 @@ WHEN MATCHED THEN UPDATE SET
     Target.unit_price = Source.unit_price,
     Target.creation_time = Source.update_time,
     Target.update_time = Source.update_time
+;
