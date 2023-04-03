@@ -17,3 +17,9 @@ resource "google_bigquery_table" "store" {
   table_id   = "store"
   project = var.project_id
 }
+
+resource "google_bigquery_table" "store" {
+  dataset_id = google_bigquery_dataset.cleaned.dataset_id
+  table_id   = "store"
+  project = var.project_id
+}
