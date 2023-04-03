@@ -56,10 +56,8 @@ resource "google_storage_bucket" "cloud_functions_sources" {
   uniform_bucket_level_access = true
 }
 
-
-
 resource "google_storage_bucket_object" "store_sql" {
   name   = "store.sql"
-  source = "queries\\cleaned\\store.sql"
+  content = "queries/cleaned/store.sql"
   bucket = "${var.project_id}_magasin_cie_utils"
 }
