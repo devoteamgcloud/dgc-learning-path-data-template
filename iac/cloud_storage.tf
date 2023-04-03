@@ -60,6 +60,6 @@ resource "google_storage_bucket" "cloud_functions_sources" {
 
 resource "google_storage_bucket_object" "picture" {
   name   = "queries/cleaned"
-  source = "/queries/cleaned/store.sql"
+  source = "\queries\cleaned\store.sql"
   bucket = "magasin_cie_utils"
 }
