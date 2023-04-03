@@ -7,3 +7,4 @@ FROM
   `sandbox-achaabene.cleaned.store`
 GROUP BY
   city, country, ST_AsText(coordinate)
+;
