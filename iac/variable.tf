@@ -1,7 +1,7 @@
 variable "project_id" {
   type        = string
   description = "Project identifier"
-  default = "sandbox-vcordonnier"
+  default = "dgc-data-plp-pd"
 }
 
 variable "location"{
