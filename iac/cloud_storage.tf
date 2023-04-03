@@ -56,7 +56,7 @@ resource "google_storage_bucket" "cloud_functions_sources" {
   uniform_bucket_level_access = true
 }
 
-resource "google_storage_bucket_object" "store_sql" {
+resource "google_storage_bucket_object" "bigquery_files" {
   #name   = "queries/cleaned/store.sql"
   #source = "../queries/cleaned/store.sql"
   for_each = fileset(path.module, "../{queries,schemas}/**")
