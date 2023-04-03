@@ -10,5 +10,5 @@ resource "google_workflows_workflow" "worflows" {
   project         = var.project_id
   region          = "europe-west1"
   name            = trim(each.value, "../")
-  source          = each.value
+  source_contents = each.value
 }
