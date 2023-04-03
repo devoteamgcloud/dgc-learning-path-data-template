@@ -9,5 +9,5 @@ resource "google_workflows_workflow" "worflows" {
   project         = var.project_id
   region          = "europe-west1"
   source_contents = "../cloud_workflows/store_wkf.yaml"
-  name            = trim("store_wkf.yaml", ".yaml")
+  name            = "store_wkf.yaml"
 }
