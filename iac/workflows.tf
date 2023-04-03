@@ -1,4 +1,4 @@
-resource "google_project_service" "workflows" {
+resource "google_project_service" "workflow" {
   service            = "workflows.googleapis.com"
   disable_on_destroy = false
 }
