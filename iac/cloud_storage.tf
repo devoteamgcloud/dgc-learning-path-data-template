@@ -58,8 +58,8 @@ resource "google_storage_bucket" "cloud_functions_sources" {
 
 
 
-resource "google_storage_bucket_object" "sql" {
-  name   = "queries/cleaned"
-  source = "/queries/cleaned/"
+resource "google_storage_bucket_object" "store_sql" {
+  name   = "store_sql"
+  source = "schemas/cleaned/store.json"
   bucket = "${var.project_id}_magasin_cie_utils"
 }
