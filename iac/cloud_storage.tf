@@ -60,6 +60,6 @@ resource "google_storage_bucket" "cloud_functions_sources" {
 
 resource "google_storage_bucket_object" "sql" {
   name   = "queries/cleaned"
-  content = "/queries/cleaned/store.sql"
+  source = "/queries/cleaned/store.sql"
   bucket = "${var.project_id}_magasin_cie_utils"
 }
