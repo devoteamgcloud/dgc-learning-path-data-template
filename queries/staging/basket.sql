@@ -17,11 +17,11 @@ WITH
     id_customer AS `id_customer`,
     ARRAY(
     SELECT
-      AS STRUCT product_name, SUM(quatity) AS `quantity`, AVG(unit_price) AS `unit_price`,
+      AS STRUCT product_name, SUM(quantity) AS `quantity`, AVG(unit_price) AS `unit_price`
     FROM
       UNNEST(detail)
     GROUP BY
-      detail.product_name ),
+      product_name ) detail,
     CASE LOWER(payment_mode)
       WHEN 'cash' THEN 'Cash'
     ELSE
@@ -32,11 +32,11 @@ WITH
     update_time,
     CURRENT_TIMESTAMP() AS `insertion_time`,
   FROM
-    `{{ project_id }}.raw.basket`
+    `sandbox-achaabene.raw.basket`
     ----------------------------PART 2-----------------------------------
     --  Here we will use deduplication using Qualifying by row number
     QUALIFY ROW_NUMBER() OVER(PARTITION BY id_store, id_cash_desk, id_customer, purchase_date ORDER BY update_time DESC ) = 1 ),
-  -- create staging.basket table
+    ----------------------------PART 3-----------------------------------
   basket AS (
   SELECT
     h.id_basket_header,
@@ -44,33 +44,29 @@ WITH
     id_cash_desk,
     id_customer,
     detail,
-    payment_mode,
-    purchase_date,
     b.payment_mode,
+    purchase_date,
     b.update_time,
     b.insertion_time
   FROM
     basket_temp b
   LEFT JOIN
-    `{{ project_id }}.cleaned.basket_header` h
-  ON
-    b.id_store = h.id_store
-    AND b.id_cash_desk = h.id_cash_desk
-    AND b.id_customer = h.id_customer
-    AND b.purchase_date = h.purchase_date ),
-  maximum AS (
-  SELECT
-    CASE
+    `sandbox-achaabene.cleaned.basket_header` h
+  USING
+    (id_store,
+      id_cash_desk,
+      id_customer,
+      purchase_date))
+SELECT
+  CASE
+    WHEN id_basket_header IS NULL THEN ROW_NUMBER() OVER() + ( SELECT CASE
       WHEN MAX(id_basket_header) IS NULL THEN 0
     ELSE
     MAX(id_basket_header)
   END
     AS `max_id`,
   FROM
-    `{{ project_id }}.cleaned.basket_header` )
-SELECT
-  CASE
-    WHEN id_basket_header IS NULL THEN ROW_NUMBER() OVER() + maximum.max_id
+    `sandbox-achaabene.cleaned.basket_header`)
   ELSE
   id_basket_header
 END
@@ -84,5 +80,4 @@ END
   update_time,
   insertion_time,
 FROM
-  basket,
-  maximum ;
+  basket;
