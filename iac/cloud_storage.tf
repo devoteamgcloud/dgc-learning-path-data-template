@@ -42,9 +42,9 @@ resource "google_storage_bucket" "magasin_cie_landing" {
 }
 
 resource "google_storage_bucket" "magasin_cie_utils" {
-  project  = var.project_id
-  name     = "${var.project_id}_magasin_cie_utils"
-  location = var.location
+  project                  = var.project_id
+  name                     = "${var.project_id}_magasin_cie_utils"
+  location                 = var.location
   public_access_prevention = "enforced"
 }
 
@@ -62,6 +62,6 @@ resource "google_storage_bucket_object" "bigquery_files" {
   for_each = fileset(path.module, "../{queries,schemas}/**")
   name     = trim(each.value, "../")
   source   = each.value
-  bucket = google_storage_bucket.magasin_cie_utils.name
+  bucket   = google_storage_bucket.magasin_cie_utils.name
 }
 
