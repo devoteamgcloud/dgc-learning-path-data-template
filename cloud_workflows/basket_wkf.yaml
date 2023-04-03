@@ -74,12 +74,6 @@
         configuration:
           query:
             query: ${text.replace_all(cleaned_basket_header_response.body, "{{ project_id }}", project_id)}
-            destinationTable:
-              projectId: ${project_id}
-              datasetId: cleaned
-              tableId: basket_header
-            create_disposition: ${create_disposition}
-            write_disposition: ${write_disposition}
             allowLargeResults: true
             useLegacySql: false
 # Cleaned basket detail
@@ -100,64 +94,6 @@
         configuration:
           query:
             query: ${text.replace_all(cleaned_basket_detail_response.body, "{{ project_id }}", project_id)}
-            destinationTable:
-              projectId: ${project_id}
-              datasetId: cleaned
-              tableId: basket_detail
-            create_disposition: ${create_disposition}
-            write_disposition: ${write_disposition}
-            allowLargeResults: true
-            useLegacySql: false
-# Aggregated open store
-- get_aggregated_open_store_query:
-    call: http.get
-    args:
-      url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/aggregated/open_store.sql"}
-      headers:
-        Content-Type: "text/plain"
-      auth:
-        type: OAuth2  
-    result: aggregated_open_store_response
-- insert_aggregated_open_store:
-    call: googleapis.bigquery.v2.jobs.insert
-    args:
-      projectId: ${project_id}
-      body:
-        configuration:
-          query:
-            query: ${text.replace_all(aggregated_open_store_response.body, "{{ project_id }}", project_id)}
-            destinationTable:
-              projectId: ${project_id}
-              datasetId: aggregated
-              tableId: open_store
-            create_disposition: ${create_disposition}
-            write_disposition: ${write_disposition}
-            allowLargeResults: true
-            useLegacySql: false
-# Aggregated customer purchase
-- get_aggregated_customer_purchase_query:
-    call: http.get
-    args:
-      url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/aggregated/customer_purchase.sql"}
-      headers:
-        Content-Type: "text/plain"
-      auth:
-        type: OAuth2  
-    result: aggregated_customer_purchase_response
-- insert_aggregated_customer_purchase:
-    call: googleapis.bigquery.v2.jobs.insert
-    args:
-      projectId: ${project_id}
-      body:
-        configuration:
-          query:
-            query: ${text.replace_all(aggregated_customer_purchase_response.body, "{{ project_id }}", project_id)}
-            destinationTable:
-              projectId: ${project_id}
-              datasetId: aggregated
-              tableId: customer_purchase
-            create_disposition: ${create_disposition}
-            write_disposition: ${write_disposition}
             allowLargeResults: true
             useLegacySql: false
 # Aggregated day sale
