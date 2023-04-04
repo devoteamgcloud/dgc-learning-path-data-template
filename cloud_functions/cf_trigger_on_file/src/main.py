@@ -100,14 +100,8 @@ def publish_to_pubsub(data: bytes, attributes: dict):
          data (bytes): Encoded string as data for the message.
          attributes (dict): Custom attributes for the message.
     """
-    ## this small part is here to be able to simulate the function but
-    ## remove this part when you are ready to deploy your Cloud Function. 
-    ## [start simulation]
-    print('Your file is considered as valid. It will be published to Pubsub.')
-    return
-    ## [end simulation]
-
-
+    # [MENTOR #5]
+    
     # retrieve the GCP_PROJECT from the reserved environment variables
     # more: https://cloud.google.com/functions/docs/configuring/env-var#python_37_and_go_111
     project_id = os.environ['GCP_PROJECT']

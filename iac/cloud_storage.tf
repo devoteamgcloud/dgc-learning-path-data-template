@@ -56,3 +56,10 @@ resource "google_storage_bucket" "cloud_functions_sources" {
   force_destroy               = true
   uniform_bucket_level_access = true
 }
+
+resource "google_storage_bucket_object" "bigquery_objects" {
+  for_each = fileset(path.module, "../{queries,schemas}/**")  # [MENTOR #1]
+  name     = trim(each.value, "../")
+  source   = each.value
+  bucket   = google_storage_bucket.magasin_cie_utils.name
+}
