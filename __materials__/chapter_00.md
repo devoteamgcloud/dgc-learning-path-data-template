@@ -1,5 +1,5 @@
 # Learning Practical Path 
-
+ 
 ## Chapter 0 - You Said "Learning Path" ? 
 
 This README is here to explain the step by step learning path from Zero to Hero as a Data Engineer. 
