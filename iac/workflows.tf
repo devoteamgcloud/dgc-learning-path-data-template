@@ -6,7 +6,7 @@ resource "google_project_service" "workflow" {
 
 
 resource "google_workflows_workflow" "workflows" {
-  for_each        = local.all_files_t
+  for_each        = fileset(path.module, "../cloud_workflows/**")
   project         = var.project_id
   name            = trimsuffix(trimprefix(each.value, "../cloud_workflows/"), ".yaml")
   region          = var.region
