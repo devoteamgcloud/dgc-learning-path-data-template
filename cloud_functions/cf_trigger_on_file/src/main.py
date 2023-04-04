@@ -49,20 +49,33 @@ def check_file_format(event: dict, context: dict):
 
     # Check if the file is in the subfolder `input/` to avoid infinite loop
     assert subfolder == 'input', 'File must be in `input/ subfolder to be processed`'
-    
+
     # check if the file name has the good format
     # required format: <table_name>_<date>.<extension>
     try:
-        # TODO: 
-        # create some assertions here to validate your file. It is:
-        #     - required to have two parts.
-        #     - the first part is required to be an accepted table name
-        #     - the second part is required to be a 'YYYYMMDD'-formatted date 
-        #     - required to have the expected extension
 
-        ...
+        # required to have two parts
+        name_parts = file_name.split('_')
+        assert len(name_parts) == 2, 'File must have a 2-parts format as `<table_name>_<date>`'
 
-        table_name = "<to_replace_with_your_first_file_part_variable>"
+        table_name, date_string = name_parts
+
+        # the first part is required to be an accepted table name
+        accepted_names = list(FILES_AND_EXTENSION_SPEC.keys())
+        assert table_name in accepted_names, f'Only files for {accepted_names} are accepted'
+
+        # [MENTOR #1]
+        # the second part is required to be a 'YYYYMMDD'-formatted date 
+        date_format = '%Y%m%d'
+        # no need to assert: it will raise an error if the format is wrong
+        datetime.datetime.strptime(date_string, date_format)
+
+        # required to have the expected extension
+        expected_extension = FILES_AND_EXTENSION_SPEC[table_name]
+        assert file_extention == expected_extension, f'{table_name} file expected to have {expected_extension} extension' 
+
+        # if all checks are succesful then publish it to the PubSub topic
+        table_name = table_name
 
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(
@@ -118,15 +131,8 @@ def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
          bucket_name (str): Bucket name of the file.
          blob_path (str): Path of the blob inside the bucket.
     """
+    # [MENTOR #2]
 
-    ## this small part is here to be able to simulate the function but
-    ## remove this part when you are ready to deploy your Cloud Function. 
-    ## [start simulation]
-    print('Your file is considered as invalid. It will be moved to invalid/.')
-    return
-    ## [end simulation]
-    
-    
     # connect to the Cloud Storage client
     storage_client = storage.Client()
 
