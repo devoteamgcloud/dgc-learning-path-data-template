@@ -21,8 +21,7 @@ steps:
   args:
   - '-c'
   - |
-    cd iac
-    cat init/backend.tfvars
+    cd iac 
     terraform init -reconfigure -input=false -no-color -upgrade -backend-config=init/backend.tfvars 
 # [END tf-init]
 
