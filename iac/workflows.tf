@@ -5,10 +5,10 @@ resource "google_project_service" "workflow" {
 }
 
 
-resource "google_workflows_workflow" "worflows" {  
-  for_each        = fileset(path.module, "../{cloud_workflows}/**")
+resource "google_workflows_workflow" "workflows" {
+  for_each        = local.all_files_t
   project         = var.project_id
-  region          = "europe-west1"
-  name            = trim(trim(each.value, "../"), ".yaml")
-  
+  name            = trimsuffix(trimprefix(each.value, "../cloud_workflows/"), ".yaml")
+  region          = var.region
+  source_contents = file(each.value)
 }
