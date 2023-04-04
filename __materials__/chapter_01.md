@@ -1,5 +1,5 @@
 # Learning Practical Path 
-
+ 
 ## Chapter 1 - Quick introduction to Data processing fundamentals. (2-3 days) 
 
 ### The Context
