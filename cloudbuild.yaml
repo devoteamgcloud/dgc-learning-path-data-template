@@ -22,7 +22,7 @@ steps:
   - '-c'
   - |
     cd iac 
-    terraform init -input=false -no-color -upgrade -backend-config=init/backend.tfvars -migrate-state
+    terraform init -input=false -no-color -upgrade -backend-config=init/backend.tfvars 
 # [END tf-init]
 
 # [START tf-plan]
