@@ -111,15 +111,30 @@ def move_file(bucket_name, blob_path, new_subfolder):
 
     # TODO: 1
     # Now you are confortable with the first Cloud Function you wrote. 
-    # Inspire youreslf from this first Cloud Function and:
+    # Inspire yourself from this first Cloud Function and:
     #     - connect to the Cloud Storage client
     #     - get the bucket object and the blob object
     #     - split the blob path to isolate the file name 
     #     - create your new blob path with the correct new subfolder given from the arguments
-    #     - move you file inside the bucket to its destination
+    #     - move your file inside the bucket to its destination
     #     - print the actual move you made
 
-    pass
+    # connect to the Cloud Storage client
+    storage_client = storage.Client()
+
+    # get the bucket object and the blob object
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(blob_path)
+    
+    # get the file name
+    subfolder, file_name = blob_path.split(os.sep) 
+    
+    # move the file to the desired subfolder
+    new_blob_path = blob_path.replace(subfolder, new_subfolder)
+    bucket.rename_blob(blob, new_blob_path)
+
+    print(f'{blob.name} moved to {new_blob_path}')
+    
 
 
 if __name__ == '__main__':
@@ -128,7 +143,7 @@ if __name__ == '__main__':
     # it will have no impact on the Cloud Function when deployed.
     import os
     
-    project_id = '<YOUR-PROJECT-ID>'
+    project_id = 'sandbox-vcordonnier'
 
     # test your Cloud Function for the store file.
     mock_event = {
