@@ -87,7 +87,7 @@ resource "google_cloudfunctions_function" "function_wtf" {
     source_archive_object = google_storage_bucket_object.zip_dispatch.name
 
     # Must match the function name in the cloud function `main.py` source code
-    entry_point           = "recieve_messages"
+    entry_point           = "receive_messages"
     
     # 
     event_trigger {
