@@ -76,22 +76,22 @@ resource "google_storage_bucket_object" "queries" {
 
 }
 
-resource "google_storage_bucket_object" "folder_upload" {
-  name = "input/"
-  bucket = "sandbox-cselmene_magasin_cie_landing_test"
-}
+# resource "google_storage_bucket_object" "folder_upload" {
+#   name = "input/"
+#   bucket = "sandbox-cselmene_magasin_cie_landing_test"
+# }
 
-resource "google_storage_bucket_object" "folder_upload2" {
-  name = "archive/"
-  bucket = "sandbox-cselmene_magasin_cie_landing_test"
-}
+# resource "google_storage_bucket_object" "folder_upload2" {
+#   name = "archive/"
+#   bucket = "sandbox-cselmene_magasin_cie_landing_test"
+# }
 
-resource "google_storage_bucket_object" "folder_upload3" {
-  name = "invalid/"
-  bucket = "sandbox-cselmene_magasin_cie_landing_test"
-}
+# resource "google_storage_bucket_object" "folder_upload3" {
+#   name = "invalid/"
+#   bucket = "sandbox-cselmene_magasin_cie_landing_test"
+# }
 
-resource "google_storage_bucket_object" "folder_upload4" {
-  name = "reject/"
-  bucket = "sandbox-cselmene_magasin_cie_landing_test"
-}
+# resource "google_storage_bucket_object" "folder_upload4" {
+#   name = "reject/"
+#   bucket = "sandbox-cselmene_magasin_cie_landing_test"
+# }
