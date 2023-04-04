@@ -1,5 +1,5 @@
 # Learning Practical Path 
-
+ 
 ## Chapter 2 - Google Gloud Storage & Lyfecycle Management (1 day)
 ### The Context
 
