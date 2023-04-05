@@ -78,12 +78,24 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     # construct the table id as `project_id.dataset_id.table_id`
     table_id = bigquery_client.dataset('raw').table(table_name)
 
+    # set the format informations
+    if blob_uri.endswith('json'): 
+        job_config_params = {
+            'source_format': bigquery.SourceFormat.NEWLINE_DELIMITED_JSON,
+        }
+    elif blob_uri.endswith('csv'):
+        job_config_params = {
+            'source_format': bigquery.SourceFormat.CSV,
+            'skip_leading_rows': 1,
+        }
+    else:
+        raise Exception(f'Unknown format for file {blob_uri}')
+
     # create job configuration to load the file into BigQuery
     job_config = bigquery.LoadJobConfig(
         schema=schema,
-        write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE,  # [MENTOR #6]
-        source_format=bigquery.SourceFormat.CSV,
-        skip_leading_rows=1,
+        write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE,
+        **job_config_params
     )
 
     # run the loading job

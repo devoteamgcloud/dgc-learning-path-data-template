@@ -1,5 +1,5 @@
 # Learning Practical Path 
-
+ 
 ## Chapter 6 - Advanced SQL & GDPR (3 days)
 
 ![Your mission architecture](img/architecture_bigquery.png)
