@@ -35,8 +35,8 @@ WITH
     `{{ project_id }}.raw.basket`
 
   QUALIFY ROW_NUMBER() OVER(
-    PARTITION BY i
-      d_store, 
+    PARTITION BY 
+      id_store, 
       id_cash_desk, 
       id_customer, 
       purchase_date 
