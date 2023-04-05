@@ -15,7 +15,6 @@ resource "google_bigquery_dataset" "cleaned" {
   friendly_name               = "test"
   description                 = "This is a dataset named cleaned"
   location                    = "EU"
-
 }
 
 # Create dataset staging
@@ -25,7 +24,6 @@ resource "google_bigquery_dataset" "staging" {
   friendly_name               = "test"
   description                 = "This is a dataset named staging"
   location                    = "EU"
-
 }
 
 # Create dataset aggregated
@@ -35,7 +33,6 @@ resource "google_bigquery_dataset" "aggregated" {
   friendly_name               = "test"
   description                 = "This is a dataset named aggregated"
   location                    = "EU"
-
 }
 
 
@@ -46,7 +43,6 @@ resource "google_bigquery_table" "raw_store" {
   dataset_id = google_bigquery_dataset.raw.dataset_id
   table_id   = "store"
   schema = file("../schemas/raw/store.json")
-  deletion_protection = false
 }
 
 resource "google_bigquery_table" "cleaned_store" {
@@ -54,7 +50,6 @@ resource "google_bigquery_table" "cleaned_store" {
   dataset_id = google_bigquery_dataset.cleaned.dataset_id
   table_id   = "store"
   schema = file("../schemas/cleaned/store.json")
-  deletion_protection = false
 }
 
 resource "google_bigquery_table" "view_open_store" {
@@ -73,7 +68,6 @@ resource "google_bigquery_table" "raw_customer" {
   dataset_id = google_bigquery_dataset.raw.dataset_id
   table_id   = "customer"
   schema = file("../schemas/raw/customer.json")
-  deletion_protection = false
 }
 
 resource "google_bigquery_table" "staging_customer" {
@@ -81,7 +75,6 @@ resource "google_bigquery_table" "staging_customer" {
   dataset_id = google_bigquery_dataset.staging.dataset_id
   table_id   = "customer"
   schema = file("../schemas/staging/customer.json")
-  deletion_protection = false
 }
 
 resource "google_bigquery_table" "cleaned_customer" {
@@ -89,7 +82,6 @@ resource "google_bigquery_table" "cleaned_customer" {
   dataset_id = google_bigquery_dataset.cleaned.dataset_id
   table_id   = "customer"
   schema = file("../schemas/cleaned/customer.json")
-  deletion_protection = false
 }
 
 resource "google_bigquery_table" "view_customer_purchase" {
@@ -108,7 +100,6 @@ resource "google_bigquery_table" "raw_basket" {
   dataset_id = google_bigquery_dataset.raw.dataset_id
   table_id   = "basket"
   schema = file("../schemas/raw/basket.json")
-  deletion_protection = false
 }
 
 resource "google_bigquery_table" "staging_basket" {
@@ -116,7 +107,6 @@ resource "google_bigquery_table" "staging_basket" {
   dataset_id = google_bigquery_dataset.staging.dataset_id
   table_id   = "basket"
   schema = file("../schemas/staging/basket.json")
-  deletion_protection = false
 }
 
 resource "google_bigquery_table" "staging_basket_detail" {
@@ -124,7 +114,6 @@ resource "google_bigquery_table" "staging_basket_detail" {
   dataset_id = google_bigquery_dataset.staging.dataset_id
   table_id   = "basket_detail"
   schema = file("../schemas/staging/basket_detail.json")
-  deletion_protection = false
 }
 
 resource "google_bigquery_table" "cleaned_basket_header" {
@@ -132,7 +121,6 @@ resource "google_bigquery_table" "cleaned_basket_header" {
   dataset_id = google_bigquery_dataset.cleaned.dataset_id
   table_id   = "basket_header"
   schema = file("../schemas/cleaned/basket_header.json")
-  deletion_protection = false
 }
 
 resource "google_bigquery_table" "cleaned_basket_detail" {
@@ -140,7 +128,6 @@ resource "google_bigquery_table" "cleaned_basket_detail" {
   dataset_id = google_bigquery_dataset.cleaned.dataset_id
   table_id   = "basket_detail"
   schema = file("../schemas/cleaned/basket_detail.json")
-  deletion_protection = false
 }
 
 resource "google_bigquery_table" "aggregated_day_sale" {
@@ -148,7 +135,6 @@ resource "google_bigquery_table" "aggregated_day_sale" {
   dataset_id = google_bigquery_dataset.aggregated.dataset_id
   table_id   = "day_sale"
   schema = file("../schemas/aggregated/day_sale.json")
-  deletion_protection = false
 }
 
 resource "google_bigquery_table" "aggregated_best_product_sale" {
@@ -156,7 +142,6 @@ resource "google_bigquery_table" "aggregated_best_product_sale" {
   dataset_id = google_bigquery_dataset.aggregated.dataset_id
   table_id   = "best_product_sale"
   schema = file("../schemas/aggregated/best_product_sale.json")
-  deletion_protection = false
 }
 
 
