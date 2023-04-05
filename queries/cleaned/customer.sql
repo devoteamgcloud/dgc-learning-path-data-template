@@ -7,6 +7,6 @@ INSERT
 WHEN MATCHED THEN
   UPDATE SET
     Target.update_time = Source.update_time,
-    Target.first_name = Source.first_name
-    Target.last_name = Source.last_name
+    Target.first_name = Source.first_name,
+    Target.last_name = Source.last_name,
     Target.email = Source.email
