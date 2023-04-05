@@ -2,13 +2,15 @@ import os
 import time
 import json
 import base64
-import yaml
+import logging
 
 from google.cloud import storage
 from google.cloud import bigquery
 from google.cloud import workflows_v1beta
 from google.cloud.workflows import executions_v1beta
 from google.cloud.workflows.executions_v1beta.types import executions
+
+logger = logging.getLogger("cf_trigger_logs")
 
 
 def receive_messages(event: dict, context: dict):
@@ -23,11 +25,11 @@ def receive_messages(event: dict, context: dict):
          context (google.cloud.functions.Context): Metadata for the event.
     """
 
-    print("I'm here : receive messages")
+    logger.debug("I'm here : receive messages")
 
     # rename the variable to be more specific and write it to the logs
     pubsub_event = event
-    print(pubsub_event)
+    logger.info(pubsub_event)
 
     # decode the data giving the targeted table name
     table_name = base64.b64decode(pubsub_event['data']).decode('utf-8')
@@ -42,16 +44,16 @@ def receive_messages(event: dict, context: dict):
         insert_into_raw(table_name, bucket_name, blob_path)
         move_file(bucket_name, blob_path, 'archive')
         load_completed = True
-        print("Inserted data into bigquery")
+        logger.info("Inserted data into bigquery")
 
     except Exception as e:
-        print(e)
+        logger.warning(e)
         move_file(bucket_name, blob_path, 'reject')
 
     # trigger the pipeline if the load is completed
     if load_completed:
         trigger_worflow(table_name)
-        print("Trigger the pipeline after inserting data")
+        logger.info("Trigger the pipeline after inserting data")
 
 
 def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
@@ -68,14 +70,15 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     storage_client = storage.Client()
 
     # get the util bucket object using the os environments
-    project_id = os.environ['PROJECT_ID']
-    bucket = storage_client.bucket(f"{project_id}_magasin_cie_utils")
+    project_id = os.environ['GCP_PROJECT']
+    bucket = storage_client.bucket(
+        f"{project_id}_{os.environ['util_bucket_suffix']}")
 
     # loads the schema of the table as a json (dictionary) from the bucket
     source_blob = bucket.blob(f"schemas/raw/{table_name}.json")
     content_bucket = source_blob.download_as_string().decode("utf-8")
     table_schema = json.loads(content_bucket)
-    print("Sucessufly loaded the schema")
+    logger.info("Sucessufly loaded the schema")
 
     # store in a string variable the blob uri path of the data to load (gs://your-bucket/your/path/to/data)
     blob_uri = f"gs://{bucket_name}/{blob_path}"
@@ -96,7 +99,7 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
         raise Exception(f"Cannot find file extension for {blob_path}")
 
     if file_extension == "csv":
-        print("Ingest csv file")
+        logger.debug("Ingest csv file")
         job_config = bigquery.LoadJobConfig(
             schema=table_schema,
             skip_leading_rows=1,
@@ -104,7 +107,7 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
             # estination=table
         )
     elif file_extension == "json":
-        print("Ingest json file")
+        logger.debug("Ingest json file")
         job_config = bigquery.LoadJobConfig(
             schema=table_schema,
             source_format=bigquery.SourceFormat.NEWLINE_DELIMITED_JSON,
@@ -113,20 +116,20 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     else:
         raise Exception(f"Unvalid extension {file_extension}")
 
-    print("Created load job config")
+    logger.info("Created load job config")
 
     # and run your loading job from the blob uri to the destination raw table
     try:
         load_job = bq_client.load_table_from_uri(
             blob_uri, table_id, job_config=job_config)  # Make an API request.
-        print("Running job")
+        logger.info("Running job")
     except Exception as e:
-        print(f"Cannot load blob : {e}")
+        logger.warning(f"Cannot load blob : {e}")
 
     # waits the job to finish and print the number of rows inserted
     load_job.result()
     destination_table = bq_client.get_table(table_id)
-    print(f"Loaded {destination_table.num_rows}")
+    logger.info(f"Loaded {destination_table.num_rows}")
     pass
 
 
@@ -139,8 +142,8 @@ def trigger_worflow(table_name: str):
     """
 
     # check : https://cloud.google.com/workflows/docs/executing-workflow
-    project = os.environ['PROJECT_ID']
-    location = "europe-west1"
+    project = os.environ['GCP_PROJECT']
+    location = os.environ['wkf_location']
     workflow = f'{table_name}_wkf'
 
     # trigger a Cloud Workflows execution according to the table updated
@@ -152,12 +155,12 @@ def trigger_worflow(table_name: str):
 
     # Execute the workflow.
     response = execution_client.create_execution(request={"parent": parent})
-    print(f"Created execution: {response.name}")
+    logger.info(f"Created execution: {response.name}")
 
     # wait for the result (with exponential backoff delay will be better)
     execution_finished = False
     backoff_delay = 1  # Start wait with delay of 1 second
-    print('Poll every second for result...')
+    logger.info('Poll every second for result...')
     while (not execution_finished):
         execution = execution_client.get_execution(
             request={"name": response.name})
@@ -165,12 +168,13 @@ def trigger_worflow(table_name: str):
 
         # If we haven't seen the result yet, wait a second.
         if not execution_finished:
-            print('- Waiting for results...')
+            logger.info('- Waiting for results...')
             time.sleep(backoff_delay)
             backoff_delay *= 2  # Double the delay to provide exponential backoff.
         else:
-            print(f'Execution finished with state: {execution.state.name}')
-            print(execution.result)
+            logger.info(
+                f'Execution finished with state: {execution.state.name}')
+            logger.info(execution.result)
             return execution.result
 
     # be verbose where you think you have to
@@ -209,21 +213,20 @@ def move_file(bucket_name, blob_path, new_subfolder):
 
     # print the actual move you made
     #.      See documentation
-    print("Blob {} in bucket {} moved to blob {} in bucket {}.".format(
+    logger.info("Blob {} in bucket {} moved to blob {} in bucket {}.".format(
         blob.name,
         bucket.name,
         new_blob.name,
         bucket.name,
     ))
 
-    print(f'{blob_path} moved to {new_blob_path}')
+    logger.info(f'{blob_path} moved to {new_blob_path}')
 
 
 if __name__ == '__main__':
 
     # here you can test with mock data the function in your local machine
     # it will have no impact on the Cloud Function when deployed.
-    import os
 
     project_id = 'sandbox-achaabene'
 

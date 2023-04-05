@@ -1,12 +1,15 @@
 import os
 import datetime
+import logging
 from google.cloud import storage
 from google.cloud import pubsub_v1
 
+logger = logging.getLogger("cf_trigger_logs")
+
 # This dictionary gives your the requirements and the specifications of the kind
 # of files you can receive.
-#     - the keys are the names of the files
-#     - the values give the required extension for each file
+# the keys are the names of the files
+# the values give the required extension for each file
 
 FILES_AND_EXTENSION_SPEC = {
     'store': 'csv',
@@ -27,11 +30,11 @@ def check_file_format(event: dict, context: dict):
          context (google.cloud.functions.Context): Metadata for the event.
     """
 
-    print("I'm here : check file format")
+    logger.debug("I'm here : check file format")
 
     # rename the variable to be more specific and write it to the logs
     blob_event = event
-    print(f'Processing blob: {blob_event["name"]}.')
+    logger.info(f'Processing blob: {blob_event["name"]}.')
 
     # get the bucket name and the blob path
     bucket_name = blob_event['bucket']
@@ -45,38 +48,36 @@ def check_file_format(event: dict, context: dict):
     # Check if the file is in the subfolder `input/` to avoid infinite loop
     assert subfolder == 'input', 'File must be in `input/ subfolder to be processed`'
 
-    print(f'Bucket name: {bucket_name}')
-    print(f'File path: {blob_path}')
-    print(f'Subfolder: {subfolder}')
-    print(f'Full file name: {file}')
-    print(f'File name: {file_name}')
-    print(f'File Extension: {file_extention}')
+    logger.info(f'Bucket name: {bucket_name}')
+    logger.info(f'File path: {blob_path}')
+    logger.info(f'Subfolder: {subfolder}')
+    logger.info(f'Full file name: {file}')
+    logger.info(f'File name: {file_name}')
+    logger.info(f'File Extension: {file_extention}')
 
     # check if the file name has the good format
     # required format: <table_name>_<date>.<extension>
     try:
-        # TODO:
-        # create some assertions here to validate your file. It is:
-        #     - required to have two parts.
+        # required to have two parts.
         assert len(file_name.split("_")) == 2
-        print("Passed test 1 : have two parts")
+        logger.debug("Passed test 1 : have two parts")
 
         table_name = file_name.split("_")[0]
         date = file_name.split("_")[1]
 
-        #     - the first part is required to be an accepted table name
+        # the first part is required to be an accepted table name
         assert table_name in list(FILES_AND_EXTENSION_SPEC.keys())
-        print("Passed test 2 : valid table name")
+        logger.debug("Passed test 2 : valid table name")
 
-        #     - the second part is required to be a 'YYYYMMDD'-formatted date
+        # the second part is required to be a 'YYYYMMDD'-formatted date
         try:
             datetime.datetime.strptime(date, '%Y%m%d')
         except:
             raise Exception("Unvalid suffix format")
 
-        #     - required to have the expected extension
+        # required to have the expected extension
         assert file_extention in ["csv", "json"]
-        print("Passed test 3 : recognized extension")
+        logger.debug("Passed test 3 : recognized extension")
 
         if file_extention == 'csv':
             assert table_name in ["store", "customer"]
@@ -84,7 +85,7 @@ def check_file_format(event: dict, context: dict):
         if file_extention == 'json':
             assert table_name == "basket"
 
-        print("Passed test 4 : valid extension")
+        logger.debug("Passed test 4 : valid extension")
 
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(data=table_name.encode('utf-8'),
@@ -94,7 +95,7 @@ def check_file_format(event: dict, context: dict):
                           })
 
     except Exception as e:
-        print(e)
+        logger.warning(e)
         # the file is moved to the invalid/ folder if one check is failed
         move_to_invalid_file_folder(bucket_name, blob_path)
 
@@ -108,12 +109,12 @@ def publish_to_pubsub(data: bytes, attributes: dict):
          attributes (dict): Custom attributes for the message.
     """
 
-    print('Your file is considered as valid. It will be published to Pubsub.')
+    logger.info('Your file is considered as valid. It will be published to Pubsub.')
 
-    # retrieve the PROJECT_ID from the reserved environment variables
+    # retrieve the GCP_PROJECT from the reserved environment variables
     # more: https://cloud.google.com/functions/docs/configuring/env-var#python_37_and_go_111
-    project_id = os.environ['PROJECT_ID']
-    topic_id = "valid_file"
+    project_id = os.environ['GCP_PROJECT']
+    topic_id = os.environ['pubsub_topic_id']
 
     # connect to the PubSub client
     publisher = pubsub_v1.PublisherClient()
@@ -122,8 +123,8 @@ def publish_to_pubsub(data: bytes, attributes: dict):
     topic_path = publisher.topic_path(project_id, topic_id)
     future = publisher.publish(topic_path, data, **attributes)
 
-    print(future.result())
-    print(f'Published messages with custom attributes to {topic_path}.')
+    logger.info(future.result())
+    logger.info(f'Published messages with custom attributes to {topic_path}.')
 
 
 def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
@@ -135,12 +136,7 @@ def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
          blob_path (str): Path of the blob inside the bucket.
     """
 
-    ## this small part is here to be able to simulate the function but
-    ## remove this part when you are ready to deploy your Cloud Function.
-    ## [start simulation]
-    print('Your file is considered as invalid. It will be moved to invalid/.')
-    # return
-    ## [end simulation]
+    logger.info('Your file is considered as invalid. It will be moved to invalid/.')
 
     # connect to the Cloud Storage client
     storage_client = storage.Client()
@@ -151,7 +147,7 @@ def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
     new_blob_path = blob_path.replace('input', 'invalid')
     bucket.rename_blob(blob, new_blob_path)
 
-    print(f'{blob.name} moved to {new_blob_path}')
+    logger.info(f'{blob.name} moved to {new_blob_path}')
 
 
 if __name__ == '__main__':
@@ -168,7 +164,7 @@ if __name__ == '__main__':
 
     # test your Cloud Function with each of the given files.
     for file_name in os.listdir(init_files_path):
-        print(f'\nTesting your file {file_name}')
+        logger.info(f'\nTesting your file {file_name}')
         mock_event = {
             'bucket': f'{project_id}_magasin_cie_landing',
             'name': os.path.join('input', file_name)
