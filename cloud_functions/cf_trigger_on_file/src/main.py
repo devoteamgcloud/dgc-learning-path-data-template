@@ -1,10 +1,14 @@
 import os
+import yaml
 import datetime
 import logging
-from google.cloud import storage
-from google.cloud import pubsub_v1
+# from google.cloud import storage
+# from google.cloud import pubsub_v1
 
 logger = logging.getLogger("cf_trigger_logs")
+
+with open('cloud_functions/cf_trigger_on_file/env.yaml', 'r') as f:
+    env_vars = yaml.load(f, Loader=yaml.SafeLoader)
 
 # This dictionary gives your the requirements and the specifications of the kind
 # of files you can receive.
@@ -109,12 +113,13 @@ def publish_to_pubsub(data: bytes, attributes: dict):
          attributes (dict): Custom attributes for the message.
     """
 
-    logger.info('Your file is considered as valid. It will be published to Pubsub.')
+    logger.info(
+        'Your file is considered as valid. It will be published to Pubsub.')
 
     # retrieve the GCP_PROJECT from the reserved environment variables
     # more: https://cloud.google.com/functions/docs/configuring/env-var#python_37_and_go_111
     project_id = os.environ['GCP_PROJECT']
-    topic_id = os.environ['pubsub_topic_id']
+    topic_id = env_vars['pubsub_topic_id']
 
     # connect to the PubSub client
     publisher = pubsub_v1.PublisherClient()
@@ -136,7 +141,8 @@ def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
          blob_path (str): Path of the blob inside the bucket.
     """
 
-    logger.info('Your file is considered as invalid. It will be moved to invalid/.')
+    logger.info(
+        'Your file is considered as invalid. It will be moved to invalid/.')
 
     # connect to the Cloud Storage client
     storage_client = storage.Client()

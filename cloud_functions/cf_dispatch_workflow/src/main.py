@@ -2,6 +2,7 @@ import os
 import time
 import json
 import base64
+import yaml
 import logging
 
 from google.cloud import storage
@@ -11,6 +12,9 @@ from google.cloud.workflows import executions_v1beta
 from google.cloud.workflows.executions_v1beta.types import executions
 
 logger = logging.getLogger("cf_trigger_logs")
+
+with open('cloud_functions/cf_dispatch_workflow/env.yaml', 'r') as f:
+    env_vars = yaml.load(f, Loader=yaml.SafeLoader)
 
 
 def receive_messages(event: dict, context: dict):
@@ -72,7 +76,7 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     # get the util bucket object using the os environments
     project_id = os.environ['GCP_PROJECT']
     bucket = storage_client.bucket(
-        f"{project_id}_{os.environ['util_bucket_suffix']}")
+        f"{project_id}_{env_vars['util_bucket_suffix']}")
 
     # loads the schema of the table as a json (dictionary) from the bucket
     source_blob = bucket.blob(f"schemas/raw/{table_name}.json")
@@ -143,7 +147,7 @@ def trigger_worflow(table_name: str):
 
     # check : https://cloud.google.com/workflows/docs/executing-workflow
     project = os.environ['GCP_PROJECT']
-    location = os.environ['wkf_location']
+    location = env_vars['wkf_location']
     workflow = f'{table_name}_wkf'
 
     # trigger a Cloud Workflows execution according to the table updated
