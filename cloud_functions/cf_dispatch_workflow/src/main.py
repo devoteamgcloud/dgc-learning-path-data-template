@@ -79,7 +79,7 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     storage_client = storage.Client()
     
     # getting the util bucket object
-    bucket_title = f'{os.environ["project_id"]}_{os.environ["util_bucket_suffix"]}'
+    bucket_title = f'{os.environ["GCP_PROJECT"]}_{os.environ["util_bucket_suffix"]}'
     bucket_util = storage_client.bucket(bucket_title)
 
     # loads the schema of the table as a json (dictionary) from the bucket
