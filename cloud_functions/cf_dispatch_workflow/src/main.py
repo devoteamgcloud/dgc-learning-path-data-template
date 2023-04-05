@@ -71,8 +71,8 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
 
     # get the util bucket object using the os environments
     project_id = os.environ['GCP_PROJECT']
-    bucket = storage_client.bucket(
-        f"{project_id}_{os.environ['UTIL_BUCKET_SUFFIX']}")
+    # bucket = storage_client.bucket(f"{project_id}_{os.environ['UTIL_BUCKET_SUFFIX']}")
+    bucket = storage_client.bucket(f"{project_id}_magasin_cie_utils")
 
     # loads the schema of the table as a json (dictionary) from the bucket
     source_blob = bucket.blob(f"schemas/raw/{table_name}.json")
@@ -143,7 +143,8 @@ def trigger_worflow(table_name: str):
 
     # check : https://cloud.google.com/workflows/docs/executing-workflow
     project = os.environ['GCP_PROJECT']
-    location = os.environ['WKF_LOCATION']
+    # location = os.environ['WKF_LOCATION']
+    location = 'europe-west1'
     workflow = f'{table_name}_wkf'
 
     # trigger a Cloud Workflows execution according to the table updated
