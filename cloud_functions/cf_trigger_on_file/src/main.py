@@ -4,9 +4,9 @@ from google.cloud import storage
 from google.cloud import pubsub_v1
 
 # This dictionary gives your the requirements and the specifications of the kind
-# of files you can receive. 
+# of files you can receive.
 #     - the keys are the names of the files
-#     - the values give the required extension for each file 
+#     - the values give the required extension for each file
 
 FILES_AND_EXTENSION_SPEC = {
     'store': 'csv',
@@ -38,9 +38,9 @@ def check_file_format(event: dict, context: dict):
     blob_path = blob_event['name']
 
     # get the subfolder, the file name and its extension
-    *subfolder, file = blob_path.split(os.sep)  
-    subfolder =  os.path.join(*subfolder) if subfolder != [] else ''
-    file_name, file_extention = file.split('.') 
+    *subfolder, file = blob_path.split(os.sep)
+    subfolder = os.path.join(*subfolder) if subfolder != [] else ''
+    file_name, file_extention = file.split('.')
 
     # Check if the file is in the subfolder `input/` to avoid infinite loop
     assert subfolder == 'input', 'File must be in `input/ subfolder to be processed`'
@@ -55,7 +55,7 @@ def check_file_format(event: dict, context: dict):
     # check if the file name has the good format
     # required format: <table_name>_<date>.<extension>
     try:
-        # TODO: 
+        # TODO:
         # create some assertions here to validate your file. It is:
         #     - required to have two parts.
         assert len(file_name.split("_")) == 2
@@ -63,12 +63,12 @@ def check_file_format(event: dict, context: dict):
 
         table_name = file_name.split("_")[0]
         date = file_name.split("_")[1]
-        
+
         #     - the first part is required to be an accepted table name
         assert table_name in list(FILES_AND_EXTENSION_SPEC.keys())
         print("Passed test 2 : valid table name")
 
-        #     - the second part is required to be a 'YYYYMMDD'-formatted date 
+        #     - the second part is required to be a 'YYYYMMDD'-formatted date
         try:
             datetime.datetime.strptime(date, '%Y%m%d')
         except:
@@ -80,20 +80,18 @@ def check_file_format(event: dict, context: dict):
 
         if file_extention == 'csv':
             assert table_name in ["store", "customer"]
-        
+
         if file_extention == 'json':
             assert table_name == "basket"
 
         print("Passed test 4 : valid extension")
 
         # if all checks are succesful then publish it to the PubSub topic
-        publish_to_pubsub(
-            data=table_name.encode('utf-8'),
-            attributes={
-                'bucket_name': bucket_name, 
-                'blob_path': blob_path
-            }
-        )
+        publish_to_pubsub(data=table_name.encode('utf-8'),
+                          attributes={
+                              'bucket_name': bucket_name,
+                              'blob_path': blob_path
+                          })
 
     except Exception as e:
         print(e)
@@ -109,19 +107,14 @@ def publish_to_pubsub(data: bytes, attributes: dict):
          data (bytes): Encoded string as data for the message.
          attributes (dict): Custom attributes for the message.
     """
-    ## this small part is here to be able to simulate the function but
-    ## remove this part when you are ready to deploy your Cloud Function. 
-    ## [start simulation]
+
     print('Your file is considered as valid. It will be published to Pubsub.')
-    # return
-    ## [end simulation]
 
-
-    # retrieve the GCP_PROJECT from the reserved environment variables
+    # retrieve the PROJECT_ID from the reserved environment variables
     # more: https://cloud.google.com/functions/docs/configuring/env-var#python_37_and_go_111
-    project_id = "sandbox-achaabene"
+    project_id = os.environ['PROJECT_ID']
     topic_id = "valid_file"
-    
+
     # connect to the PubSub client
     publisher = pubsub_v1.PublisherClient()
 
@@ -131,6 +124,7 @@ def publish_to_pubsub(data: bytes, attributes: dict):
 
     print(future.result())
     print(f'Published messages with custom attributes to {topic_path}.')
+
 
 def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
     """
@@ -142,13 +136,12 @@ def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
     """
 
     ## this small part is here to be able to simulate the function but
-    ## remove this part when you are ready to deploy your Cloud Function. 
+    ## remove this part when you are ready to deploy your Cloud Function.
     ## [start simulation]
     print('Your file is considered as invalid. It will be moved to invalid/.')
     # return
     ## [end simulation]
-    
-    
+
     # connect to the Cloud Storage client
     storage_client = storage.Client()
 
@@ -162,15 +155,15 @@ def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
 
 
 if __name__ == '__main__':
-    
+
     # here you can test with mock data the function in your local machine
     # it will have no impact on the Cloud Function when deployed.
-    import os
-    
+
     project_id = 'sandbox-achaabene'
 
     realpath = os.path.realpath(__file__)
-    material_path = os.sep.join(['', *realpath.split(os.sep)[:-4], '__materials__'])
+    material_path = os.sep.join(
+        ['', *realpath.split(os.sep)[:-4], '__materials__'])
     init_files_path = os.path.join(material_path, 'data', 'init')
 
     # test your Cloud Function with each of the given files.

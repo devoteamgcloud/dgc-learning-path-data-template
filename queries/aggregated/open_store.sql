@@ -1,8 +1,8 @@
 SELECT
   city,
   country,
-  ST_AsText(coordinate) as coordinate,
-  MAX(creation_date) AS latest_creation_date
+  ST_AsText(coordinate)       AS coordinate,
+  MAX(creation_date)          AS latest_creation_date
 FROM
   `sandbox-achaabene.cleaned.store`
 GROUP BY

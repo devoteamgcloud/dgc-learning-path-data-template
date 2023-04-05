@@ -24,6 +24,7 @@ def receive_messages(event: dict, context: dict):
     """
 
     print("I'm here : receive messages")
+
     # rename the variable to be more specific and write it to the logs
     pubsub_event = event
     print(pubsub_event)
@@ -63,36 +64,31 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
          blob_path (str): Path of the blob inside the bucket.
     """
 
-    # TODO: 2
-    # You have to try to insert the file into the correct raw table using the python BigQuery Library.
-    # Please, refer yourself to the documentation and StackOverflow is still your friend ;)
-    # As an help, you can follow those instructions:
-
-    #     - connect to the Cloud Storage client
+    # connect to the Cloud Storage client
     storage_client = storage.Client()
 
-    #     - get the util bucket object using the os environments
-    project_id = "sandbox-achaabene"
-
-    #     - loads the schema of the table as a json (dictionary) from the bucket
+    # get the util bucket object using the os environments
+    project_id = os.environ['PROJECT_ID']
     bucket = storage_client.bucket(f"{project_id}_magasin_cie_utils")
+
+    # loads the schema of the table as a json (dictionary) from the bucket
     source_blob = bucket.blob(f"schemas/raw/{table_name}.json")
     content_bucket = source_blob.download_as_string().decode("utf-8")
     table_schema = json.loads(content_bucket)
     print("Sucessufly loaded the schema")
 
-    #     - store in a string variable the blob uri path of the data to load (gs://your-bucket/your/path/to/data)
+    # store in a string variable the blob uri path of the data to load (gs://your-bucket/your/path/to/data)
     blob_uri = f"gs://{bucket_name}/{blob_path}"
 
-    #     - connect to the BigQuery Client
+    # connect to the BigQuery Client
     bq_client = bigquery.Client(project_id)
 
-    #     - store in a string variable the table id with the bigquery client. (project_id.dataset_id.table_name)
+    # store in a string variable the table id with the bigquery client. (project_id.dataset_id.table_name)
     table = bq_client.get_dataset("raw")
     dataset_id = table.dataset_id
     table_id = f"{project_id}.{dataset_id}.{table_name}"
 
-    #     - create your LoadJobConfig object from the BigQuery librairy
+    # create your LoadJobConfig object from the BigQuery librairy
     # find config based on file extension
     try:
         file_extension = blob_path.split('.')[-1].lower()
@@ -119,7 +115,7 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
 
     print("Created load job config")
 
-    #     - and run your loading job from the blob uri to the destination raw table
+    # and run your loading job from the blob uri to the destination raw table
     try:
         load_job = bq_client.load_table_from_uri(
             blob_uri, table_id, job_config=job_config)  # Make an API request.
@@ -127,13 +123,10 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     except Exception as e:
         print(f"Cannot load blob : {e}")
 
-    #     - waits the job to finish and print the number of rows inserted
+    # waits the job to finish and print the number of rows inserted
     load_job.result()
     destination_table = bq_client.get_table(table_id)
     print(f"Loaded {destination_table.num_rows}")
-
-    # note: this is not a small function. Take the day or more if you have to.
-
     pass
 
 
@@ -146,15 +139,11 @@ def trigger_worflow(table_name: str):
     """
 
     # check : https://cloud.google.com/workflows/docs/executing-workflow
-    project = "sandbox-achaabene"
+    project = os.environ['PROJECT_ID']
     location = "europe-west1"
     workflow = f'{table_name}_wkf'
 
-    # TODO: 3
-    # This is your final function to implement.
-    # At this time, I hope you are more confortable with the Google Documentations for Python libraries.
-    # So your are not guide except this little help:
-    #     - trigger a Cloud Workflows execution according to the table updated
+    # trigger a Cloud Workflows execution according to the table updated
     execution_client = executions_v1beta.ExecutionsClient()
     workflows_client = workflows_v1beta.WorkflowsClient()
 
@@ -165,7 +154,7 @@ def trigger_worflow(table_name: str):
     response = execution_client.create_execution(request={"parent": parent})
     print(f"Created execution: {response.name}")
 
-    #     - wait for the result (with exponential backoff delay will be better)
+    # wait for the result (with exponential backoff delay will be better)
     execution_finished = False
     backoff_delay = 1  # Start wait with delay of 1 second
     print('Poll every second for result...')
@@ -184,7 +173,7 @@ def trigger_worflow(table_name: str):
             print(execution.result)
             return execution.result
 
-    #     - be verbose where you think you have to
+    # be verbose where you think you have to
 
     raise NotImplementedError()
 
@@ -202,23 +191,23 @@ def move_file(bucket_name, blob_path, new_subfolder):
     # TODO: 1
     # Now you are confortable with the first Cloud Function you wrote.
     # Inspire youreslf from this first Cloud Function and:
-    #     - connect to the Cloud Storage client
+    # connect to the Cloud Storage client
     storage_client = storage.Client()
 
-    #     - get the bucket object and the blob object
+    # get the bucket object and the blob object
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(blob_path)
 
-    #     - split the blob path to isolate the file name
-    #     - create your new blob path with the correct new subfolder given from the arguments
+    # split the blob path to isolate the file name
+    # create your new blob path with the correct new subfolder given from the arguments
     current_subfolder = os.path.dirname(blob_path)
     new_blob_path = blob_path.replace(current_subfolder, new_subfolder)
 
-    #     - move your file inside the bucket to its destination
+    # move your file inside the bucket to its destination
     new_blob = bucket.copy_blob(blob, bucket, new_blob_path)
     bucket.delete_blob(blob.name)
 
-    #     - print the actual move you made
+    # print the actual move you made
     #.      See documentation
     print("Blob {} in bucket {} moved to blob {} in bucket {}.".format(
         blob.name,
@@ -228,8 +217,6 @@ def move_file(bucket_name, blob_path, new_subfolder):
     ))
 
     print(f'{blob_path} moved to {new_blob_path}')
-
-    pass
 
 
 if __name__ == '__main__':

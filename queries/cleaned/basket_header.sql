@@ -7,24 +7,12 @@ USING
     id_store,
     id_cash_desk,
     id_customer,
-    (
-    SELECT
-      SUM(d.quantity)
-    FROM
-      UNNEST(detail) d ) AS `n_product`,
-    (
-    SELECT
-      COUNT(DISTINCT d.product_name)
-    FROM
-      UNNEST(detail) d ) AS `n_product_distinct`,
-    (
-    SELECT
-      SUM(d.quantity * d.unit_price)
-    FROM
-      UNNEST(detail) d ) AS `total_price`,
+    ( SELECT SUM(d.quantity) FROM UNNEST(detail) d )                AS `n_product`,
+    ( SELECT COUNT(DISTINCT d.product_name) FROM UNNEST(detail) d ) AS `n_product_distinct`,
+    ( SELECT SUM(d.quantity * d.unit_price) FROM UNNEST(detail) d ) AS `total_price`,
     payment_mode,
     purchase_date,
-    DATETIME(update_time) AS `creation_time`,
+    DATETIME(update_time)                                           AS `creation_time`,
     update_time,
     insertion_time
   FROM
@@ -43,7 +31,5 @@ ON
     TARGET.creation_time = SOURCE.creation_time,
     TARGET.update_time = SOURCE.update_time,
     TARGET.insertion_time = SOURCE.insertion_time
-  WHEN NOT MATCHED BY TARGET
-  THEN
-INSERT
-  ROW;
+  WHEN NOT MATCHED BY TARGET THEN
+    INSERT ROW;

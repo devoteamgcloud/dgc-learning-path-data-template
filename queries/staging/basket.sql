@@ -5,39 +5,48 @@
   -- to be clean, delete the temporary table staging.basket_temp.
 WITH
   basket_temp AS (
-    ----------------------------PART 1-----------------------------------
   SELECT
     NULL AS `id_basket_header`,
-    CAST(SPLIT(id_cash_desk,"-")[
-    OFFSET
-      (0)] AS INT) AS `id_store`,
-    CAST(SPLIT(id_cash_desk,"-")[
-    OFFSET
-      (1)] AS INT) AS `id_cash_desk`,
-    id_customer AS `id_customer`,
+    CAST(SPLIT(id_cash_desk,"-")[OFFSET(0)] AS INT)                         AS `id_store`,
+    CAST(SPLIT(id_cash_desk,"-")[OFFSET(1)] AS INT)                         AS `id_cash_desk`,
+    id_customer                                                             AS `id_customer`,
+
+    --- Deduplication based on product name
     ARRAY(
-    SELECT
-      AS STRUCT product_name, SUM(quantity) AS `quantity`, AVG(unit_price) AS `unit_price`
-    FROM
-      UNNEST(detail)
-    GROUP BY
-      product_name ) detail,
+      SELECT
+        AS STRUCT product_name, 
+        SUM(quantity)                                                         AS `quantity`, 
+        AVG(unit_price)                                                       AS `unit_price`
+      FROM
+        UNNEST(detail)
+      GROUP BY
+        product_name ) detail,
+    ---
+
     CASE LOWER(payment_mode)
       WHEN 'cash' THEN 'Cash'
     ELSE
     'Card'
-  END
-    AS `payment_mode`,
-    PARSE_DATETIME("%d-%m-%Y %H:%M:%S", purchase_date) AS `purchase_date`,
+  END                                                                       AS `payment_mode`,
+    PARSE_DATETIME("%d-%m-%Y %H:%M:%S", purchase_date)                      AS `purchase_date`,
     update_time,
-    CURRENT_TIMESTAMP() AS `insertion_time`,
+    CURRENT_TIMESTAMP()                                                     AS `insertion_time`,
   FROM
-    `sandbox-achaabene.raw.basket`
-    ----------------------------PART 2-----------------------------------
-    --  Here we will use deduplication using Qualifying by row number
-    QUALIFY ROW_NUMBER() OVER(PARTITION BY id_store, id_cash_desk, id_customer, purchase_date ORDER BY update_time DESC ) = 1 ),
-    ----------------------------PART 3-----------------------------------
-  basket AS (
+    `{{ project_id }}.raw.basket`
+
+  QUALIFY ROW_NUMBER() OVER(
+    PARTITION BY i
+      d_store, 
+      id_cash_desk, 
+      id_customer, 
+      purchase_date 
+    ORDER BY 
+      update_time DESC 
+  ) = 1 
+), 
+
+--- Create table basket
+basket AS (
   SELECT
     h.id_basket_header,
     id_store,
@@ -51,26 +60,30 @@ WITH
   FROM
     basket_temp b
   LEFT JOIN
-    `sandbox-achaabene.cleaned.basket_header` h
+    `{{ project_id }}.cleaned.basket_header` h
   USING
     (id_store,
       id_cash_desk,
       id_customer,
-      purchase_date))
-SELECT
+      purchase_date)
+) SELECT
   CASE
-    WHEN id_basket_header IS NULL THEN ROW_NUMBER() OVER() + ( SELECT CASE
-      WHEN MAX(id_basket_header) IS NULL THEN 0
+    WHEN id_basket_header IS NULL 
+      THEN ROW_NUMBER() 
+        OVER() + ( 
+          SELECT
+          ---- 
+          CASE
+            WHEN MAX(id_basket_header) IS NULL 
+              THEN 0
+            ELSE
+              MAX(id_basket_header)
+          END                                                                AS `max_id`,
+          ---
+          FROM `{{ project_id }}.cleaned.basket_header`)
     ELSE
-    MAX(id_basket_header)
-  END
-    AS `max_id`,
-  FROM
-    `sandbox-achaabene.cleaned.basket_header`)
-  ELSE
-  id_basket_header
-END
-  AS `id_basket_header`,
+      id_basket_header
+  END                                                                        AS `id_basket_header`,
   id_store,
   id_cash_desk,
   id_customer,
