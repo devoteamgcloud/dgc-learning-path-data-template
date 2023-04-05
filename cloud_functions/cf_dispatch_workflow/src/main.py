@@ -45,7 +45,7 @@ def receive_messages(event: dict, context: dict):
         
     # trigger the pipeline if the load is completed
     if load_completed:
-        trigger_worflow(table_name)
+        trigger_workflow(table_name)
 
 
 def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
@@ -125,7 +125,7 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
 
 
    
-def trigger_worflow(table_name: str):
+def trigger_workflow(table_name: str):
     """
     Triggers and waits for a `<table_name>_wkf` Workflows pipeline's result within the project ID.
     
