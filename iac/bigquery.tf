@@ -8,6 +8,13 @@ resource "google_bigquery_dataset" "raw" {
   location            = var.location
 }
 
+resource "google_bigquery_dataset" "staging" {
+  project             = var.project_id
+  dataset_id          = "staging"
+  description         = "A dataset for staging data"
+  location            = var.location
+}
+
 resource "google_bigquery_dataset" "cleaned" {
   project             = var.project_id
   dataset_id          = "cleaned"
@@ -26,6 +33,16 @@ resource "google_bigquery_table" "raw_tables" {
   deletion_protection = false
 }
 
+# Tables staging layer
+
+resource "google_bigquery_table" "staging_tables" {
+  for_each            = fileset(path.module, "../schemas/staging/*.json")  # [MENTOR #2]
+  project             = var.project_id
+  dataset_id          = google_bigquery_dataset.staging.dataset_id
+  table_id            = trimsuffix(basename(each.value), ".json")
+  schema              = file(each.value)
+  deletion_protection = false
+}
 # Tables cleaned layer
 
 resource "google_bigquery_table" "cleaned_tables" {

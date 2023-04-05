@@ -1,5 +1,5 @@
 # Learning Practical Path 
-
+ 
 ## Chapter 5 - Cloud Workflows & BigQuery Fundamentals (2 days)
 
 ![Your mission architecture](img/architecture_wkf.png)
