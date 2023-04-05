@@ -43,7 +43,7 @@ resource "google_cloudfunctions_function" "trigger" {
 
     # Dependencies are automatically inferred so these lines can be deleted
     depends_on            = [
-        google_storage_bucket_landing,  # declared in `cloud_storage.tf`
-        google_storage_bucket_utils
+        google_storage_bucket.cloud_functions_sources,  # declared in `cloud_storage.tf`
+        google_storage_bucket_object.zip
     ]
 }
