@@ -79,7 +79,7 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     storage_client = storage.Client()
     
     # getting the util bucket object
-    bucket_title = f"{os.environ['project_id']}_{os.environ['util_bucket_suffix']}"
+    bucket_title = f'{os.environ["project_id"]}_{os.environ["util_bucket_suffix"]}'
     bucket_util = storage_client.bucket(bucket_title)
 
     # loads the schema of the table as a json (dictionary) from the bucket
@@ -93,27 +93,30 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     bigquery_client = bigquery.Client()
 
     # store in a string variable the table id with the bigquery client
-    table_id = f"{os.environ['project_id']}.{os.environ['project_id']}.raw.{table_name}"
+    table_id = f'{os.environ["GCP_PROJECT"]}.{os.environ["GCP_PROJECT"]}.raw.{table_name}'
 
     # create your LoadJobConfig object from the BigQuery library (two cases csv and json)
-    if table_name.lower().endswith('.csv'):
+    *_, extension = blob_path.split('.')
+    if extension.lower() == '.csv':
         load_job_config = bigquery.LoadJobConfig(
-            schema = schema,
-            source_format = bigquery.SourceFormat.CSV
+            schema=schema,
+            source_format=bigquery.SourceFormat.CSV,
+            skip_leading_rows=1,
         )
 
-    elif table_name.lower().endswith('.json'):
+    elif extension.lower() == '.json':
         load_job_config = bigquery.LoadJobConfig(
-            schema = schema,
-            source_format = bigquery.SourceFormat.NEWLINE_DELIMITED_JSON
+            schema=schema,
+            source_format=bigquery.SourceFormat.NEWLINE_DELIMITED_JSON,
         )
-    else : raise AssertionError
+    else:
+        raise NotImplementedError(f'Extension {extension} not supported')
 
     # run your loading job from the blob uri to the destination raw table
     load_job = bigquery_client.load_table_from_uri(
-        source_uris = blob_uri_path,
-        destination = table_id,
-        job_config = load_job_config
+        source_uris=blob_uri_path,
+        destination=table_id,
+        job_config=load_job_config,
     )
 
     # waits the job to finish and print the number of rows inserted
@@ -121,7 +124,7 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
 
     nb_rows_table = bigquery_client.get_table(table_id).num_rows
 
-    print(f"Number of rows inserted : {nb_rows_table}")
+    print(f'Number of rows inserted : {nb_rows_table}')
 
 
    
@@ -146,35 +149,30 @@ def trigger_workflow(table_name: str):
     workflows_client = executions_v1.ExecutionsClient()
 
     parent_workflows = workflows_client.workflow_path(
-        project = os.environ['project_id'],
-        location = os.environ['location'],
-        workflow = f"{table_name}_wkf"
+        project=os.environ['project_id'],
+        location=os.environ['location'],
+        workflow=f'{table_name}_wkf'
     )
 
     # execute the workflow
-    response = workflows_client.create_execution(request={"parent": parent_workflows})
+    response = workflows_client.create_execution(request={'parent': parent_workflows})
 
-    print(f"Created execution: {response.name}")
+    print(f'Created execution: {response.name}')
 
     # Wait for execution to finish, then print results.
     execution_finished = False
     backoff_delay = 1  # Start wait with delay of 1 second
     print('Poll every second for result...')
-    while (not execution_finished):
-        execution = workflows_client.get_execution(request={"name": response.name})
-        execution_finished = execution.state != executions.Execution.State.ACTIVE
+    while not execution_finished:
+        print('- Waiting for results...')
+        time.sleep(backoff_delay)
+        backoff_delay *= 2  # Double the delay to provide exponential backoff.
+        execution = workflows_client.get_execution(request={'name': response.name})
+        execution_finished = execution.state != executions.Execution.State.ACTIVE         
 
-        # If we haven't seen the result yet, wait a second.
-        if not execution_finished:
-            print('- Waiting for results...')
-            time.sleep(backoff_delay)
-            backoff_delay *= 2  # Double the delay to provide exponential backoff.
-        else:
-            print(f'Execution finished with state: {execution.state.name}')
-            print(execution.result)
-            return execution.result
-
-    raise NotImplementedError()
+    print(f'Execution finished with state: {execution.state.name}')
+    print(execution.result)
+    return execution.result
 
 
 
@@ -206,8 +204,7 @@ def move_file(bucket_name, blob_path, new_subfolder):
     blob = bucket.blob(blob_path)
     
     # get the file name
-    file_split = []
-    file_split = blob_path.split(os.sep) 
+    file_split = blob_path.split('/') 
     subfolder = file_split[0]
 
     # move the file to the desired subfolder

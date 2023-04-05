@@ -36,7 +36,7 @@ def check_file_format(event: dict, context: dict):
     blob_path = blob_event['name']
 
     # get the subfolder, the file name and its extension
-    *subfolder, file = blob_path.split(os.sep)  
+    *subfolder, file = blob_path.split('/')  
     subfolder =  os.path.join(*subfolder) if subfolder != [] else ''
     file_name, file_extension = file.split('.') 
 
@@ -60,13 +60,13 @@ def check_file_format(event: dict, context: dict):
         #     - required to have the expected extension
 
         file_split = []
-        file_split = file_name.split("_")
-        assert len(file_split) == 2, f"{file_name} has too many parts !"
+        file_split = file_name.split('_')
+        assert len(file_split) == 2, f'{file_name} has too many parts !'
         table_name, date = file_split[0], file_split[1]
 
-        assert table_name in FILES_AND_EXTENSION_SPEC, f"{table_name} is not a valid name" 
-        assert datetime.datetime.strptime(date, "%Y%m%d"), f"{date} is not a valid date"
-        assert FILES_AND_EXTENSION_SPEC[table_name] == file_extension, f"Not the valid extension for this type of file: {file_extension}"
+        assert table_name in FILES_AND_EXTENSION_SPEC, f'{table_name} is not a valid name' 
+        assert datetime.datetime.strptime(date, '%Y%m%d'), f'{date} is not a valid date'
+        assert FILES_AND_EXTENSION_SPEC[table_name] == file_extension, f'Not the valid extension for this type of file: {file_extension}'
 
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(
