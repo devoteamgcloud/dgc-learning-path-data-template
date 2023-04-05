@@ -11,9 +11,9 @@ from google.cloud import workflows_v1beta
 from google.cloud.workflows import executions_v1beta
 from google.cloud.workflows.executions_v1beta.types import executions
 
-logger = logging.getLogger("cf_trigger_logs")
+logger = logging.getLogger("cf_dispatch_logs")
 
-with open('cloud_functions/cf_dispatch_workflow/env.yaml', 'r') as f:
+with open('./cloud_functions/cf_dispatch_workflow/env.yaml', 'r') as f:
     env_vars = yaml.load(f, Loader=yaml.SafeLoader)
 
 

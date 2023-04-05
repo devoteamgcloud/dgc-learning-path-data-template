@@ -7,7 +7,7 @@ import logging
 
 logger = logging.getLogger("cf_trigger_logs")
 
-with open('cloud_functions/cf_trigger_on_file/env.yaml', 'r') as f:
+with open('./cloud_functions/cf_trigger_on_file/env.yaml', 'r') as f:
     env_vars = yaml.load(f, Loader=yaml.SafeLoader)
 
 # This dictionary gives your the requirements and the specifications of the kind
