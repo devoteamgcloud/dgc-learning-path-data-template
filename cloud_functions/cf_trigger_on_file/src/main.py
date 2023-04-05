@@ -1,14 +1,10 @@
 import os
-import yaml
 import datetime
 import logging
 # from google.cloud import storage
 # from google.cloud import pubsub_v1
 
 logger = logging.getLogger("cf_trigger_logs")
-
-with open('./cloud_functions/cf_trigger_on_file/env.yaml', 'r') as f:
-    env_vars = yaml.load(f, Loader=yaml.SafeLoader)
 
 # This dictionary gives your the requirements and the specifications of the kind
 # of files you can receive.
@@ -119,7 +115,7 @@ def publish_to_pubsub(data: bytes, attributes: dict):
     # retrieve the GCP_PROJECT from the reserved environment variables
     # more: https://cloud.google.com/functions/docs/configuring/env-var#python_37_and_go_111
     project_id = os.environ['GCP_PROJECT']
-    topic_id = env_vars['pubsub_topic_id']
+    topic_id = os.environ['PUBSUB_TOPIC_ID']
 
     # connect to the PubSub client
     publisher = pubsub_v1.PublisherClient()
