@@ -1,5 +1,5 @@
 # Generates an archive of the source code compressed as a .zip file.
-resource "archive_file" "archive_trigger" {
+data "archive_file" "archive_trigger" {
   type        = "zip"
   source_dir  = "../cloud_functions/cf_trigger_on_file/src"
   output_path = "tmp/trigger.zip"
