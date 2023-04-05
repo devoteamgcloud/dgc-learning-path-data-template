@@ -15,7 +15,7 @@ FILES_AND_EXTENSION_SPEC = {
 }
 
 
-def check_file_format(event: dict, context: dict):
+def check_file_format(event: dict, context):
     """
     Triggered by a change to a Cloud Storage bucket.
     Check for the files requirements. Publishes a message to PubSub if the 
@@ -60,10 +60,14 @@ def check_file_format(event: dict, context: dict):
         #     - the second part is required to be a 'YYYYMMDD'-formatted date 
         #     - required to have the expected extension
 
-        ...
+        file_split = file_name.split("_")
+        assert len(file_split) == 2, f"{file_name}'s size is not a valid"
+        table_name, date = file_split[0], file_split[1]
 
-        table_name = "<to_replace_with_your_first_file_part_variable>"
-
+        assert table_name in FILES_AND_EXTENSION_SPEC.keys(), f"{table_name}'s name is not a valid"
+        assert datetime.datetime.strptime(date, "%Y%m%d"), f"{date}'s date fortmat is not a valid"
+        assert file_extention in FILES_AND_EXTENSION_SPEC.values()
+        
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(
             data=table_name.encode('utf-8'),
@@ -123,7 +127,6 @@ def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
     ## remove this part when you are ready to deploy your Cloud Function. 
     ## [start simulation]
     print('Your file is considered as invalid. It will be moved to invalid/.')
-    return
     ## [end simulation]
     
     
@@ -140,12 +143,13 @@ def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
 
 
 if __name__ == '__main__':
+# def my_main():
     
     # here you can test with mock data the function in your local machine
     # it will have no impact on the Cloud Function when deployed.
     import os
     
-    project_id = '<YOUR-PROJECT-ID>'
+    project_id = 'sandbox-smboup'
 
     realpath = os.path.realpath(__file__)
     material_path = os.sep.join(['', *realpath.split(os.sep)[:-4], '__materials__'])
@@ -155,7 +159,7 @@ if __name__ == '__main__':
     for file_name in os.listdir(init_files_path):
         print(f'\nTesting your file {file_name}')
         mock_event = {
-            'bucket': f'{project_id}-magasin-cie-landing',
+            'bucket': f'{project_id}_magasin_cie_landing',
             'name': os.path.join('input', file_name)
         }
 

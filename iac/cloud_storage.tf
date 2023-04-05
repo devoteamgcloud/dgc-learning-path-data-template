@@ -23,6 +23,7 @@ resource "google_storage_bucket" "magasin_cie_landing" {
   lifecycle_rule {
     condition {
       age = 365
+      matches_prefix = ["archive/ARCHIVE"]
     }
     action {
       type = "SetStorageClass"
@@ -43,7 +44,6 @@ resource "google_storage_bucket" "magasin_cie_utils" {
   project  = var.project_id
   name     = "${var.project_id}_magasin_cie_utils"
   location = var.location
-  storage_class = "STANDARD"
 }
 
 resource "google_storage_bucket" "cloud_functions_sources" {

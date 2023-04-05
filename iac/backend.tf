@@ -7,7 +7,7 @@ terraform {
     }
   }
   backend "gcs" {
-    bucket = "${var.project_id}-gcs-tfstate-sbx"
+    bucket = "sandbox-smboup-gcs-tfstate-sbx"
     prefix = "terraform-states"
   }
 }
