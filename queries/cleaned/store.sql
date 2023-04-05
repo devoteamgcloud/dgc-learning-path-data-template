@@ -14,4 +14,10 @@ SELECT
   update_time,
   CURRENT_TIMESTAMP()                       AS `insertion_time`
 FROM
-  `{{ project_id }}.raw.store`;
+  `{{ project_id }}.raw.store`
+QUALIFY ROW_NUMBER() OVER (
+  PARTITION BY 
+    id_store
+  ORDER BY 
+    update_time DESC
+) = 1;
