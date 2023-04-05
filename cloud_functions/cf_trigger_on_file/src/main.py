@@ -1,8 +1,8 @@
 import os
 import datetime
 import logging
-# from google.cloud import storage
-# from google.cloud import pubsub_v1
+from google.cloud import storage
+from google.cloud import pubsub_v1
 
 logger = logging.getLogger("cf_trigger_logs")
 
