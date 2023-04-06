@@ -4,9 +4,7 @@ resource "google_bigquery_dataset" "raw_dataset" {
     location = "EU"
     default_table_expiration_ms = 3600000
 }
-resource "google_service_account" "bqowner" {
-    account_id = "bqowner"
-}
+
 resource "google_bigquery_dataset" "cleaned_dataset" {
     dataset_id = "cleaned_dataset"
     description = "A test cleaned dataset _ learning path"
