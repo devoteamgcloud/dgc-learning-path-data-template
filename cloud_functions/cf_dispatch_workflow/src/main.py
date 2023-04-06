@@ -218,7 +218,7 @@ if __name__ == '__main__':
     mock_event = {
         'data': 'store',
         'attributes': {
-            'bucket_name': f'{project_id}_magasin_cie_landing_test',
+            'bucket_name': f'{project_id}_magasin_cie_landing',
             'blob_path': os.path.join('input','store_20220601.csv'),
         }
     }
