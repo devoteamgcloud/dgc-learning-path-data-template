@@ -76,8 +76,7 @@ def hello_gcs(event: dict, context: dict):
 
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(
-            #data=table_name.encode('utf-8'),
-            data = table_name
+            data=table_name.encode('utf-8'),
             attributes={
                 'bucket_name': bucket_name, 
                 'blob_path': blob_path
