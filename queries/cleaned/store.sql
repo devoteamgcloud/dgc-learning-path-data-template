@@ -12,4 +12,4 @@ SELECT
   PARSE_DATE("%d-%m-%Y", creation_date)    AS `creation_date`,
   update_time,
   CURRENT_TIMESTAMP()                      AS `insertion_time`
-FROM `{{ project_id }}.raw.store`;
+FROM `{{ project_id }}.raw_dataset.store`;
