@@ -1,4 +1,4 @@
- resource "google_storage_bucket" "magasin_cie_landing" {
+ resource "google_storage_bucket" "sandbox-cselmene_magasin_cie_landing" {
    #project  = var.project_id
    project = "sandbox-cselmene"
    #name     = "${var.project_id}_magasin_cie_landing2"
@@ -41,7 +41,7 @@
    }
  }
 
-resource "google_storage_bucket" "magasin_cie_utils" {
+resource "google_storage_bucket" "sandbox-cselmene_magasin_cie_utils" {
    project  = var.project_id
    name     = "sandbox-cselmene_magasin_cie_utils"
    location = var.location
