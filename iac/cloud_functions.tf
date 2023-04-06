@@ -39,14 +39,9 @@ resource "google_cloudfunctions_function" "function" {
     # 
     event_trigger {
         event_type = "google.storage.object.finalize"
-        resource   = "${var.project_id}-input"
+        resource   = google.google_storage_bucket.sandbox-cselmene_magasin_cie_landing_test.name
     }
 
-    # Dependencies are automatically inferred so these lines can be deleted
-    depends_on            = [
-        google_storage_bucket.function_bucket,  # declared in `storage.tf`
-        google_storage_bucket_object.zip
-    ]
 }
 
 ##### Workflow dispatch #########

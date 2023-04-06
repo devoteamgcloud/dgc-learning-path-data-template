@@ -101,7 +101,7 @@ def publish_to_pubsub(data: bytes, attributes: dict):
     ## remove this part when you are ready to deploy your Cloud Function. 
     ## [start simulation]
     print('Your file is considered as valid. It will be published to Pubsub.')
-    return
+    #return
     ## [end simulation]
 
 
@@ -133,7 +133,7 @@ def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
     ## remove this part when you are ready to deploy your Cloud Function. 
     ## [start simulation]
     print('Your file is considered as invalid. It will be moved to invalid/.')
-    return
+    #return
     ## [end simulation]
     
     
@@ -170,4 +170,4 @@ if __name__ == '__main__':
         }
 
         mock_context = {}
-        check_file_format(mock_event, mock_context)
+        hello_gcs(mock_event, mock_context)
