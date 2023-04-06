@@ -65,7 +65,7 @@ def hello_gcs(event: dict, context: dict):
         assert first_part in FILES_AND_EXTENSION_SPEC(), "Table name not accepted"
         
         try:
-            datetime.datetime.strptime(second_part,"%Y%M%D")
+            datetime.datetime.strptime(second_part,"%Y%m%D")
         except:
             raise Exception("The file name does not have the correct format")
 
@@ -76,7 +76,8 @@ def hello_gcs(event: dict, context: dict):
 
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(
-            data=table_name.encode('utf-8'),
+            #data=table_name.encode('utf-8'),
+            data = table_name
             attributes={
                 'bucket_name': bucket_name, 
                 'blob_path': blob_path
