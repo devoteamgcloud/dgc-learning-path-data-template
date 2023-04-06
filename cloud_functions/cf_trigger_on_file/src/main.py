@@ -66,7 +66,7 @@ def hello_gcs(event: dict, context: dict):
         ), "Table name not accepted   "
 
         try:
-            datetime.datetime.strptime(second_part, "%Y%m%D")
+            datetime.datetime.strptime(second_part, "%Y%m%d")
         except:
             raise Exception("The file name does not have the correct format")
 
