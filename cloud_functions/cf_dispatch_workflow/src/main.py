@@ -27,8 +27,8 @@ def receive_messages(event: dict, context: dict):
     print(pubsub_event)
     
     # decode the data giving the targeted table name
-    table_name = pubsub_event['data'] #base64.b64decode(pubsub_event['data']).decode('utf-8')
-
+    table_name = base64.b64decode(pubsub_event['data']).decode('utf-8')
+    #table_name = pubsub_event['data']
     # get the blob infos from the attributes
     bucket_name = pubsub_event['attributes']['bucket_name']
     blob_path = pubsub_event['attributes']['blob_path']
@@ -67,7 +67,7 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     storage_client = storage.Client()
     project_id = "sandbox-cselmene"
     #     - get the util bucket object using the os environments
-    bucket_title = f"{project_id}_magasin_cie_utils"
+    bucket_title = f"{project_id}_magasin_cie_utils" 
     bucket_util = storage_client.bucket(bucket_title)
     #     - loads the schema of the table as a json (dictionary) from the bucket
     blob = bucket_util.blob("schemas/raw/store.json")
@@ -95,12 +95,8 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     #    job_config=job_config
     #)
 
-    try:
-        file_extension = blob_path.split('.')[-1].lower()
-    except:
-        raise Exception(f"Cannot find file extension for {blob_path}")
-    
-    if file_extension == "csv":
+    *_, file_extension = blob_path.split('.')
+    if file_extension.lower() == "csv":
         print("Ingest csv file")
         job_config = bigquery.LoadJobConfig(
             schema=schema,
@@ -108,7 +104,7 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
             source_format=bigquery.SourceFormat.CSV,
             # estination=table
         )
-    elif file_extension == "json":
+    elif file_extension.lower() == "json":
         print("Ingest json file")
         job_config = bigquery.LoadJobConfig(
             schema=schema,
@@ -116,27 +112,22 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
             # destination=table
         )
     else:
-        raise Exception(f"Unvalid extension {file_extension}")
+        raise NotImplementedError(f"Unvalid extension {file_extension}")
 
     print("Created load job config")
 
     #     - and run your loading job from the blob uri to the destination raw table
-    try:
-        load_job = bq_client.load_table_from_uri(
-            blob_uri, table_id, job_config=job_config
-        )  # Make an API request.
-        print("Running job")
-    except Exception as e:
-        print(f"Cannot load blob : {e}")
-
+    load_job = bq_client.load_table_from_uri(
+        blob_uri, table_id, job_config=job_config
+    )  # Make an API request.
+    print("Running job")
 
     #     - waits the job to finish and print the number of rows inserted
-    #load_job.result()
+    load_job.result()
     # note: this is not a small function. Take the day or more if you have to. 
     #table_num = bq_client.get_table(table_id)
     #print(f'Numbers of rows inserted : {table_num.num_rows}')
 
-    pass
 
 def trigger_worflow(table_name: str):
     """
@@ -176,14 +167,12 @@ def trigger_worflow(table_name: str):
         execution_finished = execution.state != executions.Execution.State.ACTIVE
 
     # If we haven't seen the result yet, wait a second.
-        if not execution_finished:
-            print('- Waiting for results...')
-            time.sleep(backoff_delay)
-            backoff_delay *= 2  # Double the delay to provide exponential backoff.
-        else:
-            print(f'Execution finished with state: {execution.state.name}')
-            print(execution.result)
-            return execution.result
+        print('- Waiting for results...')
+        time.sleep(backoff_delay)
+        backoff_delay *= 2  # Double the delay to provide exponential backoff.
+    print(f'Execution finished with state: {execution.state.name}')
+    print(execution.result)
+    return execution.result
         
     raise NotImplementedError()
 
@@ -211,14 +200,12 @@ def move_file(bucket_name, blob_path, new_subfolder):
     current_subfolder = os.path.dirname(blob_path)
     new_blob_path = blob_path.replace(current_subfolder, new_subfolder)    
     #     - move you file inside the bucket to its destination
-    new_blob = bucket.copy_blob(blob, bucket, new_blob_path)
+    _ = bucket.copy_blob(blob, bucket, new_blob_path)
     bucket.delete_blob(blob.name)    
     #     - print the actual move you made
     print(f'{blob.name} moved to {new_blob_path}')
 
-    pass
-
-
+    
 if __name__ == '__main__':
 
     # here you can test with mock data the function in your local machine
