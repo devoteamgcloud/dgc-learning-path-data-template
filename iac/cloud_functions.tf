@@ -39,7 +39,7 @@ resource "google_cloudfunctions_function" "function" {
     # 
     event_trigger {
         event_type = "google.storage.object.finalize"
-        resource   = google.google_storage_bucket.sandbox-cselmene_magasin_cie_landing_test.name
+        resource   = google_storage_bucket.sandbox-cselmene_magasin_cie_landing_test.name
     }
 
 }
