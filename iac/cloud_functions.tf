@@ -86,8 +86,8 @@ resource "google_cloudfunctions_function" "workflows" {
     source_archive_object = google_storage_bucket_object.zip2.name
 
     event_trigger {
-        event_type = "google.storage.object.finalize"
-        resource   = "${var.project_id}_magasin_cie_landing"
+        event_type = "providers/cloud.pubsub/eventTypes/topic.publish"
+        resource   = google_pubsub_topic.topic_validation.name
     }
 
     # Dependencies are automatically inferred so these lines can be deleted
