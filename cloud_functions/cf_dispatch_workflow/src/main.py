@@ -80,6 +80,7 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     
     # getting the util bucket object
     bucket_title = f'{os.environ["GCP_PROJECT"]}_{os.environ["util_bucket_suffix"]}'
+    #bucket_title = 'sandbox-vcordonnier_magasin_cie_utils'
     bucket_util = storage_client.bucket(bucket_title)
 
     # loads the schema of the table as a json (dictionary) from the bucket
@@ -93,18 +94,19 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     bigquery_client = bigquery.Client()
 
     # store in a string variable the table id with the bigquery client
-    table_id = f'{os.environ["GCP_PROJECT"]}.{os.environ["GCP_PROJECT"]}.raw.{table_name}'
+    table_id = f'{os.environ["GCP_PROJECT"]}.raw.{table_name}'
+    #table_id = f'sandbox-vcordonnier.raw.{table_name}'
 
     # create your LoadJobConfig object from the BigQuery library (two cases csv and json)
     *_, extension = blob_path.split('.')
-    if extension.lower() == '.csv':
+    if extension.lower() == 'csv':
         load_job_config = bigquery.LoadJobConfig(
             schema=schema,
             source_format=bigquery.SourceFormat.CSV,
             skip_leading_rows=1,
         )
 
-    elif extension.lower() == '.json':
+    elif extension.lower() == 'json':
         load_job_config = bigquery.LoadJobConfig(
             schema=schema,
             source_format=bigquery.SourceFormat.NEWLINE_DELIMITED_JSON,
@@ -149,10 +151,16 @@ def trigger_workflow(table_name: str):
     workflows_client = executions_v1.ExecutionsClient()
 
     parent_workflows = workflows_client.workflow_path(
-        project=os.environ['project_id'],
-        location=os.environ['location'],
+        project=os.environ['GCP_PROJECT'],
+        location=os.environ['wkf_location'],
         workflow=f'{table_name}_wkf'
     )
+
+    # parent_workflows = workflows_client.workflow_path(
+    #     project='sandbox-vcordonnier',
+    #     location='europe-west1',
+    #     workflow=f'{table_name}_wkf'
+    # )
 
     # execute the workflow
     response = workflows_client.create_execution(request={'parent': parent_workflows})
@@ -227,7 +235,7 @@ if __name__ == '__main__':
     mock_event = {
         'data': data,
         'attributes': {
-            'bucket_name': f'{project_id}-magasin-cie-landing',
+            'bucket_name': f'{project_id}_magasin_cie_landing',
             'blob_path': 'input/store_20220531.csv'
         }
     }
