@@ -29,7 +29,7 @@
             write_disposition: ${write_disposition}
             allowLargeResults: true
             useLegacySql: false
-get_cleaned_customer_query:
+- get_cleaned_customer_query:
     call: http.get
     args:
       url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/cleaned/customer.sql"}
