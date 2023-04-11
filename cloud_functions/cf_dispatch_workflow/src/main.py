@@ -73,8 +73,60 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     #     - waits the job to finish and print the number of rows inserted
     # 
     # note: this is not a small function. Take the day or more if you have to. 
+    
+    #connect to the Cloud Storage client
+    storage_client = storage.Client()
 
-    pass
+    #get the util bucket object using the os environments
+    project = os.environ["GCP_PROJECT"]
+    util_bucket_suffix = os.environ['util_bucket_suffix']
+    bucket_util_name = f'{project}_{util_bucket_suffix}'
+    bucket_util = storage_client.bucket(bucket_util_name)
+
+    #loads the schema of the table as a json (dictionary) from the bucket
+    blob_util = bucket_util.blob(f'schemas/raw/{table_name}.json')
+    raw_schema_json = json.load(blob_util.download_as_string())
+
+    #store in a string variable the blob uri path
+    blob_uri_path = f'gs://{bucket_name}/{blob_path}'
+
+    bigquery_client = bigquery.Client()    
+
+    #store in a string variable the table id with the bigquery client
+    table_id = f'{os.environ["GCP_PROJECT"]}.raw.{table_name}'
+
+    #create job config
+    *_, extension = blob_path.split('.')
+    if extension.lower() == 'csv':
+        load_job_config = bigquery.LoadJobConfig(
+            schema=raw_schema_json,
+            source_format=bigquery.SourceFormat.CSV,
+            skip_leading_rows=1,
+        )
+
+    elif extension.lower() == 'json':
+        load_job_config = bigquery.LoadJobConfig(
+            schema=raw_schema_json,
+            source_format=bigquery.SourceFormat.NEWLINE_DELIMITED_JSON,
+        )
+    else:
+        raise NotImplementedError(f'Extension {extension} not supported')
+    
+
+    # run your loading job from the blob uri to the destination raw table
+    load_job = bigquery_client.load_table_from_uri(
+        source_uris=blob_uri_path,
+        destination=table_id,
+        job_config=load_job_config,
+    )
+
+    # waits the job to finish and print the number of rows inserted
+    load_job.result()
+
+    nb_rows_table = bigquery_client.get_table(table_id).num_rows
+
+    print(f'Number of rows inserted : {nb_rows_table}')
+
 
    
 def trigger_worflow(table_name: str):
@@ -119,7 +171,24 @@ def move_file(bucket_name, blob_path, new_subfolder):
     #     - move you file inside the bucket to its destination
     #     - print the actual move you made
 
-    pass
+    # connect to BigQuery Client
+    storage_client = bigquery.Client()
+
+    # move file to bq
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(blob_path)
+
+    blob_path_split = blob_path.split('/')
+    subfolder = blob_path_split[-2]
+
+    new_blob_path = blob_path.replace(subfolder, new_subfolder)
+    bucket.rename_blob(blob, new_blob_path)
+
+    print(f'{blob.name} moved to {new_blob_path}')
+    
+
+
+
 
 
 if __name__ == '__main__':
@@ -128,13 +197,13 @@ if __name__ == '__main__':
     # it will have no impact on the Cloud Function when deployed.
     import os
     
-    project_id = '<YOUR-PROJECT-ID>'
+    project_id = 'sandbox-smboup'
 
     # test your Cloud Function for the store file.
     mock_event = {
         'data': 'store',
         'attributes': {
-            'bucket': f'{project_id}-magasin-cie-landing',
+            'bucket': f'{project_id}_magasin_cie_landing',
             'file_path': os.path.join('input', 'store_20220531.csv'),
         }
     }

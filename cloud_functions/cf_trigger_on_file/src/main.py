@@ -15,7 +15,7 @@ FILES_AND_EXTENSION_SPEC = {
 }
 
 
-def check_file_format(event: dict, context):
+def check_file_format(event: dict, context: dict):
     """
     Triggered by a change to a Cloud Storage bucket.
     Check for the files requirements. Publishes a message to PubSub if the 
@@ -95,7 +95,7 @@ def publish_to_pubsub(data: bytes, attributes: dict):
     ## remove this part when you are ready to deploy your Cloud Function. 
     ## [start simulation]
     print('Your file is considered as valid. It will be published to Pubsub.')
-    return
+    
     ## [end simulation]
 
 
@@ -143,7 +143,6 @@ def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
 
 
 if __name__ == '__main__':
-# def my_main():
     
     # here you can test with mock data the function in your local machine
     # it will have no impact on the Cloud Function when deployed.

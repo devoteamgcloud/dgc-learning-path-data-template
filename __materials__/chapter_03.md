@@ -27,7 +27,7 @@ We asked for the files:
 
 ### The Learning Resources
 
-Here a great course on Cloud Function. Will will have theoritical knowledge on Cloud Function as well as hands-on experience through the labs it provides. Go to the [Google Cloud Functions Deep Dive](https://learn.acloud.guru/course/8bd9dcda-5bb8-4049-bcd9-870d93698486/overview) to be a Cloud Function expert ;)
+Here a great course on Cloud Function. Will will have theoritical knowledge on Cloud Function as well as hands-on experience through the labs it provides. Go to the [Google Cloud Functions Deep Dive](https://learn.acloud.guru/course/8bd9dcda-5bb8-4049-bcd9-870d93698486/overview) to be a Cloud Function expert ;
 
 And of course, nothing is more useful than the [Google Cloud Function documentation](https://cloud.google.com/functions).
 ### Your mission

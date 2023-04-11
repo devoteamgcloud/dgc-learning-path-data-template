@@ -32,14 +32,15 @@ resource "google_cloudfunctions_function" "cloud_functions_sources" {
     available_memory_mb   = 128
     source_archive_bucket = google_storage_bucket.cloud_functions_sources.name
     source_archive_object = google_storage_bucket_object.zip.name
-    
+    # trigger_http          = true
+
     # Must match the function name in the cloud function `main.py` source code
     entry_point           = "check_file_format"
     
     # 
     event_trigger {
         event_type = "google.storage.object.finalize"
-        resource   = "${var.project_id}-input"
+        resource   = "${var.project_id}_magasin_cie_landing"
     }
 
     # Dependencies are automatically inferred so these lines can be deleted
