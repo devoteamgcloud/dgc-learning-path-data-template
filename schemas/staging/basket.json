@@ -13,7 +13,7 @@
     },
     {
         "name": "id_cash_desk",
-        "type": "STRING",
+        "type": "INTEGER",
         "mode": "REQUIRED",
         "description": "Unique ID of the cash desk"
     },
@@ -56,7 +56,7 @@
     {
         "name": "purchase_date",
         "type": "STRING",
-        "mode": "REQUIRED",
+        "mode": "NULLABLE",
         "description": "Date of the purchase"
     },
     {
