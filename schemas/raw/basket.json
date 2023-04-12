@@ -1,0 +1,56 @@
+[
+    {
+        "name": "id_cash_desk",
+        "type": "STRING",
+        "mode": "REQUIRED",
+        "description": "Unique ID of the cash desk"
+    },
+    {
+        "name": "id_customer",
+        "type": "INTEGER",
+        "mode": "REQUIRED",
+        "description": "Unique ID of the customer"
+    },
+    {
+        "name": "detail",
+        "type": "RECORD",
+        "mode": "REPEATED",
+        "description": "List of the products purchased"
+    },
+    {
+        "name": "detail.product_name",
+        "type": "STRING",
+        "mode": "REQUIRED",
+        "description": "Name of the product"
+    },
+    {
+        "name": "detail.quantity",
+        "type": "INTEGER",
+        "mode": "REQUIRED",
+        "description": "Quantity purchased"
+    },
+    {
+        "name": "detail.unit_price",
+        "type": "FLOAT",
+        "mode": "REQUIRED",
+        "description": "Unit price of the product"
+    },
+    {
+        "name": "payment_mode",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "MasterCard / VISA / Cash"
+    },
+    {
+        "name": "purchase_date",
+        "type": "STRING",
+        "mode": "REQUIRED",
+        "description": "Date of the purchase"
+    },
+    {
+        "name": "update_time",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE",
+        "description": "Time of record update"
+    }
+]
