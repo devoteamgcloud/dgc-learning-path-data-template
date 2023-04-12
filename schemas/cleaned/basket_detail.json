@@ -23,7 +23,6 @@
         "mode": "NULLABLE",
         "description": "Time of record update"
     },
-    
     {
         "name": "quantity",
         "type": "INTEGER",
