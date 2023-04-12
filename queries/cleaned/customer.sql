@@ -1,4 +1,4 @@
-MERGE `{{ project_id }}.cleaned.customer` AS Cleaned
+MERGE INTO `{{ project_id }}.cleaned.customer` AS Cleaned
     USING `{{ project_id }}.staging.customer` AS Staging
     ON Staging.id_customer = Cleaned.id_customer
 
