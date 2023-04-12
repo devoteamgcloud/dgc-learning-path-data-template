@@ -1,0 +1,39 @@
+[
+    {
+        "name": "id_basket_header",
+        "type": "INTEGER",
+        "mode": "REQUIRED",
+        "description": "Unique ID of the basket"
+    },
+    {
+        "name": "product_name",
+        "type": "STRING",
+        "mode": "REQUIRED",
+        "description": "Name of the product"
+    },
+    {
+        "name": "creation_time",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE",
+        "description": "Time of record creation"
+    },
+    {
+        "name": "update_time",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE",
+        "description": "Time of record update"
+    },
+    
+    {
+        "name": "quantity",
+        "type": "INTEGER",
+        "mode": "REQUIRED",
+        "description": "Quantity purchased"
+    },
+    {
+        "name": "unit_price",
+        "type": "FLOAT",
+        "mode": "REQUIRED",
+        "description": "Unit price of the product"
+    }
+]

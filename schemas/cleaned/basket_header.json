@@ -1,0 +1,68 @@
+[
+    {
+        "name": "id_basket_header",
+        "type": "INTEGER",
+        "mode": "REQUIRED",
+        "description": "Unique ID of the basket"
+    },
+    {
+        "name": "id_store",
+        "type": "INTEGER",
+        "mode": "REQUIRED",
+        "description": "Unique ID of the store"
+    },
+    {
+        "name": "id_cash_desk",
+        "type": "INTEGER",
+        "mode": "REQUIRED",
+        "description": "Unique ID of the cash desk"
+    },
+    {
+        "name": "id_customer",
+        "type": "INTEGER",
+        "mode": "REQUIRED",
+        "description": "Unique ID of the customer"
+    },
+    {
+        "name": "n_product",
+        "type": "INTEGER",
+        "mode": "REQUIRED",
+        "description": "Number of products purchased"
+    },
+    {
+        "name": "n_product_distinct",
+        "type": "INTEGER",
+        "mode": "REQUIRED",
+        "description": "Number of distinct products purchased"
+    },
+    {
+        "name": "total_price",
+        "type": "FLOAT",
+        "mode": "REQUIRED",
+        "description": "Total price of the basket"
+    },
+    {
+        "name": "payment_mode",
+        "type": "STRING",
+        "mode": "REQUIRED", 
+        "description": "MasterCard / VISA / Cash"
+    },
+    {
+        "name": "purchase_date",
+        "type": "DATETIME",
+        "mode": "NULLABLE",
+        "description": "Date of the purchase"
+    },
+    {
+        "name": "update_time",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE",
+        "description": "Time of record update"
+    },
+    {
+        "name": "insertion_time",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE",
+        "description": "Time of record insertion"
+    }
+]
