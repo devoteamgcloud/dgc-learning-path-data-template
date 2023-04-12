@@ -75,6 +75,7 @@ resource "google_bigquery_table" "basket_cleaned" {
   schema = file("../schemas/cleaned/basket_header.json")
   deletion_protection = false
 }
+
 resource "google_bigquery_table" "basket_detail_staging" {
   dataset_id = google_bigquery_dataset.staging.dataset_id
   table_id   = "basket_detail"
