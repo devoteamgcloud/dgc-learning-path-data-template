@@ -13,7 +13,7 @@ data "archive_file" "archive_workflow" {
 }
 
 # Add source code zip to the Cloud Function's bucket
-resource "google_storage_bucket_object" "zip" {
+resource "google_storage_bucket_object" "zip_trigger" {
     source       = data.archive_file.archive_trigger.output_path
     content_type = "application/zip"
 
@@ -29,7 +29,7 @@ resource "google_storage_bucket_object" "zip" {
     ]
 }
 
-resource "google_storage_bucket_object" "zip2" {
+resource "google_storage_bucket_object" "zip_workflows" {
     source       = data.archive_file.archive_workflow.output_path
     content_type = "application/zip"
 
@@ -57,7 +57,7 @@ resource "google_cloudfunctions_function" "trigger" {
     
    # Get the source code of the cloud function as a Zip compression
     source_archive_bucket = google_storage_bucket.cloud_functions_sources.name
-    source_archive_object = google_storage_bucket_object.zip.name
+    source_archive_object = google_storage_bucket_object.zip_trigger.name
 
     event_trigger {
         event_type = "google.storage.object.finalize"
@@ -67,7 +67,7 @@ resource "google_cloudfunctions_function" "trigger" {
     # Dependencies are automatically inferred so these lines can be deleted
     depends_on            = [
         google_storage_bucket.cloud_functions_sources,  # declared in `cloud_storage.tf`
-        google_storage_bucket_object.zip
+        google_storage_bucket_object.zip_trigger
     ]
 }
 
@@ -83,7 +83,7 @@ resource "google_cloudfunctions_function" "workflows" {
     
    # Get the source code of the cloud function as a Zip compression
     source_archive_bucket = google_storage_bucket.cloud_functions_sources.name
-    source_archive_object = google_storage_bucket_object.zip2.name
+    source_archive_object = google_storage_bucket_object.zip_workflows.name
 
     event_trigger {
         event_type = "providers/cloud.pubsub/eventTypes/topic.publish"
@@ -93,6 +93,6 @@ resource "google_cloudfunctions_function" "workflows" {
     # Dependencies are automatically inferred so these lines can be deleted
     depends_on            = [
         google_storage_bucket.cloud_functions_sources,  # declared in `cloud_storage.tf`
-        google_storage_bucket_object.zip2
+        google_storage_bucket_object.zip_workflows
     ]
 }
