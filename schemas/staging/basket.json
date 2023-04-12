@@ -27,25 +27,27 @@
         "name": "detail",
         "type": "RECORD",
         "mode": "REPEATED",
-        "description": "List of the products purchased"
-    },
-    {
-        "name": "detail.product_name",
-        "type": "STRING",
-        "mode": "REQUIRED",
-        "description": "Name of the product"
-    },
-    {
-        "name": "detail.quantity",
-        "type": "INTEGER",
-        "mode": "REQUIRED",
-        "description": "Quantity purchased"
-    },
-    {
-        "name": "detail.unit_price",
-        "type": "FLOAT",
-        "mode": "REQUIRED",
-        "description": "Unit price of the product"
+        "description": "List of the products purchased",
+        "fields": [
+            {
+                "name": "product_name",
+                "type": "STRING",
+                "mode": "REQUIRED",
+                "description": "Name of the product"
+            },
+            {
+                "name": "quantity",
+                "type": "INTEGER",
+                "mode": "REQUIRED",
+                "description": "Quantity purchased"
+            },
+            {
+                "name": "unit_price",
+                "type": "FLOAT",
+                "mode": "REQUIRED",
+                "description": "Unit price of the product"
+            }
+        ]
     },
     {
         "name": "payment_mode",
