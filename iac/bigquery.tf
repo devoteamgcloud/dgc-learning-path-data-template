@@ -19,6 +19,13 @@ resource "google_bigquery_dataset" "staging" {
     location = "EU"
 }
 
+resource "google_bigquery_dataset" "aggregated" {
+    dataset_id = "aggregated"
+    project = var.project_id
+    description = "This is the aggregated table for Magasin&Cie"
+    location = "EU"
+}
+
 resource "google_bigquery_table" "store_raw" {
   dataset_id = google_bigquery_dataset.raw.dataset_id
   table_id   = "store"
@@ -46,5 +53,46 @@ resource "google_bigquery_table" "customer_staging" {
 resource "google_bigquery_table" "customer_cleaned" {
   dataset_id = google_bigquery_dataset.cleaned.dataset_id
   table_id   = "customer"
+  project = var.project_id
+}
+
+resource "google_bigquery_table" "basket_raw" {
+  dataset_id = google_bigquery_dataset.raw.dataset_id
+  table_id   = "basket"
+  project = var.project_id
+}
+
+resource "google_bigquery_table" "basket_staging" {
+  dataset_id = google_bigquery_dataset.staging.dataset_id
+  table_id   = "basket"
+  project = var.project_id
+}
+
+resource "google_bigquery_table" "basket_cleaned" {
+  dataset_id = google_bigquery_dataset.cleaned.dataset_id
+  table_id   = "basket_header"
+  project = var.project_id
+}
+resource "google_bigquery_table" "basket_detail_staging" {
+  dataset_id = google_bigquery_dataset.staging.dataset_id
+  table_id   = "basket_detail"
+  project = var.project_id
+}
+
+resource "google_bigquery_table" "basket_detail_cleaned" {
+  dataset_id = google_bigquery_dataset.cleaned.dataset_id
+  table_id   = "basket_detail"
+  project = var.project_id
+}
+
+resource "google_bigquery_table" "day_sale_aggregated" {
+  dataset_id = google_bigquery_dataset.aggregated.dataset_id
+  table_id   = "day_sale"
+  project = var.project_id
+}
+
+resource "google_bigquery_table" "best_product_sale_aggregated" {
+  dataset_id = google_bigquery_dataset.aggregated.dataset_id
+  table_id   = "best_product_sale"
   project = var.project_id
 }
