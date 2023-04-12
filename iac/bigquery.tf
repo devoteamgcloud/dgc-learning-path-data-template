@@ -1,3 +1,6 @@
+// Toutes les tables avec des données insérées avant que le schéma ne soit donné 
+// ne veulent plus du schéma
+
 resource "google_bigquery_dataset" "raw" {
     dataset_id = "raw"
     project = var.project_id
