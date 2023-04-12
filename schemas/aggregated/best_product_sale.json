@@ -1,0 +1,32 @@
+[
+    {
+        "name": "product_name",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Name of the product"
+    },
+    {
+        "name": "rank_in_quantity",
+        "type": "INTEGER",
+        "mode": "NULLABLE",
+        "description": "Rank of the product in term of quantity"
+    },
+    {
+        "name": "rank_in_sale",
+        "type": "INTEGER",
+        "mode": "NULLABLE",
+        "description": "Rank of the product in term of turnover"
+    },
+    {
+        "name": "total_quantity",
+        "type": "INTEGER",
+        "mode": "NULLABLE",
+        "description": "Total quantity sold"
+    },
+    {
+        "name": "total_sale",
+        "type": "FLOAT",
+        "mode": "NULLABLE",
+        "description": "Total price sold"
+    }
+]
