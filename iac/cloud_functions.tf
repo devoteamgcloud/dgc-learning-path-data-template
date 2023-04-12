@@ -49,7 +49,7 @@ resource "google_cloudfunctions_function" "trigger" {
     project               = var.project_id
     region                = var.region
     name                  = "trigger_on_file"
-    runtime               = "python310"  # of course changeable
+    runtime               = "python37"  # of course changeable
     environment_variables = yamldecode(file("../cloud_functions/cf_trigger_on_file/env.yaml"))
 
     # Must match the function name in the cloud function `main.py` source code
@@ -75,7 +75,7 @@ resource "google_cloudfunctions_function" "workflows" {
     project               = var.project_id
     region                = var.region
     name                  = "dispatch_workflow"
-    runtime               = "python310"  # of course changeable
+    runtime               = "python37"  # of course changeable
     environment_variables = yamldecode(file("../cloud_functions/cf_dispatch_workflow/env.yaml"))
 
     # Must match the function name in the cloud function `main.py` source code
