@@ -72,6 +72,7 @@ resource "google_bigquery_table" "basket_cleaned" {
   dataset_id = google_bigquery_dataset.cleaned.dataset_id
   table_id   = "basket_header"
   project = var.project_id
+  schema = file("../schemas/cleaned/basket_header.json")
 }
 resource "google_bigquery_table" "basket_detail_staging" {
   dataset_id = google_bigquery_dataset.staging.dataset_id
