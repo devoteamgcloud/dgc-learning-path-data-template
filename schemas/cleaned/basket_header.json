@@ -44,7 +44,7 @@
     {
         "name": "payment_mode",
         "type": "STRING",
-        "mode": "REQUIRED", 
+        "mode": "NULLABLE", 
         "description": "MasterCard / VISA / Cash"
     },
     {
