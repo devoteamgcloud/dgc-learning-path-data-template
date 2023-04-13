@@ -85,7 +85,7 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
 
     #loads the schema of the table as a json (dictionary) from the bucket
     blob_util = bucket_util.blob(f'schemas/raw/{table_name}.json')
-    raw_schema_json = json.load(blob_util.download_as_string())
+    raw_schema_json = json.loads(blob_util.download_as_string())
 
     #store in a string variable the blob uri path
     blob_uri_path = f'gs://{bucket_name}/{blob_path}'
@@ -112,7 +112,6 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     else:
         raise NotImplementedError(f'Extension {extension} not supported')
     
-
     #run your loading job from the blob uri to the destination raw table
     load_job = bigquery_client.load_table_from_uri(
         source_uris=blob_uri_path,
@@ -125,10 +124,9 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
 
     nb_rows_table = bigquery_client.get_table(table_id).num_rows
 
-    print(f'Number of rows inserted : {nb_rows_table}')
+    print(f'{nb_rows_table} rows inserted ')
 
 
-   
 def trigger_worflow(table_name: str):
     """
     Triggers and waits for a `<table_name>_wkf` Workflows pipeline's result within the project ID.
@@ -164,12 +162,12 @@ def trigger_worflow(table_name: str):
     print('Poll every second for result...')
     while not execution_finished:
         execution = workflow_client.get_execution(request={'name': response.name})
-        execution_finished = execution.state != executions.Execution.State.ACTIVE         
+        execution_finished = execution.state != executions.Execution.State.ACTIVE        
 
         # If we haven't seen the result yet, wait a second.
         print('- Waiting for results...')
         time.sleep(backoff_delay)
-        backoff_delay *= 2  # Double the delay to provide exponential backoff.
+        backoff_delay *= 5  # Double the delay to provide exponential backoff.
         
     print(f'Execution finished with state: {execution.state.name}')
     print(execution.result)
