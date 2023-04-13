@@ -1,7 +1,8 @@
 resource "google_storage_bucket" "magasin_cie_landing" {
   project  = var.project_id
-  name     = "${var.project_id}_magasin_cie_landing"
+  name     = "${var.project_id}_magasin-cie-landing"
   location = var.location
+  force_destroy = true
   lifecycle_rule {
     condition {
       age = 30
@@ -42,8 +43,9 @@ resource "google_storage_bucket" "magasin_cie_landing" {
 
 resource "google_storage_bucket" "magasin_cie_utils" {
   project  = var.project_id
-  name     = "${var.project_id}_magasin_cie_utils"
+  name     = "${var.project_id}_magasin-cie-utils"
   location = var.location
+  force_destroy = true
 }
 
 resource "google_storage_bucket" "cloud_functions_sources" {

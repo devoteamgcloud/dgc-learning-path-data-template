@@ -62,11 +62,11 @@ def check_file_format(event: dict, context: dict):
 
         file_split = file_name.split("_")
         assert len(file_split) == 2, f"{file_name}'s size is not a valid"
-        table_name, date = file_split[0], file_split[1]
+        table_name, date = file_split
 
-        assert table_name in FILES_AND_EXTENSION_SPEC.keys(), f"{table_name}'s name is not a valid"
+        assert table_name in FILES_AND_EXTENSION_SPEC, f"{table_name}'s name is not a valid"
         assert datetime.datetime.strptime(date, "%Y%m%d"), f"{date}'s date fortmat is not a valid"
-        assert file_extention in FILES_AND_EXTENSION_SPEC.values()
+        assert file_extention in FILES_AND_EXTENSION_SPEC[table_name]
         
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(
@@ -158,7 +158,7 @@ if __name__ == '__main__':
     for file_name in os.listdir(init_files_path):
         print(f'\nTesting your file {file_name}')
         mock_event = {
-            'bucket': f'{project_id}_magasin_cie_landing',
+            'bucket': f'{project_id}_magasin-cie-landing',
             'name': os.path.join('input', file_name)
         }
 

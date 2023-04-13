@@ -6,7 +6,7 @@ import base64
 from google.cloud import storage
 from google.cloud import bigquery
 from google.cloud.workflows import executions_v1
-
+from google.cloud.workflows.executions_v1beta.types import executions
 
 def receive_messages(event: dict, context: dict):
     """
@@ -113,14 +113,14 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
         raise NotImplementedError(f'Extension {extension} not supported')
     
 
-    # run your loading job from the blob uri to the destination raw table
+    #run your loading job from the blob uri to the destination raw table
     load_job = bigquery_client.load_table_from_uri(
         source_uris=blob_uri_path,
         destination=table_id,
         job_config=load_job_config,
     )
 
-    # waits the job to finish and print the number of rows inserted
+    #waits the job to finish and print the number of rows inserted
     load_job.result()
 
     nb_rows_table = bigquery_client.get_table(table_id).num_rows
@@ -146,9 +146,34 @@ def trigger_worflow(table_name: str):
     #     - wait for the result (with exponential backoff delay will be better)
     #     - be verbose where you think you have to 
     
+    workflow_client = executions_v1.ExecutionsClient()
 
-    raise NotImplementedError()
+    workflow_parent = workflow_client.workflow_path(
+        project=os.environ['GCP_PROJECT'],
+        location=os.environ['wkf_location'],
+        workflow=f'{table_name}_wkf'
+    )
 
+    response = workflow_client.create_execution(request={'parent': workflow_parent})
+
+    print(f'Created execution: {response.name}')
+
+    # Wait for execution to finish, then print results.
+    execution_finished = False
+    backoff_delay = 1  # Start wait with delay of 1 second
+    print('Poll every second for result...')
+    while not execution_finished:
+        execution = workflow_client.get_execution(request={'name': response.name})
+        execution_finished = execution.state != executions.Execution.State.ACTIVE         
+
+        # If we haven't seen the result yet, wait a second.
+        print('- Waiting for results...')
+        time.sleep(backoff_delay)
+        backoff_delay *= 2  # Double the delay to provide exponential backoff.
+        
+    print(f'Execution finished with state: {execution.state.name}')
+    print(execution.result)
+    return execution.result
 
 
 def move_file(bucket_name, blob_path, new_subfolder):
@@ -171,8 +196,8 @@ def move_file(bucket_name, blob_path, new_subfolder):
     #     - move you file inside the bucket to its destination
     #     - print the actual move you made
 
-    # connect to BigQuery Client
-    storage_client = bigquery.Client()
+    # connect to storage Client
+    storage_client = storage.Client()
 
     # move file to bq
     bucket = storage_client.bucket(bucket_name)
@@ -185,9 +210,6 @@ def move_file(bucket_name, blob_path, new_subfolder):
     bucket.rename_blob(blob, new_blob_path)
 
     print(f'{blob.name} moved to {new_blob_path}')
-    
-
-
 
 
 
@@ -199,12 +221,13 @@ if __name__ == '__main__':
     
     project_id = 'sandbox-smboup'
 
+    data = base64.b64encode('store'.encode('utf-8'))
     # test your Cloud Function for the store file.
     mock_event = {
-        'data': 'store',
+        'data': data,
         'attributes': {
-            'bucket': f'{project_id}_magasin_cie_landing',
-            'file_path': os.path.join('input', 'store_20220531.csv'),
+            'bucket_name': f'{project_id}_magasin-cie-landing',
+            'blob_path': os.path.join('input', 'store_20220531.csv'),
         }
     }
 
