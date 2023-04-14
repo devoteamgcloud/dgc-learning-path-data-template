@@ -2,11 +2,12 @@ import os
 import datetime
 from google.cloud import storage
 from google.cloud import pubsub_v1
+import re
 
 # This dictionary gives your the requirements and the specifications of the kind
 # of files you can receive. 
 #     - the keys are the names of the files
-#     - the values give the required extension for each file 
+#     - the values give the required extension for each file
 
 FILES_AND_EXTENSION_SPEC = {
     'store': 'csv',
@@ -62,7 +63,25 @@ def check_file_format(event: dict, context: dict):
 
         ...
 
-        table_name = "<to_replace_with_your_first_file_part_variable>"
+        table_name = file.split("_")[0]
+
+        pattern = f"^{table_name}_\d{{8}}\.\w+$"
+
+        # Check if file name matches pattern
+        assert re.match(pattern, file), f"File name format is invalid"
+
+        # Check the good table name
+        assert table_name in FILES_AND_EXTENSION_SPEC, "the table name is invalid"
+
+        # Check the good extension
+        assert file_extention == FILES_AND_EXTENSION_SPEC[table_name], "the extension is invalid"
+
+        # Check if date is a valid 'YYYYMMDD'-formatted date
+        date_str = file.split("_")[1].split(".")[0]
+        try:
+            datetime.datetime.strptime(date_str, "%Y%m%d")
+        except ValueError:
+            assert False, "Date format is invalid"
 
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(
@@ -145,7 +164,7 @@ if __name__ == '__main__':
     # it will have no impact on the Cloud Function when deployed.
     import os
     
-    project_id = '<YOUR-PROJECT-ID>'
+    project_id = 'sandbox-sdiouf'
 
     realpath = os.path.realpath(__file__)
     material_path = os.sep.join(['', *realpath.split(os.sep)[:-4], '__materials__'])
