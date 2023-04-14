@@ -1,3 +1,4 @@
+# Chap2 -> uncomment the code in the iac/cloud_storage.tf
 resource "google_storage_bucket" "magasin_cie_landing" {
   project  = var.project_id
   name     = "${var.project_id}_magasin_cie_landing"
@@ -53,3 +54,22 @@ resource "google_storage_bucket" "cloud_functions_sources" {
   uniform_bucket_level_access = true
 }
 
+# Chap4 -> add all the content of the folders queries/ and schemas/
+
+locals {
+  all_content = fileset(path.module, "../{queries,schemas}/**")
+}
+
+resource "google_storage_bucket_object" "queries" {
+  for_each = local.all_content
+  name     = trim(each.value, "../")
+  source   = each.value
+  bucket = google_storage_bucket.magasin_cie_utils.name
+}
+
+resource "google_storage_bucket_object" "schemas" {
+  for_each = local.all_content
+  name     = trim(each.value, "../")
+  source   = each.value
+  bucket = google_storage_bucket.magasin_cie_utils.name
+}
