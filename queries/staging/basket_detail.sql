@@ -7,3 +7,4 @@ SELECT
   basket.insertion_time
 
 FROM `{{ project_id }}.staging.basket` AS basket, UNNEST(basket.detail) AS detail
+ORDER BY basket.id_basket_header
