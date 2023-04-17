@@ -4,7 +4,7 @@
     - util_bucket_suffix: "magasin_cie_utils"
     - create_disposition: "CREATE_NEVER"
     - write_disposition: "WRITE_TRUNCATE"
-- get_cleaned_store_query:
+- get_staging_basket_query:
     call: http.get
     args:
       url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/staging/basket.sql"}
@@ -13,7 +13,7 @@
       auth:
         type: OAuth2  
     result: staging_basket_response
-- insert_cleaned_store:
+- insert_staging_basket:
     call: googleapis.bigquery.v2.jobs.insert
     args:
       projectId: ${project_id}
@@ -25,6 +25,31 @@
               projectId: ${project_id}
               datasetId: staging
               tableId: basket
+            create_disposition: ${create_disposition}
+            write_disposition: ${write_disposition}
+            allowLargeResults: true
+            useLegacySql: false
+- get_staging_basket_detail_query:
+    call: http.get
+    args:
+      url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/staging/basket_detail.sql"}
+      headers:
+        Content-Type: "text/plain"
+      auth:
+        type: OAuth2  
+    result: staging_basket_detail_response
+- insert_staging_basket_detail:
+    call: googleapis.bigquery.v2.jobs.insert
+    args:
+      projectId: ${project_id}
+      body:
+        configuration:
+          query:
+            query: ${text.replace_all(staging_basket_detail_response.body, "{{ project_id }}", project_id)}
+            destinationTable:
+              projectId: ${project_id}
+              datasetId: staging
+              tableId: basket_detail
             create_disposition: ${create_disposition}
             write_disposition: ${write_disposition}
             allowLargeResults: true
