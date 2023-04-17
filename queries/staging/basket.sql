@@ -51,7 +51,7 @@ maximum AS (
 )
 
 SELECT
-  COALESCE(basket.id_basket_header, maximum.max_basket_id + ROW_NUMBER() OVER()) AS `id_basket_header`,
+  COALESCE(basket.id_basket_header, maximum.max_basket_id + ROW_NUMBER() OVER(), 1) AS `id_basket_header`,
   basket.* EXCEPT(id_basket_header)
 
 FROM basket CROSS JOIN maximum
