@@ -19,7 +19,7 @@ WITH basket_temp AS (
     PARSE_DATETIME("%d-%m-%Y %H:%M:%S", purchase_date)             AS `purchase_date`,
     update_time,  
     CURRENT_TIMESTAMP()                                            AS `insertion_time`
-    FROM `raw.basket`
+    FROM `{{ project_id }}.raw.basket`
     QUALIFY ROW_NUMBER() OVER(   --regrouper par rapport à ce qu'il y a dans le "OVER"
       PARTITION BY             --regroupe par colonne, ici tous les id car on veut empêcher les dédoublements
         id_store,
@@ -46,7 +46,7 @@ basket AS (
 maximum AS (
   SELECT
     MAX(id_basket_header) AS `max_basket_id`
-  FROM cleaned.basket_header
+  FROM `{{ project_id }}.cleaned.basket_header`
 
 )
 
