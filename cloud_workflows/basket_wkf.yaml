@@ -62,7 +62,7 @@
         Content-Type: "text/plain"
       auth:
         type: OAuth2  
-    result: cleaned_basket_header_query
+    result: cleaned_basket_header_response
 - insert_cleaned_basket_header:
     call: googleapis.bigquery.v2.jobs.insert
     args:
