@@ -3,5 +3,5 @@ SELECT
   country,
   coordinate,
   creation_date
-FROM `{{ project_id }}.cleaned.store`
+FROM `cleaned.store`
 WHERE is_closed = false;
