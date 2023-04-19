@@ -92,5 +92,55 @@
             query: ${text.replace_all(cleaned_basket_detail_response.body, "{{ project_id }}", project_id)}
             allowLargeResults: true
             useLegacySql: false
+- get_aggregated_day_sale:
+    call: http.get
+    args:
+      url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/aggregated/day_sale.sql"}
+      headers:
+        Content-Type: "text/plain"
+      auth:
+        type: OAuth2  
+    result: aggregated_day_sale_response
+- insert_aggregated_day_sale:
+    call: googleapis.bigquery.v2.jobs.insert
+    args:
+      projectId: ${project_id}
+      body:
+        configuration:
+          query:
+            query: ${text.replace_all(aggregated_day_sale_response.body, "{{ project_id }}", project_id)}
+            destinationTable:
+              projectId: ${project_id}
+              datasetId: aggregated
+              tableId: day_sale
+            create_disposition: ${create_disposition}
+            write_disposition: ${write_disposition}
+            allowLargeResults: true
+            useLegacySql: false
+- get_aggregated_best_product_sale:
+    call: http.get
+    args:
+      url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/aggregated/best_product_sale.sql"}
+      headers:
+        Content-Type: "text/plain"
+      auth:
+        type: OAuth2  
+    result: aggregated_best_product_sale_response
+- insert_aggregated_best_product_sale:
+    call: googleapis.bigquery.v2.jobs.insert
+    args:
+      projectId: ${project_id}
+      body:
+        configuration:
+          query:
+            query: ${text.replace_all(aggregated_best_product_sale_response.body, "{{ project_id }}", project_id)}
+            destinationTable:
+              projectId: ${project_id}
+              datasetId: aggregated
+              tableId: best_product_sale
+            create_disposition: ${create_disposition}
+            write_disposition: ${write_disposition}
+            allowLargeResults: true
+            useLegacySql: false
 - the_end:
     return: "SUCCESS"
