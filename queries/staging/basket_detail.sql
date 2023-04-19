@@ -6,5 +6,6 @@ SELECT
   basket.update_time,
   basket.insertion_time
 
-FROM `{{ project_id }}.staging.basket` AS basket, UNNEST(basket.detail) AS detail
+FROM `{{ project_id }}.staging.basket` AS basket 
+CROSS JOIN UNNEST(basket.detail) AS detail
 ORDER BY basket.id_basket_header

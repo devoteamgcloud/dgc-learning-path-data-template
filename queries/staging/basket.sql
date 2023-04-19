@@ -45,13 +45,13 @@ basket AS (
 
 maximum AS (
   SELECT
-    MAX(id_basket_header) AS `max_basket_id`
+    COALESCE(MAX(id_basket_header),0) AS `max_basket_id`
   FROM `{{ project_id }}.cleaned.basket_header`
 
 )
 
 SELECT
-  COALESCE(basket.id_basket_header, maximum.max_basket_id + ROW_NUMBER() OVER(), ROW_NUMBER() OVER()) AS `id_basket_header`,
+  COALESCE(basket.id_basket_header, maximum.max_basket_id + ROW_NUMBER() OVER()) AS `id_basket_header`,
   basket.* EXCEPT(id_basket_header)
 
 FROM basket CROSS JOIN maximum

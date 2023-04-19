@@ -2,9 +2,9 @@ CREATE TEMP TABLE basket_header_temp
 AS
   SELECT 
     id_basket_header,
-    SUM(quantity) AS `n_product`,
-    COUNT(product_name) AS `n_product_distinct`,
-    ROUND(SUM(unit_price),2) AS `total_price`
+    SUM(quantity)            AS `n_product`,
+    COUNT(product_name)         AS `n_product_distinct`,
+    ROUND(SUM(unit_price*quantity),2) AS `total_price`
   FROM `{{ project_id }}.staging.basket` AS basket, UNNEST(detail) AS details
   GROUP BY
     id_basket_header
@@ -26,12 +26,11 @@ MERGE INTO `{{ project_id }}.cleaned.basket_header` AS Cleaned
       basket.payment_mode, 
       basket.purchase_date, 
       basket.update_time, 
+      basket.update_time AS `creation_time`,
       basket.insertion_time
     FROM `{{ project_id }}.staging.basket` AS basket
     LEFT JOIN basket_header_temp
-      ON basket.id_basket_header = basket_header_temp.id_basket_header
-    ORDER BY
-      basket.id_basket_header
+      ON basket.id_basket_header = basket_header_temp.id_basket_header --USING(id_basket_header)
   ) AS Staging
   ON  Staging.id_basket_header = Cleaned.id_basket_header
 
