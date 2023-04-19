@@ -64,3 +64,15 @@ resource "google_bigquery_table" "aggregated_tables" {
  schema              = file(each.value)
  deletion_protection = false
 }
+
+
+resource "google_bigquery_table" "open_store"{
+    project             = var.project_id
+    dataset_id          = google_bigquery_dataset.aggregated.dataset_id
+    table_id            = "open_store"
+    view {
+        query           = "../queries/aggregated/open_store.sql"
+        use_legacy_sql  = false
+    }
+
+}
