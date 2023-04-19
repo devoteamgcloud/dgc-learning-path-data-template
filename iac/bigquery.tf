@@ -75,3 +75,13 @@ resource "google_bigquery_table" "open_store"{
         use_legacy_sql  = false
     }
 }
+
+resource "google_bigquery_table" "customer_purchase"{
+    project             = var.project_id
+    dataset_id          = google_bigquery_dataset.aggregated.dataset_id
+    table_id            = "customer_purchase"
+    view {
+        query           = file("../queries/aggregated/customer_purchase.sql")
+        use_legacy_sql  = false
+    }
+}
