@@ -65,7 +65,7 @@ Activate GCP APIs
 gcloud services enable serviceusage.googleapis.com cloudresourcemanager.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com --project $PROJECT_ID
 ```
 
-Adds the `Editor` role to the SA Cloud build
+Add the `Editor` role to the SA Cloud build
 
 ```bash
 gcloud projects add-iam-policy-binding $PROJECT_ID \
@@ -73,7 +73,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
     --role="roles/editor"
 ```
 
-Then Go to the GCP Console to the [Cloud Build interface](https://console.cloud.google.com/cloud-build/builds) from your project id.
+Then go to the GCP Console and access the [Cloud Build interface](https://console.cloud.google.com/cloud-build/builds) from your project id.
 - In the left panel, click on `Triggers` then `+ CREATE TRIGGER`
 - add a trigger name (for instance `trigger-learning-path`)
 - In `Source -> Repository`, connect to the repository.
