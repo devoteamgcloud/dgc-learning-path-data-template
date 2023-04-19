@@ -1,4 +1,4 @@
-CREATE VIEW aggregated.open_store(city, country, coordinate, creation_date) AS (
+CREATE VIEW open_store(city, country, coordinate, creation_date) AS (
   SELECT
     city,
     country,
