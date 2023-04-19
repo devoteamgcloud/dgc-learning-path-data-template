@@ -71,7 +71,7 @@ resource "google_bigquery_table" "open_store"{
     dataset_id          = google_bigquery_dataset.aggregated.dataset_id
     table_id            = "open_store"
     view {
-        query           = "./queries/aggregated/open_store.sql"
+        query           = "/queries/aggregated/open_store.sql"
         use_legacy_sql  = false
     }
 }
