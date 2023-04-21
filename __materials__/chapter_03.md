@@ -7,9 +7,9 @@
 ### The Context
 
 Your bucket is now in place and is ready to be used to get the files from Magasin & Cie. 
-Of course, a file in a bucket is not really useful so we will then integrate it to get great insights. 
+Of course, a file in a bucket is not really useful so we will then integrate it to get the insights. 
 
-In this context, as soon as a file arrive in the bucket. We want to perform so verification on the file. 
+In this context, as soon as a file arrive in the bucket. We want to perform some verifications on the file. 
 The requirements given to Magasin & Cie to have a pipeline ready to use is to have well formatted & defined files sent to our bucket. 
 
 We asked for the files:
@@ -18,7 +18,7 @@ We asked for the files:
     - to be prefixed with the corresponding targeted table name for data items it contains. (`store`, `customer`, `basket`)
     - to be suffixed with the sending date as `YYYYMMDD`. (example: `20220301` for March, 1st of 2022.)
     - to have the correct extension:
-        - CSV for stores and customer files.
+        - CSV for store and customer files.
         - JSON for the basket files.
 
 
@@ -45,7 +45,7 @@ Deploy the Cloud Function with the `gcloud` CLI. Go check by yourself for the do
 
 #### Deployment with Terraform
 
-Then, when you are confortable with Cloud Function, you have to create the Terraform deployement of the Cloud Function in the `iac/cloud_functions.tf` file. 
+Then, when you are comfortable with Cloud Function, you have to create the Terraform deployment of the Cloud Function in the `iac/cloud_functions.tf` file. 
 Go to the Codelab [Deploy Cloud Functions on GCP with Terraform](https://codelabs.devoteamgcloud.com/codelabs/cloud_function_terraform/index.html). 
 
 

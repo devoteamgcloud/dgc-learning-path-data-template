@@ -6,15 +6,15 @@
 
 ### The Context
 
-Magasin & Cie has qualified both the store table and the customer table in your cleaned dataset. Their are impressed by you work. 
-But now they want to ingest another file which is more difficult to handle and is bigger than the others. 
-You have to ingest the sales of Magasin & Cie from the basket files, which are JSON files. 
+Magasin & Cie has seen both the store table and the customer table in your cleaned dataset. Their are impressed by you work. 
+But now, they want to ingest another file which is much more difficult to handle and is way bigger than the others. 
+You will have to ingest the sales of Magasin & Cie from the basket files, which are JSON files. 
 
 Then they want you to create a dataset with aggregated tables to be ready to create the dashboards for the managers. 
 
 ### The Learning Resources
 
-At this stage, yes yes it will be harder but I think you will be more autonomous. So for the last time, I will give you some links to without explaining anything. It can or can not be useful. And of course, it is not exhaustive!
+At this stage, yes it will be harder, but I think you will be more autonomous. So for the last time, I will give you some links without explaining anything. It may or may not be useful. And of course, it is not exhaustive!
 
 BigQuery
 - [Partitioned Tables](https://cloud.google.com/bigquery/docs/partitioned-tables)
@@ -42,11 +42,11 @@ Others
 - **your amazing colleagues**
 ### Your mission
 
-Your mission here is to complete the full diagram before to finish with the dashboards in the next chapter. 
+Your mission here is to complete the full diagram before finishing with the dashboards in the next chapter. 
 
 **For this chapter, you can use every file(s) you want**
 
-I hope you are more autonomous now but here are some hints. 
+I hope you will be more autonomous now but here are some hints. 
 
 #### Documentation & context matters
 
@@ -54,7 +54,7 @@ Every information can be retreive from the documentations, or from the context.
 
 #### Order matters
 
-When it comes to write some code, do you can do it in a smart way. For instance, by default, you can write your code following the pipeline's diagram. 
+When it comes to write some code, do it in a smart way. For instance, by default, you can write your code following the pipeline's diagram. 
 
 #### JSON instead of CSV ?
 
@@ -63,14 +63,14 @@ Maybe you will have to rework your second Cloud Function to be able to load all 
 #### Staging basket table
 
 The `staging.basket` table is really hard to make.
-We therefore advise you to follow the following steps to create it.
-- start by creating a `staging.basket_temp` table with only the simple transformations from `raw.basket` (the transformations that are not specified just below). For now set id_basket_header to NULL.
-- then dedupicate the detail on `product_name` updating the `staging.basket_temp` table in place (really, really hard). 
-- create `staging.basket` table joining with `cleaned.basket_header` table to retrieve existing basket headers ids and keep the new header as `NULL`. 
-- and update the `staging.basket` table in place to fill the NULL (new) basket headers with an incremental value starting from the last id known in the `cleaned.basket_header` table.
-- to be clean, delete the temporary table `staging.basket_temp`.
+We therefore advise you to follow the those steps to create it.
+- start by creating a `staging.basket_temp` table with only the simple transformations from `raw.basket` (the transformations that are not specified below). For now set id_basket_header to NULL.
+- then deduplicate the detail on `product_name` updating the `staging.basket_temp` table in place (really, really hard part). 
+- create `staging.basket` table joining with `cleaned.basket_header` table to retrieve existing basket headers ids and keep the new headers as `NULL`. 
+- update the `staging.basket` table in place to fill the NULL (new) basket headers with an incremental value starting from the last id known in the `cleaned.basket_header` table.
+- to be clean, delete the temporary table `staging.basket_temp` if you create one.
 
-By the end you will have the completed the pipeline architecture with those files.
+By the end you will have completed the pipeline architecture for those files.
 
 
 #### GDRP
@@ -82,17 +82,17 @@ To go further, what BigQuery supports to be GDPR compliant and to secure or prot
 
 This part, although it is only a few lines long, is very very very important! 
 
-The amount of the financial penalties can be up to 4% of the annual worldwide turnover. These sanctions can be made public and thus damage the public reputation of the company in the short and long term.
+The amount of financial penalties can be up to 4% of the annual worldwide turnover. These sanctions can be made public and thus damage the public reputation of the company in the short and long term.
 
-I invite you to take a look at this [interactive map of the sanctions imposed](https://datalegaldrive.com/lentreprise/nos-outils/carte-sanctions-rgpd/) and made public.
+I invite you to take a look at this [interactive map of the sanctions imposed and made public](https://datalegaldrive.com/lentreprise/nos-outils/carte-sanctions-rgpd/) .
 
 
 #### Some questions to ask 
 
-What if you ingest a file from the date `D` and then you can to catchup the history and ingest a file from the date `D-1`?
+What if you ingest a file from the date `D` and then you want to catch up the history and ingest a file from the date `D-1`?
 Is this the behaviour you want? If no, how can you address this issue? 
 
-The `aggregated.customer_purchase` is a view. Why does it matters in this situation? What are the limits of Cloud Workflows in this case? 
+The `aggregated.customer_purchase` is a view. Why does it matter in this situation? What are the limits of Cloud Workflows in this case? 
 
 Do you need some partitions? Some clustering? Why?
 
