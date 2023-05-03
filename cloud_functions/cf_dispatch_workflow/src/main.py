@@ -226,14 +226,14 @@ if __name__ == '__main__':
     import os
 
     project_id = 'sandbox-sdiouf'
-    data = base64.b64encode('customer'.encode('utf-8'))
+    data = base64.b64encode('store'.encode('utf-8'))
 
     # test your Cloud Function for the store file.
     mock_event = {
         'data': data,
         'attributes': {
             'bucket_name': f'{project_id}_magasin_cie_landing',
-            'blob_path': os.path.join('input', 'customer_20220603.csv'),
+            'blob_path': os.path.join('input', 'store_20220531.csv'),
         }
     }
 
