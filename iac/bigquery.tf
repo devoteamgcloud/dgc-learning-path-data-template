@@ -24,6 +24,8 @@ resource "google_bigquery_dataset" "staging" {
 }
 
 # Tables creation
+
+# ---------- store --------------
 resource "google_bigquery_table" "raw_store" {
   project             = var.project_id
   dataset_id          = google_bigquery_dataset.raw.dataset_id
@@ -40,6 +42,7 @@ resource "google_bigquery_table" "cleaned_store" {
   deletion_protection = false
 }
 
+# ---------- customer --------------
 resource "google_bigquery_table" "raw_customer" {
   project             = var.project_id
   dataset_id          = google_bigquery_dataset.raw.dataset_id
@@ -61,5 +64,45 @@ resource "google_bigquery_table" "cleaned_customer" {
   dataset_id          = google_bigquery_dataset.cleaned.dataset_id
   table_id            = "customer"
   schema              = file("../schemas/cleaned/customer.json")
+  deletion_protection = false
+}
+
+# ---------- basket --------------
+resource "google_bigquery_table" "raw_basket" {
+  project             = var.project_id
+  dataset_id          = google_bigquery_dataset.raw.dataset_id
+  table_id            = "basket"
+  schema              = file("../schemas/raw/basket.json")
+  deletion_protection = false
+}
+resource "google_bigquery_table" "staging_basket" {
+  project             = var.project_id
+  dataset_id          = google_bigquery_dataset.staging.dataset_id
+  table_id            = "basket"
+  schema              = file("../schemas/staging/basket.json")
+  deletion_protection = false
+}
+
+resource "google_bigquery_table" "staging_basket_detail" {
+  project             = var.project_id
+  dataset_id          = google_bigquery_dataset.staging.dataset_id
+  table_id            = "basket_detail"
+  schema              = file("../schemas/staging/basket_detail.json")
+  deletion_protection = false
+}
+
+resource "google_bigquery_table" "cleaned_basket_detail" {
+  project             = var.project_id
+  dataset_id          = google_bigquery_dataset.cleaned.dataset_id
+  table_id            = "basket_detail"
+  schema              = file("../schemas/cleaned/basket_detail.json")
+  deletion_protection = false
+}
+
+resource "google_bigquery_table" "cleaned_basket_header" {
+  project             = var.project_id
+  dataset_id          = google_bigquery_dataset.cleaned.dataset_id
+  table_id            = "basket_header"
+  schema              = file("../schemas/cleaned/basket_header.json")
   deletion_protection = false
 }
