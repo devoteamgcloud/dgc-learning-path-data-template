@@ -23,6 +23,14 @@ resource "google_bigquery_dataset" "staging" {
 
 }
 
+resource "google_bigquery_dataset" "aggregated" {
+  project     = var.project_id
+  dataset_id  = "aggregated"
+  description = "This is a dataset named aggregated"
+  location    = var.location
+
+}
+
 # Tables creation
 
 # ---------- store --------------
@@ -105,4 +113,42 @@ resource "google_bigquery_table" "cleaned_basket_header" {
   table_id            = "basket_header"
   schema              = file("../schemas/cleaned/basket_header.json")
   deletion_protection = false
+}
+
+# ---------- aggregated --------------
+resource "google_bigquery_table" "aggregated_day_sale" {
+  project             = var.project_id
+  dataset_id          = google_bigquery_dataset.aggregated.dataset_id
+  table_id            = "day_sale"
+  schema              = file("../schemas/aggregated/day_sale.json")
+  deletion_protection = false
+}
+
+resource "google_bigquery_table" "aggregated_best_product_sale" {
+  project             = var.project_id
+  dataset_id          = google_bigquery_dataset.aggregated.dataset_id
+  table_id            = "best_product_sale"
+  schema              = file("../schemas/aggregated/best_product_sale.json")
+  deletion_protection = false
+}
+
+# ---------- aggregated view --------------
+resource "google_bigquery_table" "view_open_store" {
+  project    = var.project_id
+  dataset_id = google_bigquery_dataset.aggregated.dataset_id
+  table_id   = "open_store"
+  view {
+    query          = file("../queries/aggregated/open_store.sql")
+    use_legacy_sql = false
+  }
+}
+
+resource "google_bigquery_table" "view_customer_purchase" {
+  project    = var.project_id
+  dataset_id = google_bigquery_dataset.aggregated.dataset_id
+  table_id   = "customer_purchase"
+  view {
+    query          = file("../queries/aggregated/customer_purchase.sql")
+    use_legacy_sql = false
+  }
 }

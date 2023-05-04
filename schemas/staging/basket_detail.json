@@ -12,18 +12,6 @@
     "description": "Name of the product"
   },
   {
-    "name": "creation_time",
-    "type": "TIMESTAMP",
-    "mode": "NULLABLE",
-    "description": "Time of record creation"
-  },
-  {
-    "name": "update_time",
-    "type": "TIMESTAMP",
-    "mode": "NULLABLE",
-    "description": "Time of update"
-  },
-  {
     "name": "quantity",
     "type": "INTEGER",
     "mode": "REQUIRED",
@@ -34,5 +22,17 @@
     "type": "FLOAT",
     "mode": "REQUIRED",
     "description": "Unit price of the product"
+  },
+  {
+    "name": "update_time",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE",
+    "description": "Time of record update"
+  },
+  {
+    "name": "insertion_time",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE",
+    "description": "Time of insertion"
   }
 ]
