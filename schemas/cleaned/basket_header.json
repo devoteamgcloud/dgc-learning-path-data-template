@@ -7,13 +7,13 @@
   },
   {
     "name": "id_store",
-    "type": "STRING",
+    "type": "INTEGER",
     "mode": "REQUIRED",
     "description": "Unique ID of the cash desk"
   },
   {
     "name": "id_cash_desk",
-    "type": "STRING",
+    "type": "INTEGER",
     "mode": "REQUIRED",
     "description": "Unique ID of the cash desk"
   },
