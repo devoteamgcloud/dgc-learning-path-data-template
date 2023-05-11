@@ -2,17 +2,21 @@ import os
 import time
 import json
 import base64
-from unittest import mock
+import logging
 
 from google.cloud import storage
 from google.cloud import bigquery
-from google.cloud.workflows import executions_v1
+from google.cloud import workflows_v1beta
+from google.cloud.workflows import executions_v1beta
+from google.cloud.workflows.executions_v1beta.types import executions
+
+logger = logging.getLogger("cf_dispatch_logs")
 
 
 def receive_messages(event: dict, context: dict):
     """
     Triggered from a message on a Cloud Pub/Sub topic.
-    Inserts a file into the correct BigQuery raw table. If succedded then
+    Inserts a file into the correct BigQuery raw table. If succeeded then
     archive the file and trigger the Cloud Workflow pipeline else move the
     file to the reject/ subfolder.
 
@@ -21,9 +25,11 @@ def receive_messages(event: dict, context: dict):
          context (google.cloud.functions.Context): Metadata for the event.
     """
 
+    logger.debug("---------- receiving messages ----------")
+
     # rename the variable to be more specific and write it to the logs
     pubsub_event = event
-    print(pubsub_event)
+    logger.info(pubsub_event)
 
     # decode the data giving the targeted table name
     table_name = base64.b64decode(pubsub_event['data']).decode('utf-8')
@@ -38,18 +44,18 @@ def receive_messages(event: dict, context: dict):
         insert_into_raw(table_name, bucket_name, blob_path)
         move_file(bucket_name, blob_path, 'archive')
         load_completed = True
+        logger.info("Inserted data into bigquery")
 
     except Exception as e:
-        print(e)
+        logger.warning(e)
         move_file(bucket_name, blob_path, 'reject')
 
     # trigger the pipeline if the load is completed
     if load_completed:
         trigger_worflow(table_name)
+        logger.info("Trigger the pipeline after inserting data")
 
 
-@mock.patch.dict(os.environ, {"project_id": "sandbox-sdiouf"})
-@mock.patch.dict(os.environ, {"util_bucket_suffix": "magasin_cie_utils"})
 def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     """
     Insert a file into the correct BigQuery raw table.
@@ -60,78 +66,71 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
          blob_path (str): Path of the blob inside the bucket.
     """
 
-    # TODO: 2
-    # You have to try to insert the file into the correct raw table using the python BigQuery Library.
-    # Please, refer yourself to the documentation and StackOverflow is still your friend ;)
-    # As an help, you can follow those instructions:
-    #     - connect to the Cloud Storage client
+    # connect to the Cloud Storage client
     storage_client = storage.Client()
 
-    #     - get the util bucket object using the os environments
-    bucket_title = storage_client.bucket(f"{os.environ['project_id']}_{os.environ['util_bucket_suffix']}")
-    source_blob = bucket_title.blob(f"schemas/raw/{table_name}.json")
+    # get the util bucket object using the os environments
+    project_id = os.environ['GCP_PROJECT']
+    # bucket = storage_client.bucket(f"{project_id}_{os.environ['UTIL_BUCKET_SUFFIX']}")
+    bucket = storage_client.bucket(f"{project_id}_magasin_cie_utils")
 
-    #     - loads the schema of the table as a json (dictionary) from the bucket
+    # loads the schema of the table as a json (dictionary) from the bucket
+    source_blob = bucket.blob(f"schemas/raw/{table_name}.json")
     content_bucket = source_blob.download_as_string().decode("utf-8")
-    schema = json.loads(content_bucket)
+    table_schema = json.loads(content_bucket)
+    logger.info("Successfully loaded the schema")
 
-    #     - store in a string variable the blob uri path of the data to load (gs://your-bucket/your/path/to/data)
-    data_uri = f"gs://{bucket_name}/{blob_path}"
+    # store in a string variable the blob uri path of the data to load (gs://your-bucket/your/path/to/data)
+    blob_uri = f"gs://{bucket_name}/{blob_path}"
 
-    #     - connect to the BigQuery Client
-    bigquery_client = bigquery.Client()
+    # connect to the BigQuery Client
+    bq_client = bigquery.Client(project_id)
 
-    #     - store in a string variable the table id with the bigquery client. (project_id.dataset_id.table_name)
-    table = bigquery_client.get_dataset("raw")
+    # store in a string variable the table id with the bigquery client. (project_id.dataset_id.table_name)
+    table = bq_client.get_dataset("raw")
     dataset_id = table.dataset_id
-    table_id = f"{os.environ.get('project_id')}.{dataset_id}.{table_name}"
+    table_id = f"{project_id}.{dataset_id}.{table_name}"
 
-    #     - create your LoadJobConfig object from the BigQuery library
-    #     - (maybe you will need more variables according to the type of the file - csv, json - so it can be good to see the documentation)
+    # create your LoadJobConfig object from the BigQuery library
+    # find config based on file extension
     try:
         file_extension = blob_path.split('.')[-1].lower()
-    except Exception as e:
-        print(e)
-        raise Exception(f"Extension (csv or json) are not find  in  {blob_path}")
+    except:
+        raise Exception(f"Cannot find file extension for {blob_path}")
 
     if file_extension == "csv":
+        logger.debug("Ingest csv file")
         job_config = bigquery.LoadJobConfig(
-            schema=schema,
+            schema=table_schema,
             skip_leading_rows=1,
             source_format=bigquery.SourceFormat.CSV,
         )
     elif file_extension == "json":
+        logger.debug("Ingest json file")
         job_config = bigquery.LoadJobConfig(
-            schema=schema,
-            source_format=bigquery.SourceFormat.NEWLINE_DELIMITED_JSON
+            schema=table_schema,
+            source_format=bigquery.SourceFormat.NEWLINE_DELIMITED_JSON,
         )
     else:
         raise Exception(f"Invalid extension {file_extension}")
 
-    #     - and run your loading job from the blob uri to the destination raw table
+    logger.info("Created load job config")
+
+    # and run your loading job from the blob uri to the destination raw table
     try:
-        load_job = bigquery_client.load_table_from_uri(
-            source_uris=data_uri,
-            destination=table_id,
-            job_config=job_config
-        )
-        #     - waits the job to finish and print the number of rows inserted
-        # job result
-        load_job.result()
+        load_job = bq_client.load_table_from_uri(
+            blob_uri, table_id, job_config=job_config)  # Make an API request.
+        logger.info("Running job")
     except Exception as e:
-        print(f"Cannot load blob : {e}")
+        logger.warning(f"Cannot load blob : {e}")
 
-    # print the number of rows inserted
-    table = bigquery_client.get_table(table_id)
-    print(f'Number of rows inserted : {table.num_rows}')
-
-    # note: this is not a small function. Take the day or more if you have to.
-
+    # waits the job to finish and print the number of rows inserted
+    load_job.result()
+    destination_table = bq_client.get_table(table_id)
+    logger.info(f"Loaded {destination_table.num_rows}")
     pass
 
 
-@mock.patch.dict(os.environ, {"project_id": "sandbox-sdiouf"})
-@mock.patch.dict(os.environ, {"wkf_location": "europe-west1"})
 def trigger_worflow(table_name: str):
     """
     Triggers and waits for a `<table_name>_wkf` Workflows pipeline's result within the project ID.
@@ -140,42 +139,44 @@ def trigger_worflow(table_name: str):
          table_name (str): BigQuery raw table name.
     """
 
-    # TODO: 3
-    # This is your final function to implement.
-    # At this time, I hope you are more confortable with the Google Documentations for Python libraries.
-    # So your are not guide except this little help:
-    #     - trigger a Cloud Workflows execution according to the table updated
-    # connection to the cloud workflows client
-    execution_client = executions_v1.ExecutionsClient()
+    # check : https://cloud.google.com/workflows/docs/executing-workflow
+    project = os.environ['GCP_PROJECT']
+    # location = os.environ['WKF_LOCATION']
+    location = 'europe-west1'
+    workflow = f'{table_name}_wkf'
 
-    # create the fully workflow
-    # projects/{project}/locations/{location}/workflows/{workflow}
-    parent = execution_client.workflow_path(
-        project=os.environ['project_id'],
-        location=os.environ['wkf_location'],
-        workflow=f"{table_name}_wkf")
-    print(f'the fully workflow: {parent}')
+    # trigger a Cloud Workflows execution according to the table updated
+    execution_client = executions_v1beta.ExecutionsClient()
+    workflows_client = workflows_v1beta.WorkflowsClient()
 
-    # Make the request
+    # Construct the fully qualified location path.
+    parent = workflows_client.workflow_path(project, location, workflow)
+
+    # Execute the workflow.
     response = execution_client.create_execution(request={"parent": parent})
-    print(f"Created execution: {response.name}")
+    logger.info(f"Created execution: {response.name}")
 
-    #     - wait for the result (with exponential backoff delay will be better)
+    # wait for the result (with exponential backoff delay will be better)
     execution_finished = False
-    backoff_delay = 1
-    print('Poll every second for result...')
-    while not execution_finished:
-        execution = execution_client.get_execution(request={"name": response.name})
-        execution_finished = execution.state != execution.State.ACTIVE
+    backoff_delay = 1  # Start wait with delay of 1 second
+    logger.info('Poll every second for result...')
+    while (not execution_finished):
+        execution = execution_client.get_execution(
+            request={"name": response.name})
+        execution_finished = execution.state != executions.Execution.State.ACTIVE
+
+        # If we haven't seen the result yet, wait a second.
         if not execution_finished:
-            print('- Waiting for results...')
+            logger.info('- Waiting for results...')
             time.sleep(backoff_delay)
-            backoff_delay *= 2
+            backoff_delay *= 2  # Double the delay to provide exponential backoff.
         else:
-            #     - be verbose where you think you have to
-            print(f'- Execution finished with state: {execution.state.name}')
-            print(execution.result)
+            logger.info(
+                f'Execution finished with state: {execution.state.name}')
+            logger.info(execution.result)
             return execution.result
+
+    # be verbose where you think you have to
 
     raise NotImplementedError()
 
@@ -193,37 +194,34 @@ def move_file(bucket_name, blob_path, new_subfolder):
     # TODO: 1
     # Now you are confortable with the first Cloud Function you wrote.
     # Inspire youreslf from this first Cloud Function and:
-    #     - connect to the Cloud Storage client
+    # connect to the Cloud Storage client
     storage_client = storage.Client()
 
-    #     - get the bucket object and the blob object
-    source_bucket = storage_client.bucket(bucket_name)
-    source_blob = source_bucket.blob(blob_path)
+    # get the bucket object and the blob object
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(blob_path)
 
-    #     - split the blob path to isolate the file name
-    #     - create your new blob path with the correct new subfolder given from the arguments
-    new_blob_path = blob_path.replace(os.path.dirname(blob_path), new_subfolder)
+    # split the blob path to isolate the file name
+    # create your new blob path with the correct new subfolder given from the arguments
+    current_subfolder = os.path.dirname(blob_path)
+    new_blob_path = blob_path.replace(current_subfolder, new_subfolder)
 
-    #     - move you file inside the bucket to its destination
-    #     - print the actual move you made
-    destination_blob = source_bucket.copy_blob(source_blob, source_bucket, new_blob_path)
-    source_bucket.delete_blob(source_blob.name)
-    print(
-        "Blob {} in bucket {} copied to blob {} in bucket {}.".format(
-            source_blob.name,
-            source_bucket.name,
-            destination_blob.name,
-            source_bucket.name,
-        ))
-    print(f'{blob_path} is moved to {new_blob_path}')
+    # move your file inside the bucket to its destination
+    new_blob = bucket.copy_blob(blob, bucket, new_blob_path)
+    bucket.delete_blob(blob.name)
 
-    pass
+    # print the actual move you made
+    # See documentation
+    logger.info(
+        f"Blob {blob.name} in bucket {bucket.name} moved to blob {new_blob.name} in bucket {bucket.name}."
+    )
+
+    logger.info(f'{blob_path} moved to {new_blob_path}')
 
 
 if __name__ == '__main__':
     # here you can test with mock data the function in your local machine
     # it will have no impact on the Cloud Function when deployed.
-    import os
 
     project_id = 'sandbox-sdiouf'
     data = base64.b64encode('store'.encode('utf-8'))
@@ -232,8 +230,8 @@ if __name__ == '__main__':
     mock_event = {
         'data': data,
         'attributes': {
-            'bucket_name': f'{project_id}_magasin_cie_landing',
-            'blob_path': os.path.join('input', 'store_20220531.csv'),
+            'bucket': f'{project_id}_magasin_cie_landing',
+            'file_path': os.path.join('input', 'store_20220531.csv'),
         }
     }
 
