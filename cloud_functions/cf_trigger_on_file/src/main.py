@@ -1,13 +1,12 @@
 import os
-from datetime import datetime
 import datetime
 from google.cloud import storage
 from google.cloud import pubsub_v1
 
 # This dictionary gives your the requirements and the specifications of the kind
-# of files you can receive. 
+# of files you can receive
 #     - the keys are the names of the files test
-#     - the values give the required extension for each file 
+#     - the values give the required extension for each file
 
 FILES_AND_EXTENSION_SPEC = {
     'store': 'csv',
@@ -37,7 +36,7 @@ def check_file_format(event: dict, context: dict):
     blob_path = blob_event['name']
 
     # get the subfolder, the file name and its extension
-    *subfolder, file = blob_path.split(os.sep)  
+    *subfolder, file = blob_path.split(os.sep)
     subfolder =  os.path.join(*subfolder) if subfolder != [] else ''
     file_name, file_extention = file.split('.') 
 
@@ -57,7 +56,7 @@ def check_file_format(event: dict, context: dict):
         # TODO: 
         # create some assertions here to validate your file. It is:
         #     - the first part is required to be an accepted table name
-        #     - the second part is required to be a 'YYYYMMDD'-formatted date 
+        #     - the second part is required to be a 'YYYYMMDD'-formatted date
         #     - required to have the expected extension
         table_name, date = file_name.split('_')
         format = "%Y%m%d"
@@ -103,7 +102,7 @@ def publish_to_pubsub(data: bytes, attributes: dict):
          attributes (dict): Custom attributes for the message.
     """
     ## this small part is here to be able to simulate the function but
-    ## remove this part when you are ready to deploy your Cloud Function. 
+    ## remove this part when you are ready to deploy your Cloud Function
     ## [start simulation]
     print('Your file is considered as valid. It will be published to Pubsub.')
     return
@@ -135,7 +134,7 @@ def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
     """
 
     ## this small part is here to be able to simulate the function but
-    ## remove this part when you are ready to deploy your Cloud Function. 
+    ## remove this part when you are ready to deploy your Cloud Function
     ## [start simulation]
     print('Your file is considered as invalid. It will be moved to invalid/.')
     return
