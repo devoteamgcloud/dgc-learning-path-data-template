@@ -49,7 +49,7 @@ def check_file_format(event: dict, context: dict):
 
     # Check if the file is in the subfolder `input/` to avoid infinite loop
     assert subfolder == 'input', 'File must be in `input/ subfolder to be processed`'
-    
+  
     # check if the file name has the good format
     # required format: <table_name>_<date>.<extension>
     try:
@@ -63,7 +63,7 @@ def check_file_format(event: dict, context: dict):
 
 
         assert table_name == "customer" or table_name == "store" or table_name == "basket", "table_name should is incorrect"
-      
+   
         res = True
 
         # using try-except to check for truth value
@@ -113,7 +113,7 @@ def publish_to_pubsub(data: bytes, attributes: dict):
     # more: https://cloud.google.com/functions/docs/configuring/env-var#python_37_and_go_111
     project_id = os.environ['GCP_PROJECT']
     topic_id = os.environ['pubsub_topic_id']
-    
+ 
     # connect to the PubSub client
     publisher = pubsub_v1.PublisherClient()
 
@@ -139,8 +139,8 @@ def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
     print('Your file is considered as invalid. It will be moved to invalid/.')
     return
     ## [end simulation]
-    
-    
+
+ 
     # connect to the Cloud Storage client
     storage_client = storage.Client()
 
@@ -154,11 +154,11 @@ def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
 
 
 if __name__ == '__main__':
-    
+  
     # here you can test with mock data the function in your local machine
     # it will have no impact on the Cloud Function when deployed.
     import os
-    
+  
     project_id = 'sandbox-elekouara'
 
     realpath = os.path.realpath(__file__)
