@@ -68,7 +68,7 @@ def check_file_format(event: dict, context: dict):
 
         # using try-except to check for truth value
         try:
-            res = bool(datetime.strptime(date, format))
+            res = bool(datetime.datetime.strptime(date, format))
         except ValueError:
             res = False
         assert res == "True", "Date is required to be a 'YYYYMMDD'-formatted date"
