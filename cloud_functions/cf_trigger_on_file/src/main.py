@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 import datetime
 from google.cloud import storage
 from google.cloud import pubsub_v1
@@ -55,14 +56,28 @@ def check_file_format(event: dict, context: dict):
     try:
         # TODO: 
         # create some assertions here to validate your file. It is:
-        #     - required to have two parts.
         #     - the first part is required to be an accepted table name
         #     - the second part is required to be a 'YYYYMMDD'-formatted date 
         #     - required to have the expected extension
+        table_name, date = file_name.split('_')
+        format = "%Y%m%d"
 
-        ...
 
-        table_name = "<to_replace_with_your_first_file_part_variable>"
+        assert table_name == "customer" or table_name == "store" or table_name == "basket", "table_name should is incorrect"
+        
+        res = True
+ 
+        # using try-except to check for truth value
+        try:
+            res = bool(datetime.strptime(date, format))
+        except ValueError:
+            res = False
+        assert res == "True", "Date is required to be a 'YYYYMMDD'-formatted date"
+        if table_name == 'customer' or table_name =='store':
+            assert file_extention == "CSV", "file extension should be 'CSV'"
+        if table_name == 'basket':
+            assert file_extention == "JSON", "file extension should be 'JSON'"
+
 
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(
@@ -145,7 +160,7 @@ if __name__ == '__main__':
     # it will have no impact on the Cloud Function when deployed.
     import os
     
-    project_id = '<YOUR-PROJECT-ID>'
+    project_id = 'sandbox-elekouara'
 
     realpath = os.path.realpath(__file__)
     material_path = os.sep.join(['', *realpath.split(os.sep)[:-4], '__materials__'])
@@ -155,7 +170,7 @@ if __name__ == '__main__':
     for file_name in os.listdir(init_files_path):
         print(f'\nTesting your file {file_name}')
         mock_event = {
-            'bucket': f'{project_id}-magasin-cie-landing',
+            'bucket': f'sandbox_elekouara_magasin_cie_landing',
             'name': os.path.join('input', file_name)
         }
 
