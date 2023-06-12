@@ -66,7 +66,7 @@ def check_file_format(event: dict, context: dict):
         format = "%Y%m%d"
 
         print(f'table name is : {table_name}')
-        assert table_name == "customer" or table_name == "store" or table_name == "basket", "table_name is correct"
+        assert table_name == "customer" or table_name == "store" or table_name == "basket", "table_name is not correct"
 
         res = bool(datetime.datetime.strptime(date, format))
 
