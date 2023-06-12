@@ -38,7 +38,7 @@ def check_file_format(event: dict, context: dict):
     # get the subfolder, the file name and its extension
     *subfolder, file = blob_path.split(os.sep)
     subfolder =  os.path.join(*subfolder) if subfolder != [] else ''
-    file_name, file_extention = file.split('.') 
+    file_name, file_extention = file.split('.')
 
     print(f'Bucket name: {bucket_name}')
     print(f'File path: {blob_path}')
@@ -53,7 +53,7 @@ def check_file_format(event: dict, context: dict):
     # check if the file name has the good format
     # required format: <table_name>_<date>.<extension>
     try:
-        # TODO: 
+        # TODO:
         # create some assertions here to validate your file. It is:
         #     - the first part is required to be an accepted table name
         #     - the second part is required to be a 'YYYYMMDD'-formatted date
@@ -63,9 +63,9 @@ def check_file_format(event: dict, context: dict):
 
 
         assert table_name == "customer" or table_name == "store" or table_name == "basket", "table_name should is incorrect"
-        
+      
         res = True
- 
+
         # using try-except to check for truth value
         try:
             res = bool(datetime.strptime(date, format))
