@@ -6,7 +6,7 @@ from google.cloud import pubsub_v1
 
 # This dictionary gives your the requirements and the specifications of the kind
 # of files you can receive. 
-#     - the keys are the names of the files
+#     - the keys are the names of the files test
 #     - the values give the required extension for each file 
 
 FILES_AND_EXTENSION_SPEC = {
