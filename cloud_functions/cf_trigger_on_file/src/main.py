@@ -47,6 +47,8 @@ def check_file_format(event: dict, context: dict):
     print(f'File name: {file_name}')
     print(f'File Extension: {file_extention}')
 
+
+
     # Check if the file is in the subfolder `input/` to avoid infinite loop
     assert subfolder == 'input', 'File must be in `input/ subfolder to be processed`'
 
@@ -59,23 +61,27 @@ def check_file_format(event: dict, context: dict):
         #     - the second part is required to be a 'YYYYMMDD'-formatted date
         #     - required to have the expected extension
         table_name, date = file_name.split('_')
+        print(f'table name: {table_name}')
+        print(f'date: {date}')
         format = "%Y%m%d"
 
+        print(f'table name is : {table_name}')
+        assert table_name == "customer" or table_name == "store" or table_name == "basket", "table_name is correct"
 
-        assert table_name == "customer" or table_name == "store" or table_name == "basket", "table_name should is incorrect"
-
-        res = True
+        res = bool(datetime.datetime.strptime(date, format))
 
         # using try-except to check for truth value
-        try:
-            res = bool(datetime.datetime.strptime(date, format))
-        except ValueError:
-            res = False
-        assert res == "True", "Date is required to be a 'YYYYMMDD'-formatted date"
+        #try:
+        #    res = bool(datetime.datetime.strptime(date, format))
+        #except ValueError:
+        #    res = False
+        #    printf("Date is required to be a 'YYYYMMDD'-formatted date")
+        print(f'res is: {res}')
+        assert res is True, "Date is not good format"
         if table_name == 'customer' or table_name =='store':
-            assert file_extention == "CSV", "file extension should be 'CSV'"
+            assert file_extention == "csv", "file extension should be 'CSV'"
         if table_name == 'basket':
-            assert file_extention == "JSON", "file extension should be 'JSON'"
+            assert file_extention == "json", "file extension should be 'JSON'"
 
 
         # if all checks are succesful then publish it to the PubSub topic
