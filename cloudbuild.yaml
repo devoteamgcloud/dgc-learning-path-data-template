@@ -46,16 +46,16 @@ steps:
     cd iac
     terraform apply -input=false -no-color -auto-approve changes.tfplan
 # [END tf-apply]
-# # [START tf-destroy]
-# - id: 'Destroy infrastructure'
-#   name: 'hashicorp/terraform:1.2.1'
-#   entrypoint: 'sh'
-#   args:
-#   - '-c'
-#   - |
-#     cd iac
-#     terraform destroy -input=false -auto-approve
-# # [END tf-destroy]
+# [START tf-destroy]
+- id: 'Destroy infrastructure'
+  name: 'hashicorp/terraform:1.2.1'
+  entrypoint: 'sh'
+  args:
+  - '-c'
+  - |
+    cd iac
+    terraform destroy -input=false -auto-approve
+# [END tf-destroy]
 timeout: 5400s
 options:
   logging: CLOUD_LOGGING_ONLY
