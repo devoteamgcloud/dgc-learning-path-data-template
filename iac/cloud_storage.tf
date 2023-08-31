@@ -1,6 +1,6 @@
 resource "google_storage_bucket" "magasin_cie_landing" {
   project  = var.project_id
-  name     = "${var.project_id}_magasin_cie_landing" 
+  name     = "${var.project_id}_magasin_cie_landing-s" 
   location = var.location
   lifecycle_rule {
     condition {
@@ -44,7 +44,7 @@ resource "google_storage_bucket" "magasin_cie_landing" {
 
 resource "google_storage_bucket" "magasin_cie_utils" {
   project  = var.project_id
-  name     = "${var.project_id}_magasin_cie_utils"
+  name     = "${var.project_id}_magasin_cie_utils-s"
   location = var.location
 }
 
