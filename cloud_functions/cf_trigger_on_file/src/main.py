@@ -53,7 +53,7 @@ def check_file_format(event: dict, context: dict):
     # check if the file name has the good format
     # required format: <table_name>_<date>.<extension>
     try:
-        # TODO: 
+        # Done: 
         # create some assertions here to validate your file. It is:
         #     - required to have two parts.
         #     - the first part is required to be an accepted table name
@@ -61,9 +61,16 @@ def check_file_format(event: dict, context: dict):
         #     - required to have the expected extension
 
         ...
+        # adding assert 
+        assert all([
+            len(file_name.split('_')) == 2,
+                     file_name.split('_')[0] in FILES_AND_EXTENSION_SPEC.keys(),
+                     bool(datetime.strptime(file_name.split('_')[1],'%Y%m%d'))==True,
+                       file_extention == FILES_AND_EXTENSION_SPEC[table_name]
+                       ]), 'Checking : 3 conditions'
 
-        table_name = "<to_replace_with_your_first_file_part_variable>"
-
+        table_name=file_name.split('_')[0],
+        #table_name = "<to_replace_with_your_first_file_part_variable>"
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(
             data=table_name.encode('utf-8'),
@@ -97,6 +104,7 @@ def publish_to_pubsub(data: bytes, attributes: dict):
 
     # retrieve the GCP_PROJECT from the reserved environment variables
     # more: https://cloud.google.com/functions/docs/configuring/env-var#python_37_and_go_111
+    
     project_id = os.environ['GCP_PROJECT']
     topic_id = os.environ['pubsub_topic_id']
     
