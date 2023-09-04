@@ -38,8 +38,7 @@ def check_file_format(event: dict, context: dict):
     # get the subfolder, the file name and its extension
     *subfolder, file = blob_path.split(os.sep)  
     subfolder =  os.path.join(*subfolder) if subfolder != [] else ''
-    file_name, file_extention = file.split('.') 
-
+    file_name, file_extention = file.split('.')
     print(f'Bucket name: {bucket_name}')
     print(f'File path: {blob_path}')
     print(f'Subfolder: {subfolder}')
@@ -49,7 +48,6 @@ def check_file_format(event: dict, context: dict):
 
     # Check if the file is in the subfolder `input/` to avoid infinite loop
     assert subfolder == 'input', 'File must be in `input/ subfolder to be processed`'
-    
     # check if the file name has the good format
     # required format: <table_name>_<date>.<extension>
     try:
@@ -65,8 +63,8 @@ def check_file_format(event: dict, context: dict):
         assert all([
             len(file_name.split('_')) == 2,
                      file_name.split('_')[0] in FILES_AND_EXTENSION_SPEC.keys(),
-                     bool(datetime.strptime(file_name.split('_')[1],'%Y%m%d'))==True,
-                       file_extention == FILES_AND_EXTENSION_SPEC[table_name]
+                     bool(datetime.datetime.strptime(file_name.split('_')[1],'%Y%m%d')) is True,
+                       file_extention == FILES_AND_EXTENSION_SPEC[file_name.split('_')[0]]
                        ]), 'Checking : 3 conditions'
 
         table_name=file_name.split('_')[0],
