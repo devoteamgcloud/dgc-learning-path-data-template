@@ -64,4 +64,3 @@ resource "google_storage_bucket_object" "bigquery_files" {
   source   = each.value
   bucket   = google_storage_bucket.magasin_cie_utils.name
 }
-
