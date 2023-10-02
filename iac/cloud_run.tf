@@ -6,7 +6,7 @@ resource "google_cloud_run_service" "trigger_on_file" {
   template {
       spec{
         containers {
-          image = "eu.gcr.io/sandbox-vcordonnier/test:0.1"  
+          image = "eu.gcr.io/sandbox-vcordonnier/test:0.2"  
         }
       }
     

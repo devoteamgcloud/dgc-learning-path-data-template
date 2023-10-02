@@ -154,4 +154,4 @@ if __name__ == '__main__':
 
     #     mock_context = {}
     #     check_file_format(mock_event, mock_context)
-    app.run(port=int(os.environ.get("PORT", 8080)),host='0.0.0.0',debug=True)
+    app.run(port=int(os.environ.get("PORT", 8000)),host='0.0.0.0',debug=True)
