@@ -1,4 +1,4 @@
-resource "google_cloud_run_v2_service" "trigger_on_file" {
+resource "google_cloud_run_service" "trigger_on_file" {
   name     = "trigger-on-file-cloud-run"
   location = "europe-west1"
 
