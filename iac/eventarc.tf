@@ -1,6 +1,6 @@
-resource "google_eventarc_trigger" "trigger-on-file" {
+resource "google_eventarc_trigger" "trigger_on_file_event" {
     project  = var.project_id
-    name = "trigger-on-file"
+    name = "trigger-on-file-event"
     location = "europe-west1"
     matching_criteria {
         attribute = "type"
