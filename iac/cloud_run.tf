@@ -7,6 +7,9 @@ resource "google_cloud_run_service" "trigger_on_file" {
       spec{
         containers {
           image = "eu.gcr.io/sandbox-vcordonnier/test:0.2"  
+          ports {
+            container_port = 8000
+          }
         }
       }
     
