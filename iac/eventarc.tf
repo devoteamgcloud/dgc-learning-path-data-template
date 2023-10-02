@@ -2,6 +2,7 @@ resource "google_eventarc_trigger" "trigger_on_file_event" {
     project  = var.project_id
     name = "trigger-on-file-event"
     location = "europe-west1"
+    service_account = "eventarc-cloudrun-learning-pat@sandbox-vcordonnier.iam.gserviceaccount.com"
     matching_criteria {
         attribute = "type"
         value = "google.cloud.storage.object.v1.finalized"
