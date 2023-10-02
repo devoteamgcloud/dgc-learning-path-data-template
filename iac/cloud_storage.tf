@@ -64,3 +64,47 @@ resource "google_storage_bucket_object" "bigquery_files" {
   source   = each.value
   bucket   = google_storage_bucket.magasin_cie_utils.name
 }
+
+
+resource "google_storage_bucket" "magasin_cie_landing2" {
+  project  = var.project_id
+  name     = "${var.project_id}_magasin_cie_landing2"
+  location = var.location
+  public_access_prevention = "enforced"
+  lifecycle_rule {
+    condition {
+      age = 30
+    }
+    action {
+      type = "SetStorageClass"
+      storage_class = "NEARLINE"
+    }
+  }
+  lifecycle_rule {
+    condition {
+      age = 90
+    }
+    action {
+      type = "SetStorageClass"
+      storage_class = "COLDLINE"
+    }
+  }
+  lifecycle_rule {
+    condition {
+      age = 365
+    }
+    action {
+      type = "SetStorageClass"
+      storage_class = "ARCHIVE"
+    }
+  }
+  lifecycle_rule {
+    condition {
+      age = 1000
+      matches_prefix = ["archive/"]
+    }
+    action {
+      type = "Delete"
+    }
+  }
+}
