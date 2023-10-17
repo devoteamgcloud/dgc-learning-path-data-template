@@ -1,0 +1,39 @@
+{
+    "rule":
+    [
+      {
+        "action": {"type": "Delete"},
+        "condition": {"age": 1000}
+      },
+      {
+        "action":{
+            "type":"SetStorageClass",
+            "storageClass": "NEARLINE"
+        },
+        "condition":{
+            "age":90,
+            "matchesPrefix" : "archive/"
+        }
+      },
+      {
+        "action":{
+            "type":"SetStorageClass",
+            "storageClass": "COLDLINE"
+        },
+        "condition":{
+            "age":180,
+            "matchesPrefix" : "archive/"
+        }
+      },
+      {
+        "action":{
+            "type":"SetStorageClass",
+            "storageClass": "ARCHIVE"
+        },
+        "condition":{
+            "age":90,
+            "matchesPrefix" : "archive/"
+        }
+      }
+    ]
+  }
