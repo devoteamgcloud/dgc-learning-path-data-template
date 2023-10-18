@@ -41,7 +41,7 @@ resource "google_cloudfunctions_function" "function" {
 
   event_trigger {
     event_type          = "google.storage.object.finalize"
-    resource            = "${var.project_id}-input"
+    resource            = "${var.project_id}_magasin_cie_landing"
   }
 
   # Dependencies are automatically inferred so these lines can be deleted
