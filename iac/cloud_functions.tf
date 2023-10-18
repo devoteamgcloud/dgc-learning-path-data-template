@@ -13,7 +13,7 @@ resource "google_storage_bucket_object" "zip" {
   # Append to the MD5 checksum of the files's content
   # to force the zip to be updated as soon as a change occurs
   name = "src-${data.archive_file.source.output_md5}.zip"
-  bucket = google_storage_bucket.cloud_functions_sources
+  bucket = google_storage_bucket.cloud_functions_sources.name
 
   # Dependencies are automatically inferred so these lines can be deleted
   
@@ -31,7 +31,7 @@ resource "google_cloudfunctions_function" "function" {
 
 
   # Get the source code of the cloud function as a Zip compression
-  source_archive_bucket = google_storage_bucket.cloud_functions_sources
+  source_archive_bucket = google_storage_bucket.cloud_functions_sources.name
   source_archive_object = google_storage_bucket_object.zip.name
 
   # Must match the function name in the cloud function `main.py` source code
