@@ -166,7 +166,7 @@ if __name__ == '__main__':
     for file_name in os.listdir(init_files_path):
         print(f'\nTesting your file {file_name}')
         mock_event = {
-            'bucket': f'{project_id}_magasin_cie_landing', #ici le nom du bucket est peut-etre mauvais
+            'bucket': f'{project_id}-magasin-cie-landing', #ici le nom du bucket est peut-etre mauvais
             'name': os.path.join('input', file_name)
         }
 
