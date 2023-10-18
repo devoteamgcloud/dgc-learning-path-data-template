@@ -1,5 +1,6 @@
 import os
-import datetime
+import datetime 
+from datetime import datetime
 from google.cloud import storage
 from google.cloud import pubsub_v1
 
@@ -46,6 +47,9 @@ def check_file_format(event: dict, context: dict):
     print(f'Full file name: {file}')
     print(f'File name: {file_name}')
     print(f'File Extension: {file_extention}')
+    
+    # Define date format
+    date_format = "%Y%m%d"
 
     # Check if the file is in the subfolder `input/` to avoid infinite loop
     assert subfolder == 'input', 'File must be in `input/ subfolder to be processed`'
@@ -56,13 +60,20 @@ def check_file_format(event: dict, context: dict):
         # TODO: 
         # create some assertions here to validate your file. It is:
         #     - required to have two parts.
+        assert len(file_name.split('_')) == 2, 'File name must have two parts <table_name>_<date> to be processed'
         #     - the first part is required to be an accepted table name
+        assert file_name.split('_')[0] in ('store','customer','basket') , 'File name must be prefixed with the corresponding targeted table name for data items it contains. (store, customer, basket) '
         #     - the second part is required to be a 'YYYYMMDD'-formatted date 
+        assert bool(datetime.strptime(file_name.split('_')[1], date_format)) , 'File name must be suffixed with the sending date as "YYYYMMDD". (example: 20220301 for March, 1st of 2022.)'
+
         #     - required to have the expected extension
-
-        ...
-
-        table_name = "<to_replace_with_your_first_file_part_variable>"
+        if file_name.split('_')[0] in ['store', 'customer'] :
+            assert file_extention == 'csv', 'File extension for store and customer files should be csv'
+        else:
+            assert file_extention == 'json', 'File extension for basket files should be json'
+            
+        
+        table_name = file_name.split('.')[0].split('_')[0]
 
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(
@@ -90,8 +101,8 @@ def publish_to_pubsub(data: bytes, attributes: dict):
     ## this small part is here to be able to simulate the function but
     ## remove this part when you are ready to deploy your Cloud Function. 
     ## [start simulation]
-    print('Your file is considered as valid. It will be published to Pubsub.')
-    return
+    # print('Your file is considered as valid. It will be published to Pubsub.')
+    # return
     ## [end simulation]
 
 
@@ -122,8 +133,8 @@ def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
     ## this small part is here to be able to simulate the function but
     ## remove this part when you are ready to deploy your Cloud Function. 
     ## [start simulation]
-    print('Your file is considered as invalid. It will be moved to invalid/.')
-    return
+    # print('Your file is considered as invalid. It will be moved to invalid/.')
+    # return
     ## [end simulation]
     
     
@@ -155,7 +166,7 @@ if __name__ == '__main__':
     for file_name in os.listdir(init_files_path):
         print(f'\nTesting your file {file_name}')
         mock_event = {
-            'bucket': f'{project_id}-magasin-cie-landing',
+            'bucket': f'{project_id}_magasin_cie_landing', #ici le nom du bucket est peut-etre mauvais
             'name': os.path.join('input', file_name)
         }
 
