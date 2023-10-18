@@ -27,6 +27,7 @@ resource "google_storage_bucket_object" "zip" {
 # Create the Cloud function triggered by a `Finalize` event on the bucket
 resource "google_cloudfunctions_function" "function" {
   project               = var.project_id
+  region                = var.region 
   name                  = "cf_trigger_onfile"
   runtime               = "python310"
 
