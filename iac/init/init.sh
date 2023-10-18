@@ -23,6 +23,5 @@ echo "artifactregistry.googleapis.com "
 echo "******"
 
 gsutil ls -b -p $PROJECT_ID gs://$TERRAFORM_BUCKET || gsutil mb -l eu -p $PROJECT_ID gs://$TERRAFORM_BUCKET || gsutil versioning set on gs://$TERRAFORM_BUCKET # Set versioning on
-echo "project_id = \"$PROJECT_ID"\" > backend.tfvars
-echo "bucket = \"$TERRAFORM_BUCKET"\" >> backend.tfvars
+echo "bucket = \"$TERRAFORM_BUCKET"\" > backend.tfvars
 
