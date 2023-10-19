@@ -1,3 +1,4 @@
+ 
  resource "google_storage_bucket" "magasin_cie_landing" {
    project  = var.project_id
    name     = "${var.project_id}_magasin_cie_landing"
@@ -5,6 +6,7 @@
    lifecycle_rule {
      condition {
        age = 30
+       matches_prefix = "archive/Nearline"
      }
      action {
        type = "SetStorageClass"
@@ -14,6 +16,7 @@
    lifecycle_rule {
      condition {
        age = 90
+       matches_prefix = "archive/Coldline"
      }
      action {
        type = "SetStorageClass"
@@ -23,6 +26,7 @@
    lifecycle_rule {
      condition {
        age = 365
+       matches_prefix = "archive/Archive"
      }
      action {
        type = "SetStorageClass"
@@ -32,6 +36,7 @@
    lifecycle_rule {
      condition {
        age = 1000
+       matches_prefix = "archive/"
      }
      action {
        type = "Delete"
@@ -45,11 +50,11 @@
    location = var.location
  }
 
- resource "google_storage_bucket" "cloud_functions_sources" {
-   project                     = var.project_id
-   name                        = "${var.project_id}_cloud_functions_sources"
-   location                    = var.location
-   force_destroy               = true
-   uniform_bucket_level_access = true
- }
+# resource "google_storage_bucket" "cloud_functions_sources" {
+#   project                     = var.project_id
+#   name                        = "${var.project_id}_cloud_functions_sources"
+#   location                    = var.location
+#   force_destroy               = true
+#   uniform_bucket_level_access = true
+# }
 
