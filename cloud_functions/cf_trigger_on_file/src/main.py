@@ -59,10 +59,13 @@ def check_file_format(event: dict, context: dict):
         #     - the first part is required to be an accepted table name
         #     - the second part is required to be a 'YYYYMMDD'-formatted date 
         #     - required to have the expected extension
+    
+        assert len(file_name.split("_")) == 2
+        assert file_name.split("_")[0] in FILES_AND_EXTENSION_SPEC.keys()
+        assert datetime.datetime.strptime(file_name.split("_")[1], "%Y%m%d")
+        assert file_extention in FILES_AND_EXTENSION_SPEC.values()
 
-        ...
-
-        table_name = "<to_replace_with_your_first_file_part_variable>"
+        table_name = f'{file_name.split("_")[0]}'
 
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(
@@ -145,7 +148,7 @@ if __name__ == '__main__':
     # it will have no impact on the Cloud Function when deployed.
     import os
     
-    project_id = '<YOUR-PROJECT-ID>'
+    project_id = 'sandbox-vvaneecloo'
 
     realpath = os.path.realpath(__file__)
     material_path = os.sep.join(['', *realpath.split(os.sep)[:-4], '__materials__'])
