@@ -2,41 +2,55 @@ resource "google_storage_bucket" "magasin_cie_landing" {
   project  = var.project_id
   name     = "${var.project_id}_magasin_cie_landing"
   location = var.location
+
   lifecycle_rule {
     condition {
       age = 30
+      matches_storage_class = ["STANDARD"]
     }
     action {
       type = "SetStorageClass"
       storage_class = "NEARLINE"
     }
   }
+
   lifecycle_rule {
     condition {
       age = 90
+      matches_storage_class = ["NEARLINE"]
     }
     action {
       type = "SetStorageClass"
       storage_class = "COLDLINE"
     }
   }
+
   lifecycle_rule {
     condition {
       age = 365
+      matches_storage_class = ["COLDLINE"]
     }
     action {
       type = "SetStorageClass"
       storage_class = "ARCHIVE"
     }
   }
+
   lifecycle_rule {
     condition {
       age = 1000
+      matches_storage_class = ["ARCHIVE"]
     }
     action {
       type = "Delete"
     }
   }
+}
+
+resource "google_storage_bucket_object" "input"{
+  name = "input"
+  content = " "
+  bucket = google_storage_bucket.magasin_cie_landing.name
 }
 
 resource "google_storage_bucket" "magasin_cie_utils" {
@@ -52,4 +66,3 @@ resource "google_storage_bucket" "cloud_functions_sources" {
   force_destroy               = true
   uniform_bucket_level_access = true
 }
-
