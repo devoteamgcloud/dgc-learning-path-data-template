@@ -59,13 +59,14 @@ def check_file_format(event: dict, context: dict):
         #     - the first part is required to be an accepted table name
         #     - the second part is required to be a 'YYYYMMDD'-formatted date 
         #     - required to have the expected extension
-    
-        assert len(file_name.split("_")) == 2
-        assert file_name.split("_")[0] in FILES_AND_EXTENSION_SPEC.keys()
-        assert datetime.datetime.strptime(file_name.split("_")[1], "%Y%m%d")
-        assert file_extention in FILES_AND_EXTENSION_SPEC.values()
 
-        table_name = f'{file_name.split("_")[0]}'
+        assert len(file_name.split("_")) == 2, f"{file_name} must contain exactly 2 parts"
+        file, date, *_ = file_name.split("_")
+        assert file in FILES_AND_EXTENSION_SPEC.keys(), f"{file_name} must be 'store', 'customer' or 'basket'"
+        assert datetime.datetime.strptime(date, "%Y%m%d"), f"{date} must be 'YYYYMMDD'-formatted"
+        assert file_extention == FILES_AND_EXTENSION_SPEC[file], f"{file_name} must be 'csv' or 'json'"
+
+        table_name = f'{file}'
 
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(

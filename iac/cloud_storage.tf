@@ -1,3 +1,5 @@
+#Configuration of 'magasin_cie_landing' bucket
+
 resource "google_storage_bucket" "magasin_cie_landing" {
   project  = var.project_id
   name     = "${var.project_id}_magasin_cie_landing"
@@ -53,12 +55,20 @@ resource "google_storage_bucket_object" "input"{
   bucket = google_storage_bucket.magasin_cie_landing.name
 }
 
+resource "google_storage_bucket_object" "invalid"{
+  name = "invalid"
+  content = " "
+  bucket = google_storage_bucket.magasin_cie_landing.name
+}
+
+#Configuration of 'magasin_cie_utils' bucket
 resource "google_storage_bucket" "magasin_cie_utils" {
   project  = var.project_id
   name     = "${var.project_id}_magasin_cie_utils"
   location = var.location
 }
 
+#Configuration of 'cloud_functions_sources' bucket
 resource "google_storage_bucket" "cloud_functions_sources" {
   project                     = var.project_id
   name                        = "${var.project_id}_cloud_functions_sources"

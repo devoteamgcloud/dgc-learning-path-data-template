@@ -1,37 +1,32 @@
 locals {
-    raw_schema_content = file("./schemas/raw/store.json")
-    raw_schema = jsondecode(local.raw_schema_content)
+    #'Raw' table schema
+    raw_schema = file("/Users/vvaneeclo/Projects/dgc-learning-path-data/dgc-learning-path-data-template/schemas/raw/store.json")
 
-    cleaned_schema_content = file("./schemas/cleaned/store.json")
-    cleaned_schema = jsondecode(local.cleaned_schema_content)
+    #'Cleaned‘ table schema
+    cleaned_schema = file("/Users/vvaneeclo/Projects/dgc-learning-path-data/dgc-learning-path-data-template/schemas/cleaned/store.json")
 }
 
-resource "google-bigquery-dataset" "raw" {
+resource "google_bigquery_dataset" "raw" {
     dataset_id = "${var.project_id}_raw"
-    description = ""
+    description = "Raw data from the 'store.csv', 'customer.csv' & 'basket.json' files stored in the 'magasin_cie_landing/input' storage bucket."
     location = "EU"
 }
 
-resource "google-bigquery-dataset" "cleaned" {
+resource "google_bigquery_dataset" "cleaned" {
     dataset_id = "${var.project_id}_cleaned"
-    description = ""
+    description = "Raw data from the 'store.csv', 'customer.csv' & 'basket.json' files stored in the 'magasin_cie_landing/input' storage bucket."
     location = "EU"
 }
 
-resource "google-bigquery-table" "raw_store" {
-    dataset_id = google-bigquery-dataset.raw.dataset_id
-    table_id = "{google-bigquery-dataset.cleaned.dataset_id}_store" #dont know how to parameter the table id considering the dataset_id
-    time_partitioning {
-        type = ""
-    }
+resource "google_bigquery_table" "raw_store" {
+    dataset_id = google_bigquery_dataset.raw.dataset_id
+    table_id = "${google_bigquery_dataset.cleaned.dataset_id}_store"
+    schema = local.raw_schema
 }
 
-resource "google-bigquery-table" "cleaned_store" {
-    dataset_id = google-bigquery-dataset.cleaned.dataset_id
-    table_id = "{google-bigquery-dataset.cleaned.dataset_id}_store" #dont know how to parameter the table id considering the dataset_id
-    schema = locals.cleaned_schema
-    time_partitioning {
-        type = ""
-    }
+resource "google_bigquery_table" "cleaned_store" {
+    dataset_id = google_bigquery_dataset.cleaned.dataset_id
+    table_id = "${google_bigquery_dataset.cleaned.dataset_id}_store"
+    schema = local.cleaned_schema
 }
 

@@ -1,7 +1,7 @@
 # Generates an archive of the source code compressed as a .zip file.
 data "archive_file" "source" {
     type        = "zip"
-    source_dir  = "../src"
+    source_dir  = "/Users/vvaneeclo/Projects/dgc-learning-path-data/dgc-learning-path-data-template/cloud_functions/cf_trigger_on_file/src"
     output_path = "/tmp/trigger_on_file.zip"
 }
 
