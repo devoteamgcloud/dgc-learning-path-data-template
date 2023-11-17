@@ -26,7 +26,7 @@ resource "google_storage_bucket_object" "zip" {
 resource "google_cloudfunctions_function" "trigger_on_file" {
     name                  = "trigger_on_file"
     runtime               = "python39"  # of course changeable
-
+    
     # Get the source code of the cloud function as a Zip compression
     source_archive_bucket = google_storage_bucket.cloud_functions_sources.name
     source_archive_object = google_storage_bucket_object.zip.name

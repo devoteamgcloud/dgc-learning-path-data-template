@@ -2,7 +2,7 @@
 
 resource "google_storage_bucket" "magasin_cie_landing" {
   project  = var.project_id
-  name     = "${var.project_id}_magasin_cie_landing"
+  name     = "${var.project_id}-magasin-cie-landing"
   location = var.location
 
   lifecycle_rule {

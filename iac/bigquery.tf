@@ -1,3 +1,5 @@
+#Lib pour formatter code: 'pre-commit'
+
 locals {
     #'Raw' table schema
     raw_schema = file("/Users/vvaneeclo/Projects/dgc-learning-path-data/dgc-learning-path-data-template/schemas/raw/store.json")
@@ -6,14 +8,16 @@ locals {
     cleaned_schema = file("/Users/vvaneeclo/Projects/dgc-learning-path-data/dgc-learning-path-data-template/schemas/cleaned/store.json")
 }
 
+#Utiliser une boucle pour créer les différentes tables
+
 resource "google_bigquery_dataset" "raw" {
-    dataset_id = "${var.project_id}_raw"
+    dataset_id = "${var.project_id}-raw"
     description = "Raw data from the 'store.csv', 'customer.csv' & 'basket.json' files stored in the 'magasin_cie_landing/input' storage bucket."
     location = "EU"
 }
 
 resource "google_bigquery_dataset" "cleaned" {
-    dataset_id = "${var.project_id}_cleaned"
+    dataset_id = "${var.project_id}-cleaned"
     description = "Raw data from the 'store.csv', 'customer.csv' & 'basket.json' files stored in the 'magasin_cie_landing/input' storage bucket."
     location = "EU"
 }
@@ -29,4 +33,3 @@ resource "google_bigquery_table" "cleaned_store" {
     table_id = "${google_bigquery_dataset.cleaned.dataset_id}_store"
     schema = local.cleaned_schema
 }
-
