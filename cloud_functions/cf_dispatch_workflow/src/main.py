@@ -79,19 +79,20 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     storage_client = storage.Client()
 
     # Get the util bucket object using the os environments
-    bucket = storage_client.bucket(bucket_name)
-    blob = bucket.blob(blob_path)
-
+    data_bucket = storage_client.bucket(bucket_name)
+    data_blob = data_bucket.blob(blob_path)
+    
     #Get the file and extension (it will be useful for the LoadJob)
     *subfolders, file_name = blob_path.split(os.sep)
     *file, file_extension = file_name.split(".")
 
     #Loads the schema of the table as a json (dictionary) from the bucket
-    schema = bucket.blob("schema_path") #how to know where it is ?
+    schema_bucket = storage_client.bucket("sandbox-vaneecloo-magasin_cie_utils")
+    schema = schema_bucket.blob(f"{table_name}_schema.json") #how to know where it is ?
     schema_json = schema.download_as_text()
    
     #Store in a string variable the blob uri path of the data to load (gs://your-bucket/your/path/to/data)
-    file_uri = blob.media_link()
+    file_uri = data_blob.media_link()
 
     #BigQuery
     #Connect to the BigQuery Client
@@ -99,8 +100,7 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
 
     #Store in a string variable the table id with the bigquery client. (project_id.dataset_id.table_name)
     table_ref = bq_client.get_table(table_name)
-    project_id, dataset_id = table_ref.project_id, table_ref.dataset_id
-    table_id = f"{project_id}.{dataset_id}.{table_name}"
+    table_id = table_ref.table_id
 
     #Create your LoadJobConfig object from the BigQuery librairy (maybe you will need more variables according to the type of the file - csv, json - so it can be good to see the documentation)
     job_config = bigquery.LoadJobConfig(
@@ -140,7 +140,7 @@ def trigger_worflow(table_name: str):
     #     - trigger a Cloud Workflows execution according to the table updated
     #     - wait for the result (with exponential backoff delay will be better)
     #     - be verbose where you think you have to 
-    client = workflows.
+    # client = workflows.
     
 
     raise NotImplementedError()
@@ -178,7 +178,7 @@ def move_file(bucket_name, blob_path, new_subfolder):
     new_blob_path = os.path.join(new_subfolder, file)
     #     - move you file inside the bucket to its destination
     destination_blob = bucket.blob(new_blob_path)
-    bucket.copy_blob(blob, destination_blob)
+    bucket.copy_blob(blob, bucket, destination_blob.name) #destination_blob.name == destination_blob.name
     #     - print the actual move you made
     print(f'File moved from {blob_path} moved to {new_blob_path}')
     # Do I have to delete the first blob ?
@@ -190,7 +190,7 @@ if __name__ == '__main__':
     # it will have no impact on the Cloud Function when deployed.
     import os
     
-    project_id = '<YOUR-PROJECT-ID>'
+    project_id = 'sandbox-vvaneecloo'
 
     # test your Cloud Function for the store file.
     mock_event = {
