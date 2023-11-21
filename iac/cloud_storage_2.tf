@@ -1,7 +1,7 @@
 locals {
   magasin_cie_landing    = "${var.project_id}_magasin_cie_landing"
   magasin_cie_utils      = "${var.project_id}_magasin_cie_utils"
-  cloud_function_sources = "cloud_function_sources"
+  cloud_function_sources = "${var.project_id}_cloud_function_sources"
 
   bucket_config = {
     (local.magasin_cie_landing) = {
@@ -34,7 +34,7 @@ locals {
           matches_storage_class = ["ARCHIVE"]
           matches_prefix        = "*/input/"
           action_type           = "Delete"
-        }]
+      }]
     }
     (local.magasin_cie_utils) = {
       project  = var.project_id,
@@ -51,13 +51,13 @@ locals {
 
   bucket_object_config = {
     "input" = {
-      content = " ",
       bucket  = local.magasin_cie_landing
+      content = " "
     }
 
     "invalid" = {
-      content = " ",
       bucket  = local.magasin_cie_landing
+      content = " "
     }
   }
 }

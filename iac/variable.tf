@@ -24,10 +24,10 @@ variable "region" {
 
 variable "cleaned_schema_path" {
   description = "Path to the cleaned schema file."
-  default = "../schemas/cleaned/store.json"
+  default     = "../schemas/cleaned/store.json"
 }
 
 variable "raw_schema_path" {
   description = "Path to the raw schema file."
-  default = "../schemas/raw/store.json"
+  default     = "../schemas/raw/store.json"
 }
