@@ -99,8 +99,7 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     bq_client = bigquery.Client()
 
     #Store in a string variable the table id with the bigquery client. (project_id.dataset_id.table_name)
-    table_ref = bq_client.get_table(table_name)
-    table_id = table_ref.table_id
+    table_id = bq_client.get_table(table_name).table_id
 
     #Create your LoadJobConfig object from the BigQuery librairy (maybe you will need more variables according to the type of the file - csv, json - so it can be good to see the documentation)
     job_config = bigquery.LoadJobConfig(
