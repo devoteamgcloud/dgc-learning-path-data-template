@@ -91,6 +91,21 @@ resource "google_storage_bucket" "buckets" {
 resource "google_storage_bucket_object" "objects" {
   for_each = local.bucket_object_config
   name     = each.key
-  content  = each.value.content
+  content  = try(each.value.content, null)
+  source = try(each.value.source, null)
   bucket   = each.value.bucket
+}
+
+resource "google_storage_bucket_object" "queries" {
+  bucket = local.magasin_cie_utils
+  for_each = fileset("../queries", "**")
+  name = each.value
+  source = "../queries/${each.value}"
+}
+
+resource "google_storage_bucket_object" "schemas" {
+  bucket = local.magasin_cie_utils
+  for_each = fileset("../schemas", "**")
+  name = each.value
+  source = "../schemas/${each.value}"
 }
