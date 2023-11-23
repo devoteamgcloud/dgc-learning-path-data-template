@@ -132,7 +132,7 @@ if __name__ == '__main__':
 
     # test your Cloud Function for the store file.
     mock_event = {
-        'data': 'store',
+        'data': 'store'.encode('utf-8'),
         'attributes': {
             'bucket': f'{project_id}-magasin-cie-landing',
             'file_path': os.path.join('input', 'store_20220531.csv'),
