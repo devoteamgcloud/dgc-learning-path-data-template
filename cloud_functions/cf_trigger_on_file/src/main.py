@@ -14,7 +14,6 @@ FILES_AND_EXTENSION_SPEC = {
     'basket': 'json'
 }
 
-
 def check_file_format(event: dict, context: dict):
     """
     Triggered by a change to a Cloud Storage bucket.
@@ -81,7 +80,6 @@ def check_file_format(event: dict, context: dict):
         print(e)
         # the file is moved to the invalid/ folder if one check is failed
         move_to_invalid_file_folder(bucket_name, blob_path)
-
 
 def publish_to_pubsub(data: bytes, attributes: dict):
     """
