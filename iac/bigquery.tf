@@ -19,13 +19,19 @@ locals {
     "raw_store" = {
       dataset_id = "${local.dataset_config.raw.dataset_id}"
       table_id   = "${local.dataset_config.raw.dataset_id}_store"
-      schema     = file("${var.raw_schema_path}")
+      schema     = file("${var.raw_store_schema_path}")
     }
 
     "cleaned_store" = {
       dataset_id = "${local.dataset_config.cleaned.dataset_id}"
       table_id   = "${local.dataset_config.cleaned.dataset_id}_store"
-      schema     = file("${var.cleaned_schema_path}")
+      schema     = file("${var.cleaned_store_schema_path}")
+    }
+
+    "raw_customer" = {
+      dataset_id = "${local.dataset_config.raw.dataset_id}"
+      table_id   = "${local.dataset_config.raw.dataset_id}_customer"
+      schema     = file("${var.raw_customer_schema_path}")
     }
   }
 }
