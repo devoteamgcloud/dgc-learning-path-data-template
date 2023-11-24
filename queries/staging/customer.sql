@@ -6,9 +6,9 @@ SELECT
   CAST(creation_date           AS DATE),
   update_time,
   CURRENT_TIMESTAMP()          AS 'insertion_time'
+FROM
+  `{{ project_id }}.raw.customer`
 GROUP BY
   email
 HAVING
-  COUNT(email) > 1
-FROM
-  `{{ project_id }}.raw.customer`;
+  COUNT(email) = 1;

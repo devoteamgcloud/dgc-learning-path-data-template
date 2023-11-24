@@ -1,38 +1,44 @@
-# #Lib pour formatter code: 'pre-commit'
+locals {
+  ### Datasets config ###
+  dataset_config = {
+    "raw" = {
+      dataset_id  = "${replace(var.project_id, "-", "_")}_raw"
+      description = "Raw data from the 'store.csv', 'customer.csv ' & 'basket.json' files stored in the 'magasin_cie_landing/input' storage bucket."
+      location    = "EU"
+    }
 
-# locals {
-#   #'Raw' table schema
-#   raw_schema = file("/Users/vvaneeclo/Projects/dgc-learning-path-data/dgc-learning-path-data-template/schemas/raw/store.json")
-#   #'Cleaned‘ table schema
-#   cleaned_schema = file("/Users/vvaneeclo/Projects/dgc-learning-path-data/dgc-learning-path-data-template/schemas/cleaned/store.json")
-#   #Big Query does not support "-" in dataset names, we have to replace them by "_"
-#   dataset_prefix_id = replace(var.project_id, "-", "_")
-# }
+    "cleaned" = {
+      dataset_id  = "${replace(var.project_id, "-", "_")}_cleaned"
+      description = "Raw data from the 'store.csv', 'customer.csv' & 'basket.json' files stored in the 'magasin_cie_landing/input' storage bucket."
+      location    = "EU"
+    }
+  }
 
-# #Utiliser une boucle pour créer les différentes tables
+  ### Tables config ###
+  tables_config = {
+    "raw_store" = {
+      dataset_id = "${local.dataset_config.raw.dataset_id}"
+      table_id   = "${local.dataset_config.raw.dataset_id}_store"
+      schema     = file("${var.raw_schema_path}")
+    }
 
-# #Tables
-# resource "google_bigquery_dataset" "raw" {
-#   dataset_id  = "${local.dataset_prefix_id}-raw"
-#   description = "Raw data from the 'store.csv', 'customer.csv' & 'basket.json' files stored in the 'magasin_cie_landing/input' storage bucket."
-#   location    = "EU"
-# }
+    "cleaned_store" = {
+      dataset_id = "${local.dataset_config.cleaned.dataset_id}"
+      table_id   = "${local.dataset_config.cleaned.dataset_id}_store"
+      schema     = file("${var.cleaned_schema_path}")
+    }
+  }
+}
 
-# resource "google_bigquery_dataset" "cleaned" {
-#   dataset_id  = "${local.dataset_prefix_id}-cleaned"
-#   description = "Raw data from the 'store.csv', 'customer.csv' & 'basket.json' files stored in the 'magasin_cie_landing/input' storage bucket."
-#   location    = "EU"
-# }
+resource "google_bigquery_dataset" "datasets" {
+  for_each    = local.dataset_config
+  dataset_id  = each.value.dataset_id
+  description = each.value.description
+}
 
-# #Datasets
-# resource "google_bigquery_table" "raw_store" {
-#   dataset_id = google_bigquery_dataset.raw.dataset_id
-#   table_id   = "${google_bigquery_dataset.raw.dataset_id}_store"
-#   schema     = local.raw_schema
-# }
-
-# resource "google_bigquery_table" "cleaned_store" {
-#   dataset_id = google_bigquery_dataset.cleaned.dataset_id
-#   table_id   = "${google_bigquery_dataset.cleaned.dataset_id}_store"
-#   schema     = local.cleaned_schema
-# }
+resource "google_bigquery_table" "tables" {
+  for_each   = local.tables_config
+  dataset_id = each.value.dataset_id
+  table_id   = each.value.table_id
+  schema     = each.value.schema
+}
