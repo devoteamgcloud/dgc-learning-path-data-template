@@ -1,0 +1,38 @@
+[
+    {
+        "name": "first_name",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Customer first name"
+    },
+    {
+        "name": "last_name",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Customer last name"
+    },
+    {
+        "name": "n_basket",
+        "type": "INTEGER",
+        "mode": "NULLABLE",
+        "description": "Number of baskets"
+    },
+    {
+        "name": "total_purchase",
+        "type": "FLOAT",
+        "mode": "NULLABLE",
+        "description": "Total amount spent"
+    },
+    {
+        "name": "first_purchase_date",
+        "type": "DATETIME",
+        "mode": "NULLABLE",
+        "description": "First purchase date of the customer"
+    },
+    {
+        "name": "last_purchase_date",
+        "type": "DATETIME",
+        "mode": "NULLABLE",
+        "description": "Last purchase date of the customer"
+    }
+]
