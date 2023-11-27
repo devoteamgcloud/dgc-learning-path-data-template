@@ -56,14 +56,14 @@ locals {
   ### BUCKET OBJECT ###
   ### Files ('/input' and "/invalid") ###
   bucket_object_config = {
-      "input" = {
+    "input" = {
       bucket  = local.magasin_cie_landing
       content = " "
-      }
-      "invalid" = {
+    }
+    "invalid" = {
       bucket  = local.magasin_cie_landing
       content = " "
-      }
+    }
   }
 }
 

@@ -44,17 +44,17 @@ variable "raw_store_schema_path" {
 ### Staging ###
 variable "staging_customer_schema_path" {
   description = "Path to the staging_customer table schema file."
-  default = "../schemas/staging/customer.json"
+  default     = "../schemas/staging/customer.json"
 }
 
 variable "staging_basket_schema_path" {
   description = "Path to the staging_basket table schema file."
-  default = "../schemas/staging/basket.json"
+  default     = "../schemas/staging/basket.json"
 }
 
 variable "staging_basket_detail_schema_path" {
   description = "Path to the staging_basket_detail table schema file."
-  default = "../schemas/staging/basket_detail.json"
+  default     = "../schemas/staging/basket_detail.json"
 }
 
 ### Cleaned ###
@@ -89,9 +89,9 @@ variable "customer_purchase_schema_path" {
   default     = "../schemas/aggregated/customer_purchase.json"
 }
 
-variable "day_sale_header_schema_path" {
+variable "day_sale_schema_path" {
   description = "Path to the day_sale table schema file."
-  default     = "../schemas/aggregated/day_sale_header.json"
+  default     = "../schemas/aggregated/day_sale.json"
 }
 
 variable "best_product_sale_schema_path" {

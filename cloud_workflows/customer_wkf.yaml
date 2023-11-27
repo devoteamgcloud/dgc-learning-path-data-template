@@ -1,0 +1,44 @@
+- init:
+    assign:
+    - project_id: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
+    - util_bucket_suffix: "magasin-cie-utils"
+    - create_disposition: "CREATE_NEVER"
+    - write_disposition: "WRITE_TRUNCATE"
+
+### insert raw_customer >> staging_customer
+- get_staging_customer_query:
+    call: http.get
+    args:
+      url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/staging/customer.sql"}
+      headers:
+        Content-Type: "text/plain"
+      auth:
+        type: OAuth2  
+    result: staging_customer_response
+- insert_staging_customer:
+    call: googleapis.bigquery.v2.jobs.insert
+    args:
+      projectId: ${project_id}
+      body:
+        configuration:
+          query:
+            query: ${text.replace_all(staging_customer_response.body, "{{ project_id }}", project_id)}
+            destinationTable:
+              projectId: ${project_id}
+              datasetId: staging
+              tableId: customer
+            create_disposition: ${create_disposition}
+            write_disposition: ${write_disposition}
+            allowLargeResults: true
+            useLegacySql: false
+
+### merge staging_customer >> cleaned_customer
+- get_merge_customer_query:
+- merge_cleaned_customer:
+
+### insert cleaned_customer >> customer_purchase
+- get_merge_customer_query:
+- insert_aggregated_customer:
+
+- the_end:
+    return: "SUCCESS"
