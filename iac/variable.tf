@@ -1,5 +1,4 @@
 ### GLOBAL ###
-
 variable "project_id" {
   type        = string
   description = "Project identifier"
@@ -26,9 +25,7 @@ variable "region" {
 
 
 ### TABLES SCHEMAS ###
-
 ### Raw ####
-
 variable "raw_basket_schema_path" {
   description = "Path to the raw_basket table schema file."
   default     = "../schemas/raw/basket.json"
@@ -45,7 +42,6 @@ variable "raw_store_schema_path" {
 }
 
 ### Staging ###
-
 variable "staging_customer_schema_path" {
   description = "Path to the staging_customer table schema file."
   default = "../schemas/staging/customer.json"
@@ -62,7 +58,6 @@ variable "staging_basket_detail_schema_path" {
 }
 
 ### Cleaned ###
-
 variable "cleaned_store_schema_path" {
   description = "Path to the cleaned table schema file."
   default     = "../schemas/cleaned/store.json"
@@ -84,23 +79,22 @@ variable "cleaned_basket_detail_schema_path" {
 }
 
 ### Aggregated ###
-
 variable "open_store_schema_path" {
   description = "Path to the open_store table schema file."
-  default     = "../schemas/cleaned/open_store.json"
+  default     = "../schemas/aggregated/open_store.json"
 }
 
 variable "customer_purchase_schema_path" {
   description = "Path to the customer_purchase table schema file."
-  default     = "../schemas/cleaned/customer_purchase.json"
+  default     = "../schemas/aggregated/customer_purchase.json"
 }
 
 variable "day_sale_header_schema_path" {
   description = "Path to the day_sale table schema file."
-  default     = "../schemas/cleaned/basket_header.json"
+  default     = "../schemas/aggregated/day_sale_header.json"
 }
 
 variable "best_product_sale_schema_path" {
   description = "Path to the best_product_sale table schema file."
-  default     = "../schemas/cleaned/best_product_sale.json"
+  default     = "../schemas/aggregated/best_product_sale.json"
 }
