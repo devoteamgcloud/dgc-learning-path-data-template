@@ -4,7 +4,6 @@
     - util_bucket_suffix: "magasin-cie-utils"
     - create_disposition: "CREATE_NEVER"
     - write_disposition: "WRITE_TRUNCATE"
-
 ### insert raw_customer >> staging_customer
 - get_staging_customer_query:
     call: http.get
@@ -31,14 +30,57 @@
             write_disposition: ${write_disposition}
             allowLargeResults: true
             useLegacySql: false
-
 ### merge staging_customer >> cleaned_customer
 - get_merge_customer_query:
+    call: http.get
+    args:
+      url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/cleaned/customer.sql"}
+      headers:
+        Content-Type: "text/plain"
+      auth:
+        type: OAuth2  
+    result: cleaned_customer_response
 - merge_cleaned_customer:
-
+    call: googleapis.bigquery.v2.jobs.insert
+    args:
+      projectId: ${project_id}
+      body:
+        configuration:
+          query:
+            query: ${text.replace_all(cleaned_customer_response.body, "{{ project_id }}", project_id)}
+            destinationTable:
+              projectId: ${project_id}
+              datasetId: cleaned
+              tableId: customer
+            create_disposition: ${create_disposition}
+            write_disposition: ${write_disposition}
+            allowLargeResults: true
+            useLegacySql: false
 ### insert cleaned_customer >> customer_purchase
-- get_merge_customer_query:
-- insert_aggregated_customer:
-
+- get_insert_aggregated_customer_purchase_query:
+    call: http.get
+    args:
+      url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/cleaned/customer.sql"}
+      headers:
+        Content-Type: "text/plain"
+      auth:
+        type: OAuth2  
+    result: aggregated_customer_purchase_response
+- insert_cleaned_customer:
+    call: googleapis.bigquery.v2.jobs.insert
+    args:
+      projectId: ${project_id}
+      body:
+        configuration:
+          query:
+            query: ${text.replace_all(aggregated_customer_purchase_response.body, "{{ project_id }}", project_id)}
+            destinationTable:
+              projectId: ${project_id}
+              datasetId: aggregated
+              tableId: customer_purchase
+            create_disposition: ${create_disposition}
+            write_disposition: ${write_disposition}
+            allowLargeResults: true
+            useLegacySql: false
 - the_end:
     return: "SUCCESS"
