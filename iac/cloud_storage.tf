@@ -9,8 +9,10 @@ locals {
   ### Bucket config ###
   bucket_config = {
     (local.magasin_cie_landing) = {
+      name = local.magasin_cie_landing
       project  = var.project_id
       location = var.location
+      force_destroy = true
       lifecycle_rules = [
         {
           age                   = 30
@@ -39,14 +41,16 @@ locals {
           matches_prefix        = "*/input/"
           action_type           = "Delete"
       }]
-    }
+    },
     (local.magasin_cie_utils) = {
+      name = local.magasin_cie_utils
       project  = var.project_id,
       location = var.location
-    }
-    (local.cloud_function_sources) = {
+      force_destroy = true
+    },
+    (local.cloud_function_sources) ={
       project                     = var.project_id
-      name                        = "${var.project_id}_cloud_functions_sources"
+      name                        = local.cloud_function_sources
       location                    = var.location
       force_destroy               = true
       uniform_bucket_level_access = true
@@ -71,7 +75,7 @@ locals {
 resource "google_storage_bucket" "buckets" {
   for_each = local.bucket_config
   #### Required args ###
-  name     = each.key
+  name     = each.value.name
   project  = each.value.project
   location = each.value.location
   ### Optional args ###
