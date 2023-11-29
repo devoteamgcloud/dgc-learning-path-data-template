@@ -2,14 +2,14 @@
 locals {
   ### BUCKETS ###
   ### Bucket names ###
-  magasin_cie_landing    = "${var.project_id}_magasin_cie_landing"
-  magasin_cie_utils      = "${var.project_id}_magasin_cie_utils"
-  cloud_function_sources = "${var.project_id}_cloud_function_sources"
+  magasin-cie-landing    = "${var.project_id}_magasin-cie-landing"
+  magasin-cie-utils      = "${var.project_id}_magasin-cie-utils"
+  cloud-function-sources = "${var.project_id}_cloud-function-sources"
 
   ### Bucket config ###
   bucket_config = {
-    (local.magasin_cie_landing) = {
-      name = local.magasin_cie_landing
+    (local.magasin-cie-landing) = {
+      name = local.magasin-cie-landing
       project  = var.project_id
       location = var.location
       force_destroy = true
@@ -42,15 +42,15 @@ locals {
           action_type           = "Delete"
       }]
     },
-    (local.magasin_cie_utils) = {
-      name = local.magasin_cie_utils
+    (local.magasin-cie-utils) = {
+      name = local.magasin-cie-utils
       project  = var.project_id,
       location = var.location
       force_destroy = true
     },
-    (local.cloud_function_sources) ={
+    (local.cloud-function-sources) ={
       project                     = var.project_id
-      name                        = local.cloud_function_sources
+      name                        = local.cloud-function-sources
       location                    = var.location
       force_destroy               = true
       uniform_bucket_level_access = true
@@ -61,11 +61,11 @@ locals {
   ### Files ('/input' and "/invalid") ###
   bucket_object_config = {
     "input" = {
-      bucket  = local.magasin_cie_landing
+      bucket  = local.magasin-cie-landing
       content = " "
     }
     "invalid" = {
-      bucket  = local.magasin_cie_landing
+      bucket  = local.magasin-cie-landing
       content = " "
     }
   }
@@ -109,16 +109,16 @@ resource "google_storage_bucket_object" "files" {
 
 ### Queries ###
 resource "google_storage_bucket_object" "queries" {
-  bucket   = local.magasin_cie_utils
+  bucket   = local.magasin-cie-utils
   for_each = fileset("../queries", "**")
-  name     = each.value
+  name     = "queries/${each.value}"
   source   = "../queries/${each.value}"
 }
 
 ### Schemas ###
 resource "google_storage_bucket_object" "schemas" {
-  bucket   = local.magasin_cie_utils
+  bucket   = local.magasin-cie-utils
   for_each = fileset("../schemas", "**")
-  name     = each.value
+  name     = "schemas/${each.value}"
   source   = "../schemas/${each.value}"
 }

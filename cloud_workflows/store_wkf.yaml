@@ -11,7 +11,7 @@
       headers:
         Content-Type: "text/plain"
       auth:
-        type: OAuth2  
+        type: OAuth2
     result: cleaned_store_response
 - insert_cleaned_store:
     call: googleapis.bigquery.v2.jobs.insert

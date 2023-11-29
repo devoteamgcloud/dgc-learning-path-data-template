@@ -1,5 +1,5 @@
 locals {
-  cloud_functions_bucket = "${var.project_id}_cloud_function_sources"
+  cloud_functions_bucket = "${var.project_id}_cloud-function-sources"
 }
 
 # ZIP
@@ -34,6 +34,6 @@ resource "google_cloudfunctions_function" "check_file_format" {
 
   event_trigger {
     event_type = "google.storage.object.finalize"
-    resource   = "projects/${var.project_id}/buckets/${var.project_id}_magasin_cie_landing"
+    resource   = "projects/${var.project_id}/buckets/${var.project_id}_magasin-cie-landing"
   }
 }
