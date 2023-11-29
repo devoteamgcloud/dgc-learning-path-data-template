@@ -3,7 +3,7 @@ SELECT
   first_name,
   UPPER(last_name)             AS `last_name`,
   email,
-  CAST(creation_date           AS DATE),
+  CAST(creation_date AS DATE) AS `creation_date`,
   update_time,
   CURRENT_TIMESTAMP()          AS `insertion_time`
 FROM

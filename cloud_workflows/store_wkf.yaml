@@ -1,7 +1,7 @@
 - init:
     assign:
     - project_id: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
-    - util_bucket_suffix: "magasin-cie-utils"
+    - util_bucket_suffix: "magasin-cie-utils" 
     - create_disposition: "CREATE_NEVER"
     - write_disposition: "WRITE_TRUNCATE"
 - get_cleaned_store_query:
