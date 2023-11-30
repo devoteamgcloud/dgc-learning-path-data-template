@@ -7,7 +7,7 @@ SELECT
   ANY_VALUE(basket_header.last_purchase_date)  AS `last_purchase_date`
 FROM
   ## Bonne pratique: table la + grosse à gauche le plus opti
-  `cleaned.customer` customer
-  LEFT JOIN `cleaned.basket_header` basket_header ON customer.id_customer = basket_header.id_customer
+  `{{ project_id }}.cleaned.customer` customer
+  LEFT JOIN `{{ project_id }}.cleaned.basket_header` basket_header ON customer.id_customer = basket_header.id_customer
 GROUP BY
-  customer.id_customer
+  customer.id_customer;
