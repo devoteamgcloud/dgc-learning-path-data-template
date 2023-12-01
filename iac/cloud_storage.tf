@@ -56,19 +56,6 @@ locals {
       uniform_bucket_level_access = true
     }
   }
-
-  ### BUCKET OBJECT ###
-  ### Files ('/input' and "/invalid") ###
-  bucket_object_config = {
-    "input" = {
-      bucket  = local.magasin-cie-landing
-      content = " "
-    }
-    "invalid" = {
-      bucket  = local.magasin-cie-landing
-      content = " "
-    }
-  }
 }
 
 ### BUCKETS ###
@@ -97,16 +84,6 @@ resource "google_storage_bucket" "buckets" {
 }
 
 ### GCS BUCKET OBJECTS ###
-
-### Files ('/input' and "/invalid") ###
-resource "google_storage_bucket_object" "files" {
-  for_each = local.bucket_object_config
-  name     = each.key
-  content  = try(each.value.content, null)
-  source   = try(each.value.source, null)
-  bucket   = each.value.bucket
-}
-
 ### Queries ###
 resource "google_storage_bucket_object" "queries" {
   bucket   = local.magasin-cie-utils

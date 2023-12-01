@@ -37,7 +37,7 @@ def check_file_format(event: dict, context: dict):
     # get the subfolder, the file name and its extension
     *subfolder, file = blob_path.split(os.sep)  
     subfolder =  os.path.join(*subfolder) if subfolder != [] else ''
-    file_name, file_extention = file.split('.') 
+    file_name, file_extention = file.split('.')
 
     print(f'Bucket name: {bucket_name}')
     print(f'File path: {blob_path}')
@@ -59,11 +59,11 @@ def check_file_format(event: dict, context: dict):
         #     - the second part is required to be a 'YYYYMMDD'-formatted date 
         #     - required to have the expected extension
 
-        assert len(file_name.split("_")) == 2, f"{file_name} must contain exactly 2 parts"
-        file, date, *_ = file_name.split("_")
-        assert file in FILES_AND_EXTENSION_SPEC.keys(), f"{file_name} must be 'store', 'customer' or 'basket'"
-        assert datetime.datetime.strptime(date, "%Y%m%d"), f"{date} must be 'YYYYMMDD'-formatted"
-        assert file_extention == FILES_AND_EXTENSION_SPEC[file], f"{file_name} must be 'csv' or 'json'"
+        assert len(file_name.split('_')) == 2, f'{file_name} must contain exactly 2 parts'
+        file, date, *_ = file_name.split('_')
+        assert file in FILES_AND_EXTENSION_SPEC.keys(), f'{file_name} must be "store", "customer" or "basket"'
+        assert datetime.datetime.strptime(date, "%Y%m%d"), f'{date} must be "YYYYMMDD"-formatted'
+        assert file_extention == FILES_AND_EXTENSION_SPEC[file], f'{file_name} must be "csv" or "json"'
 
         table_name = f'{file}'
 
@@ -75,7 +75,8 @@ def check_file_format(event: dict, context: dict):
                 'blob_path': blob_path
             }
         )
-
+        print(f"{file_name} published to Pub/Sub")
+        
     except Exception as e:
         print(e)
         # the file is moved to the invalid/ folder if one check is failed
@@ -93,7 +94,6 @@ def publish_to_pubsub(data: bytes, attributes: dict):
     ## remove this part when you are ready to deploy your Cloud Function. 
     ## [start simulation]
     print('Your file is considered as valid. It will be published to Pubsub.')
-    return
     ## [end simulation]
 
 
@@ -111,7 +111,6 @@ def publish_to_pubsub(data: bytes, attributes: dict):
 
     print(future.result())
     print(f'Published messages with custom attributes to {topic_path}.')
-
 def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
     """
     Move an invalid file from the input/ to the invalid/ subfolder.
@@ -120,14 +119,6 @@ def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
          bucket_name (str): Bucket name of the file.
          blob_path (str): Path of the blob inside the bucket.
     """
-
-    ## this small part is here to be able to simulate the function but
-    ## remove this part when you are ready to deploy your Cloud Function. 
-    ## [start simulation]
-    print('Your file is considered as invalid. It will be moved to invalid/.')
-    return
-    ## [end simulation]
-    
     
     # connect to the Cloud Storage client
     storage_client = storage.Client()

@@ -34,7 +34,9 @@ def receive_messages(event: dict, context: dict):
     load_completed = False
     try:
         # insert the data into the raw table then archive the file
+        print(f"insert_into_raw()) problem")
         insert_into_raw(table_name, bucket_name, blob_path)
+        print(f"move_file() problem")
         move_file(bucket_name, blob_path, 'archive')
         load_completed = True
         
@@ -86,8 +88,8 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
     *file, file_extension = file_name.split(".")
 
     #Loads the schema of the table as a json (dictionary) from the bucket
-    schema_bucket = storage_client.bucket("sandbox-vaneecloo-magasin_cie_utils")
-    schema = schema_bucket.blob(f"{table_name}_schema.json") #how to know where it is ?
+    schema_bucket = storage_client.bucket("sandbox-vvaneecloo_magasin-cie-utils")
+    schema = schema_bucket.blob(f"schemas/raw/{table_name}.json")
     schema_json = schema.download_as_text()
    
     #Store in a string variable the blob uri path of the data to load (gs://your-bucket/your/path/to/data)
