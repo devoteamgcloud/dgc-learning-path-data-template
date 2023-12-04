@@ -75,5 +75,5 @@ resource "google_cloudfunctions_function" "receive_messages" {
     resource   = "projects/sandbox-vvaneecloo/topics/valid_file"
   }
 
-  environment_variables = yamldecode(file("../cloud_functions/cf_trigger_on_file/env.yaml"))
+  environment_variables = yamldecode(file("../cloud_functions/cf_dispatch_workflow/env.yaml"))
 }

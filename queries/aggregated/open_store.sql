@@ -4,6 +4,6 @@ SELECT
   coordinate,
   creation_date
 WHERE
-  is_closed = "N"
+  is_closed = FALSE
 FROM
   `{{ project_id }}.cleaned.store`

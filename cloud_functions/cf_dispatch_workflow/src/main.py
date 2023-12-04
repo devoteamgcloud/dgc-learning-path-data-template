@@ -26,17 +26,16 @@ def receive_messages(event: dict, context: dict):
     
     # decode the data giving the targeted table name
     table_name = base64.b64decode(pubsub_event['data']).decode('utf-8')
-
+    
     # get the blob infos from the attributes
     bucket_name = pubsub_event['attributes']['bucket_name']
     blob_path = pubsub_event['attributes']['blob_path']
-
+    
+    print(f"table_name: {table_name}, bucket_name: {bucket_name}, blob_path: {blob_path}")
     load_completed = False
     try:
         # insert the data into the raw table then archive the file
-        print(f"insert_into_raw()) problem")
         insert_into_raw(table_name, bucket_name, blob_path)
-        print(f"move_file() problem")
         move_file(bucket_name, blob_path, 'archive')
         load_completed = True
         
@@ -57,7 +56,8 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
          bucket_name (str): Bucket name of the file.
          blob_path (str): Path of the blob inside the bucket.
     """
-
+    print("Beginning insert_into_raw")
+    project_id = os.environ['GCP_PROJECT']
     # TODO: 2
     # You have to try to insert the file into the correct raw table using the python BigQuery Library. 
     # Please, refer yourself to the documentation and StackOverflow is still your friend ;)
@@ -77,53 +77,67 @@ def insert_into_raw(table_name: str, bucket_name: str, blob_path: str):
 
     # GCS
     # Connect to the Cloud Storage client
+    print("storage_client")
     storage_client = storage.Client()
-
-    # Get the util bucket object using the os environments
-    data_bucket = storage_client.bucket(bucket_name)
-    data_blob = data_bucket.blob(blob_path)
     
+    # Get the util bucket object using the os environments
+    print("storage_client")
+    data_bucket = storage_client.bucket(bucket_name)
+    print(f"data_bucket is None: {data_bucket is None}")
+    print("data_blob")
+    data_blob = data_bucket.get_blob(blob_path)
+    print(f"data_blob is None: {data_blob is None}")
+
     #Get the file and extension (it will be useful for the LoadJob)
     *subfolders, file_name = blob_path.split(os.sep)
     *file, file_extension = file_name.split(".")
 
     #Loads the schema of the table as a json (dictionary) from the bucket
+    print("schema")
     schema_bucket = storage_client.bucket("sandbox-vvaneecloo_magasin-cie-utils")
+
     schema = schema_bucket.blob(f"schemas/raw/{table_name}.json")
     schema_json = schema.download_as_text()
    
     #Store in a string variable the blob uri path of the data to load (gs://your-bucket/your/path/to/data)
-    file_uri = data_blob.media_link()
-
+    print("file_uri")
+    file_uri = blobInternalUri(data_blob)
+    print(f"file_uri: {file_uri}")
     #BigQuery
     #Connect to the BigQuery Client
     bq_client = bigquery.Client()
 
     #Store in a string variable the table id with the bigquery client. (project_id.dataset_id.table_name)
-    table_id = bq_client.get_table(table_name).table_id
-    
+    print("table_id")
+    table_id = f"{project_id}.raw.{table_name}"
+        
     if file_extension == "csv":
-        job_config_param = {
+        job_config_parameters = {
             'source_format': bigquery.SourceFormat.CSV,
-            'skip_leading_row': 1
+            'skip_leading_rows': 1
         }
     elif file_extension == "json":
-        job_config_param = {
+        job_config_parameters = {
             'source_format': bigquery.SourceFormat.NEWLINE_DELIMITED_JSON,
         }
     else:
         raise ValueError("Unsupported file format (must be 'csv' or 'json')")
+    
+    print("file_extension OK")
 
     #Create your LoadJobConfig object from the BigQuery librairy (maybe you will need more variables according to the type of the file - csv, json - so it can be good to see the documentation)
+    print("job_config")
     job_config = bigquery.LoadJobConfig(
-    schema = schema_json,
     write_disposition = bigquery.WriteDisposition.WRITE_TRUNCATE,
-    **job_config_param
+    **job_config_parameters
     )
     
     #Run your loading job from the blob uri to the destination raw table
-    load_job = bq_client.load_table_from_uri(file_uri, table_id, job_config=job_config, location = 'eu')
+    print("load_job")
+    load_job = bq_client.load_table_from_uri(file_uri, table_id, job_config=job_config, location = 'us')
+    print(load_job is None)
     #Waits the job to finish and print the number of rows inserted
+    print("load_job.result")
     load_job.result()
     print(f"Number of inserted rows: {load_job.output_rows}")
 
@@ -134,8 +148,6 @@ def trigger_worflow(table_name: str):
     Args:
          table_name (str): BigQuery raw table name.
     """
-    
-
     # TODO: 3
     # This is your final function to implement. 
     # At this time, I hope you are more confortable with the Google Documentations for Python libraries. 
@@ -144,6 +156,7 @@ def trigger_worflow(table_name: str):
     #     - wait for the result (with exponential backoff delay will be better)
     #     - be verbose where you think you have to
     
+    print(f"trigger_workflow({table_name}) started")
     execution_client = executions_v1.ExecutionsClient()
     
     parent = execution_client.workflow_path(
@@ -189,17 +202,21 @@ def move_file(bucket_name, blob_path, new_subfolder):
     #Connect to the Cloud Storage client
     storage_client = storage.Client()
     #Get the bucket object and the blob object
-    bucket = storage_client.bucket(bucket_name)
-    blob = bucket.blob(blob_path)
+    source_bucket = storage_client.bucket(bucket_name)
+    source_blob = source_bucket.blob(blob_path)
     #Split the blob path to isolate the file name
     *subfolder, file = blob_path.split(os.sep)
     #Create your new blob path with the correct new subfolder given from the arguments + can the new_subfolder not exist ?
     new_blob_path = os.path.join(new_subfolder, file)
     #Move you file inside the bucket to its destination
-    destination_blob = bucket.blob(new_blob_path)
-    bucket.copy_blob(blob, bucket, destination_blob.name)
+    destination_blob = source_bucket.blob(new_blob_path)
+    source_bucket.copy_blob(source_blob, source_bucket, destination_blob.name)
     #Print the actual move you made
     print(f'File moved from {blob_path} moved to {new_blob_path}')
+    source_blob.delete()
+    
+def blobInternalUri(blob):
+    return f"gs://{blob.bucket.name}/{blob.name}"
 
 if __name__ == '__main__':
 
@@ -211,10 +228,10 @@ if __name__ == '__main__':
 
     # test your Cloud Function for the store file.
     mock_event = {
-        'data': 'store'.encode('utf-8'),
+        'data': 'stores='.encode('utf-8'),
         'attributes': {
             'bucket': f'{project_id}-magasin-cie-landing',
-            'file_path': os.path.join('input', 'store_20220531.csv'),
+            'file_path': os.path.join('input', 'store_20220531.csv')
         }
     }
 
