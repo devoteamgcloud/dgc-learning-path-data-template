@@ -12,6 +12,12 @@
         "description": "Unique ID of the store"
     },
     {
+        "name": "id_customer",
+        "type": "INTEGER",
+        "mode": "REQUIRED",
+        "description": "Unique ID of the customer"
+    },
+    {
         "name": "id_cash_desk",
         "type": "INTEGER",
         "mode": "REQUIRED",
