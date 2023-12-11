@@ -27,7 +27,7 @@
 --> insertion_time
 
 MERGE INTO
-  '{{ project_id }}.cleaned.basket_header' T USING '{{ project_id }}.staging.basket' S ON S.id_bakset_header = T.id_bakset_header
+  '{{ project_id }}.cleaned.basket_header' T USING '{{ project_id }}.staging.basket' S ON S.id_basket_header = T.id_basket_header
 WHEN MATCHED AND T.update_time < S.update_time THEN
 UPDATE SET
     T.id_basket_header = S.id_basket_header,

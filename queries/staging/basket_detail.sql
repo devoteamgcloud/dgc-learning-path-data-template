@@ -17,15 +17,22 @@
 --> update_time
 --# insertion_time
 
-## TODO
--- staging.basket_temp:
-    -- unnest all nested details
-    -- deduplicate all nested details
-    -- keep id_basket_header Null
-    -- insertion_time == NOW()
--- staging basket:
-    -- 
-    
-WITH staging.basket_temp AS (
 
-)
+INSERT INTO
+  `staging.basket_detail`
+    (id_basket_header,
+    product_name,
+    quantity,
+    unit_price,
+    update_time,
+    insertion_time)
+SELECT
+  id_basket_header,
+  product_name,
+  quantity,
+  unit_price,
+  update_time,
+  CURRENT_TIMESTAMP() AS `insertion_time`
+FROM
+  staging.basket,
+  UNNEST(detail)

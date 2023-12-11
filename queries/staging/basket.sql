@@ -25,7 +25,16 @@ CREATE OR REPLACE TABLE
       CURRENT_TIMESTAMP()                                  AS `insertion_time`
     FROM
       `{{ project_id }}.raw.basket`
-  );
+    QUALIFY ROW_NUMBER() 
+    OVER(
+      PARTITION BY 
+        id_store, 
+        id_cash_desk, 
+        id_customer, 
+        purchase_date 
+      ORDER BY 
+        update_time DESC
+    ) = 1);
 
 /*
 Deduplicate the detail subtable (or nested table) from staging.basket_temp in place.
@@ -108,6 +117,6 @@ WHERE
   tmp.id_cash_desk = staging_basket.id_cash_desk 
   AND tmp.id_customer = staging_basket.id_customer
   AND tmp.purchase_date = staging_basket.purchase_date
-  AND tmp.id_store = staging_basket.id_store
+  AND tmp.id_store = staging_basket.id_store;
 
 DROP TABLE IF EXISTS `{{ project_id }}.staging.basket_temp`;

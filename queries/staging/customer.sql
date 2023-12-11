@@ -1,14 +1,15 @@
-SELECT
-  CAST(id_customer AS INTEGER) AS `id_customer`,
+SELECT 
+  id_customer,
   first_name,
-  UPPER(last_name)             AS `last_name`,
+  UPPER(last_name)                      AS `last_name`,
   email,
-  CAST(creation_date AS DATE) AS `creation_date`,
+  PARSE_DATE("%d-%b-%Y", creation_date) AS `creation_date`,
   update_time,
-  CURRENT_TIMESTAMP()          AS `insertion_time`
-FROM
-  `{{ project_id }}.raw.customer`
-GROUP BY
-  email
-HAVING
-  COUNT(email) = 1;
+  CURRENT_TIMESTAMP()                   AS `insertion_time`
+FROM `{{ project_id }}.raw.customer`
+QUALIFY ROW_NUMBER() OVER (  -- [MENTOR #1]
+  PARTITION BY 
+    id_customer
+  ORDER BY 
+    update_time DESC
+) = 1

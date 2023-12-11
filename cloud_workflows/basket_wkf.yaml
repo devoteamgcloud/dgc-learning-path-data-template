@@ -23,16 +23,37 @@
         configuration:
           query:
             query: ${text.replace_all(staging_basket_response.body, "{{ project_id }}", project_id)}
+            allowLargeResults: true
+            useLegacySql: false
+### BASKET_DETAIL ###
+###insert raw_basket >> staging_basket_detail
+- get_staging_basket_detail_query:
+    call: http.get
+    args:
+      url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/staging/basket_detail.sql"}
+      headers:
+        Content-Type: "text/plain"
+      auth:
+        type: OAuth2  
+    result: staging_basket_detail_response
+- insert_staging_basket_detail:
+    call: googleapis.bigquery.v2.jobs.insert
+    args:
+      projectId: ${project_id}
+      body:
+        configuration:
+          query:
+            query: ${text.replace_all(staging_basket_detail_response.body, "{{ project_id }}", project_id)}
             destinationTable:
               projectId: ${project_id}
               datasetId: staging
-              tableId: basket
+              tableId: basket_detail
             create_disposition: ${create_disposition}
             write_disposition: ${write_disposition}
             allowLargeResults: true
             useLegacySql: false
 ###merge staging_basket >> cleaned_basket_header
-- get_basket_header_query:
+- get_cleaned_basket_header_query:
     call: http.get
     args:
       url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/cleaned/basket_detail.sql"}
@@ -41,7 +62,7 @@
       auth:
         type: OAuth2  
     result: cleaned_basket_header_response
-- merge_basket_header:
+- merge_cleaned_basket_header:
     call: googleapis.bigquery.v2.jobs.insert
     args:
       projectId: ${project_id}
@@ -53,6 +74,58 @@
               projectId: ${project_id}
               datasetId: cleaned
               tableId: basket_header
+            create_disposition: ${create_disposition}
+            write_disposition: ${write_disposition}
+            allowLargeResults: true
+            useLegacySql: false
+###merge staging_basket_detail >> cleaned_basket_detail
+- get_cleaned_basket_detail_query:
+    call: http.get
+    args:
+      url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/cleaned/basket_detail.sql"}
+      headers:
+        Content-Type: "text/plain"
+      auth:
+        type: OAuth2  
+    result: cleaned_basket_detail_response
+- merge_cleaned_basket_detail:
+    call: googleapis.bigquery.v2.jobs.insert
+    args:
+      projectId: ${project_id}
+      body:
+        configuration:
+          query:
+            query: ${text.replace_all(cleaned_basket_header_response.body, "{{ project_id }}", project_id)}
+            destinationTable:
+              projectId: ${project_id}
+              datasetId: cleaned
+              tableId: basket_detail
+            create_disposition: ${create_disposition}
+            write_disposition: ${write_disposition}
+            allowLargeResults: true
+            useLegacySql: false
+###insert cleaned_basket_header >> aggregated_day_sale
+- get_aggregated_day_sale_query:
+    call: http.get
+    args:
+      url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/aggregated/day_sale.sql"}
+      headers:
+        Content-Type: "text/plain"
+      auth:
+        type: OAuth2  
+    result: aggregated_day_sale
+- insert_aggregated_day_sale:
+    call: googleapis.bigquery.v2.jobs.insert
+    args:
+      projectId: ${project_id}
+      body:
+        configuration:
+          query:
+            query: ${text.replace_all(cleaned_basket_header_response.body, "{{ project_id }}", project_id)}
+            destinationTable:
+              projectId: ${project_id}
+              datasetId: aggregated
+              tableId: day_sale
             create_disposition: ${create_disposition}
             write_disposition: ${write_disposition}
             allowLargeResults: true
@@ -83,87 +156,8 @@
             write_disposition: ${write_disposition}
             allowLargeResults: true
             useLegacySql: false
-###insert cleaned_basket_header >> aggregated_day_sale
-- get_day_sale_query:
-    call: http.get
-    args:
-      url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/aggregated/day_sale.sql"}
-      headers:
-        Content-Type: "text/plain"
-      auth:
-        type: OAuth2  
-    result: aggregated_day_sale
-- insert_day_sale:
-    call: googleapis.bigquery.v2.jobs.insert
-    args:
-      projectId: ${project_id}
-      body:
-        configuration:
-          query:
-            query: ${text.replace_all(cleaned_basket_header_response.body, "{{ project_id }}", project_id)}
-            destinationTable:
-              projectId: ${project_id}
-              datasetId: aggregated
-              tableId: day_sale
-            create_disposition: ${create_disposition}
-            write_disposition: ${write_disposition}
-            allowLargeResults: true
-            useLegacySql: false
-### BASKET_DETAIL ###
-###insert raw_basket >> staging_basket_detail
-- get_staging_basket_detail_query:
-    call: http.get
-    args:
-      url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/staging/basket_detail.sql"}
-      headers:
-        Content-Type: "text/plain"
-      auth:
-        type: OAuth2  
-    result: staging_basket_detail_response
-- insert_staging_basket_detail:
-    call: googleapis.bigquery.v2.jobs.insert
-    args:
-      projectId: ${project_id}
-      body:
-        configuration:
-          query:
-            query: ${text.replace_all(staging_basket_detail_response.body, "{{ project_id }}", project_id)}
-            destinationTable:
-              projectId: ${project_id}
-              datasetId: staging
-              tableId: basket
-            create_disposition: ${create_disposition}
-            write_disposition: ${write_disposition}
-            allowLargeResults: true
-            useLegacySql: false
-###merge staging_basket_detail >> cleaned_basket_detail
-- get_basket_detail_query:
-    call: http.get
-    args:
-      url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/cleaned/basket_detail.sql"}
-      headers:
-        Content-Type: "text/plain"
-      auth:
-        type: OAuth2  
-    result: cleaned_basket_detail_response
-- merge_basket_detail:
-    call: googleapis.bigquery.v2.jobs.insert
-    args:
-      projectId: ${project_id}
-      body:
-        configuration:
-          query:
-            query: ${text.replace_all(cleaned_basket_header_response.body, "{{ project_id }}", project_id)}
-            destinationTable:
-              projectId: ${project_id}
-              datasetId: cleaned
-              tableId: basket_detail
-            create_disposition: ${create_disposition}
-            write_disposition: ${write_disposition}
-            allowLargeResults: true
-            useLegacySql: false
 ###insert cleaned_basket_detail >> aggregated_best_product_sale
-- get_best_product_sale_query:
+- get_aggregated_best_product_sale_query:
     call: http.get
     args:
       url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/aggregated/best_product_sale.sql"}
@@ -172,7 +166,7 @@
       auth:
         type: OAuth2  
     result: aggregated_best_product_sale_response
-- insert_best_product_sale:
+- insert_aggregated_best_product_sale:
     call: googleapis.bigquery.v2.jobs.insert
     args:
       projectId: ${project_id}
