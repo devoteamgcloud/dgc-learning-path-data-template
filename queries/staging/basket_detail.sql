@@ -17,15 +17,6 @@
 --> update_time
 --# insertion_time
 
-
-INSERT INTO
-  `staging.basket_detail`
-    (id_basket_header,
-    product_name,
-    quantity,
-    unit_price,
-    update_time,
-    insertion_time)
 SELECT
   id_basket_header,
   product_name,

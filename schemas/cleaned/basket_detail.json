@@ -12,7 +12,7 @@
         "description": "Name of the product"
     },
     {
-        "name": "creation_type",
+        "name": "creation_time",
         "type": "TIMESTAMP",
         "mode": "NULLABLE",
         "description": "Time of record creation"

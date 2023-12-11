@@ -1,5 +1,5 @@
 MERGE INTO
-  '{{ project_id }}.cleaned.customer' T USING '{{ project_id }}.staging.customer' S ON S.id_customer = T.id_customer
+  `{{ project_id }}.cleaned.customer` T USING `{{ project_id }}.staging.customer` S ON S.id_customer = T.id_customer
 WHEN MATCHED
   AND T.update_time < S.update_time THEN
 UPDATE SET

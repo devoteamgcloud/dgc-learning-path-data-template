@@ -70,12 +70,6 @@
         configuration:
           query:
             query: ${text.replace_all(cleaned_basket_header_response.body, "{{ project_id }}", project_id)}
-            destinationTable:
-              projectId: ${project_id}
-              datasetId: cleaned
-              tableId: basket_header
-            create_disposition: ${create_disposition}
-            write_disposition: ${write_disposition}
             allowLargeResults: true
             useLegacySql: false
 ###merge staging_basket_detail >> cleaned_basket_detail
@@ -96,12 +90,6 @@
         configuration:
           query:
             query: ${text.replace_all(cleaned_basket_header_response.body, "{{ project_id }}", project_id)}
-            destinationTable:
-              projectId: ${project_id}
-              datasetId: cleaned
-              tableId: basket_detail
-            create_disposition: ${create_disposition}
-            write_disposition: ${write_disposition}
             allowLargeResults: true
             useLegacySql: false
 ###insert cleaned_basket_header >> aggregated_day_sale
@@ -122,12 +110,6 @@
         configuration:
           query:
             query: ${text.replace_all(cleaned_basket_header_response.body, "{{ project_id }}", project_id)}
-            destinationTable:
-              projectId: ${project_id}
-              datasetId: aggregated
-              tableId: day_sale
-            create_disposition: ${create_disposition}
-            write_disposition: ${write_disposition}
             allowLargeResults: true
             useLegacySql: false
 ###insert cleaned_basket_header >> aggregated_customer_purchase
@@ -148,12 +130,6 @@
         configuration:
           query:
             query: ${text.replace_all(cleaned_basket_header_response.body, "{{ project_id }}", project_id)}
-            destinationTable:
-              projectId: ${project_id}
-              datasetId: aggregated
-              tableId: customer_purchase
-            create_disposition: ${create_disposition}
-            write_disposition: ${write_disposition}
             allowLargeResults: true
             useLegacySql: false
 ###insert cleaned_basket_detail >> aggregated_best_product_sale
@@ -174,12 +150,6 @@
         configuration:
           query:
             query: ${text.replace_all(cleaned_basket_header_response.body, "{{ project_id }}", project_id)}
-            destinationTable:
-              projectId: ${project_id}
-              datasetId: aggregated
-              tableId: best_product_sale
-            create_disposition: ${create_disposition}
-            write_disposition: ${write_disposition}
             allowLargeResults: true
             useLegacySql: false
 - the_end:

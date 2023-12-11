@@ -7,7 +7,7 @@ SELECT
   update_time,
   CURRENT_TIMESTAMP()                   AS `insertion_time`
 FROM `{{ project_id }}.raw.customer`
-QUALIFY ROW_NUMBER() OVER (  -- [MENTOR #1]
+QUALIFY ROW_NUMBER() OVER (
   PARTITION BY 
     id_customer
   ORDER BY 
