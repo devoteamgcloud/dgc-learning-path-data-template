@@ -101,15 +101,13 @@ Update the staging.basket table in place:
 Assumption:
 - The staging.basket_header table needs to be NOT NULL for this to work, otherwise, all id_basket_header will be equal to 1. 
 */
-UPDATE staging.basket
-SET
-  id_basket_header = (
-    SELECT
-      COALESCE(MAX(id_basket_header), 0) + ROW_NUMBER() OVER ()
-    FROM
-      `{{ project_id }}.staging.basket`
-  )
+UPDATE staging.basket staging_basket
+SET id_basket_header = tmp.id_basket_header 
+FROM (SELECT id_cash_desk, id_customer, purchase_date, id_store, (SELECT MAX(id_basket_header) FROM {{ project_id }}.cleaned.basket_header) + ROW_NUMBER() OVER() AS id_basket_header FROM {{ project_id }}.staging.basket WHERE id_basket_header IS NULL) tmp 
 WHERE
-  id_basket_header IS NULL;
+  tmp.id_cash_desk = staging_basket.id_cash_desk 
+  AND tmp.id_customer = staging_basket.id_customer
+  AND tmp.purchase_date = staging_basket.purchase_date
+  AND tmp.id_store = staging_basket.id_store
 
 DROP TABLE IF EXISTS `{{ project_id }}.staging.basket_temp`;
