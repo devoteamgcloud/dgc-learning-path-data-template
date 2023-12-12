@@ -152,5 +152,25 @@
             query: ${text.replace_all(aggregated_best_product_sale_response.body, "{{ project_id }}", project_id)}
             allowLargeResults: true
             useLegacySql: false
+### Create the open_store view
+- get_aggregated_open_store_query:
+    call: http.get
+    args:
+      url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/aggregated/open_store.sql"}
+      headers:
+        Content-Type: "text/plain"
+      auth:
+        type: OAuth2  
+    result: aggregated_open_store_response
+- insert_get_aggregated_open_store_query:
+    call: googleapis.bigquery.v2.jobs.insert
+    args:
+      projectId: ${project_id}
+      body:
+        configuration:
+          query:
+            query: ${text.replace_all(aggregated_open_store_response.body, "{{ project_id }}", project_id)}
+            allowLargeResults: true
+            useLegacySql: false
 - the_end:
     return: "SUCCESS"

@@ -100,9 +100,6 @@ locals {
       dataset_id = "${local.dataset_config.aggregated.dataset_id}"
       table_id   = "customer_purchase"
       schema     = file("${var.customer_purchase_schema_path}")
-      view = {
-        sql = file("../queries/aggregated/customer_purchase.sql")
-      }
     }
 
     "day_sale" = {
