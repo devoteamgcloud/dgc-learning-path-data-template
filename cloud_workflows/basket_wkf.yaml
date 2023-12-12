@@ -56,7 +56,7 @@
 - get_cleaned_basket_header_query:
     call: http.get
     args:
-      url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/cleaned/basket_detail.sql"}
+      url: ${"https://storage.googleapis.com/" + project_id + "_" + util_bucket_suffix + "/queries/cleaned/basket_header.sql"}
       headers:
         Content-Type: "text/plain"
       auth:
@@ -89,7 +89,7 @@
       body:
         configuration:
           query:
-            query: ${text.replace_all(cleaned_basket_header_response.body, "{{ project_id }}", project_id)}
+            query: ${text.replace_all(cleaned_basket_detail_response.body, "{{ project_id }}", project_id)}
             allowLargeResults: true
             useLegacySql: false
 ###insert cleaned_basket_header >> aggregated_day_sale
@@ -109,7 +109,7 @@
       body:
         configuration:
           query:
-            query: ${text.replace_all(cleaned_basket_header_response.body, "{{ project_id }}", project_id)}
+            query: ${text.replace_all(aggregated_day_sale.body, "{{ project_id }}", project_id)}
             allowLargeResults: true
             useLegacySql: false
 ###insert cleaned_basket_header >> aggregated_customer_purchase
@@ -129,7 +129,7 @@
       body:
         configuration:
           query:
-            query: ${text.replace_all(cleaned_basket_header_response.body, "{{ project_id }}", project_id)}
+            query: ${text.replace_all(aggregated_basket_customer_purchase.body, "{{ project_id }}", project_id)}
             allowLargeResults: true
             useLegacySql: false
 ###insert cleaned_basket_detail >> aggregated_best_product_sale
@@ -149,7 +149,7 @@
       body:
         configuration:
           query:
-            query: ${text.replace_all(cleaned_basket_header_response.body, "{{ project_id }}", project_id)}
+            query: ${text.replace_all(aggregated_best_product_sale_response.body, "{{ project_id }}", project_id)}
             allowLargeResults: true
             useLegacySql: false
 - the_end:

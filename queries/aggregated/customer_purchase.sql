@@ -1,13 +1,13 @@
 SELECT
   ANY_VALUE(customer.first_name)               AS `first_name`,
-  customer.last_name                           AS `last_name`,
-  ANY_VALUE(basket_header.n_basket)            AS `n_basket`,
-  ANY_VALUE(ROUND(b.total_purchase, 2))        AS `total_purchase`,
-  ANY_VALUE(basket_header.first_purchase_date) AS `first_purchase_date`,
-  ANY_VALUE(basket_header.last_purchase_date)  AS `last_purchase_date`
+  ANY_VALUE(customer.last_name)                           AS `last_name`,
+  COUNT(basket_header.id_basket_header)            AS `n_basket`,
+  ROUND(SUM(basket_header.total_price), 2)        AS `total_purchase`,
+  MAX(basket_header.purchase_date) AS `first_purchase_date`,
+  MIN(basket_header.purchase_date)  AS `last_purchase_date`
 FROM
   ## Bonne pratique: table la + grosse à gauche le plus opti
-  `{{ project_id }}.cleaned.customer` customer
-  LEFT JOIN `{{ project_id }}.cleaned.basket_header` basket_header ON customer.id_customer = basket_header.id_customer
+  `cleaned.customer` customer
+  LEFT JOIN `cleaned.basket_header` basket_header ON customer.id_customer = basket_header.id_customer
 GROUP BY
   customer.id_customer;
