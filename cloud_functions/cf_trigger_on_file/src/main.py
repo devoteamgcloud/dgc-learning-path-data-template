@@ -1,5 +1,5 @@
 import os
-import datetime
+from datetime import datetime
 from google.cloud import storage
 from google.cloud import pubsub_v1
 
@@ -38,14 +38,14 @@ def check_file_format(event: dict, context: dict):
     # get the subfolder, the file name and its extension
     *subfolder, file = blob_path.split(os.sep)  
     subfolder =  os.path.join(*subfolder) if subfolder != [] else ''
-    file_name, file_extention = file.split('.') 
+    file_name, file_extension = file.split('.') 
 
     print(f'Bucket name: {bucket_name}')
     print(f'File path: {blob_path}')
     print(f'Subfolder: {subfolder}')
     print(f'Full file name: {file}')
     print(f'File name: {file_name}')
-    print(f'File Extension: {file_extention}')
+    print(f'File Extension: {file_extension}')
 
     # Check if the file is in the subfolder `input/` to avoid infinite loop
     assert subfolder == 'input', 'File must be in `input/ subfolder to be processed`'
@@ -60,19 +60,39 @@ def check_file_format(event: dict, context: dict):
         #     - the second part is required to be a 'YYYYMMDD'-formatted date 
         #     - required to have the expected extension
 
-        ...
-
-        table_name = "<to_replace_with_your_first_file_part_variable>"
-
-        # if all checks are succesful then publish it to the PubSub topic
-        publish_to_pubsub(
-            data=table_name.encode('utf-8'),
-            attributes={
-                'bucket_name': bucket_name, 
-                'blob_path': blob_path
-            }
-        )
-
+        file_name_and_date = file_name.split('_')
+        check_file_name_and_extension = False
+        if len(file_name_and_date) == 2:
+            for table_name in FILES_AND_EXTENSION_SPEC: 
+                if file_name_and_date[0] == table_name and file_extension == FILES_AND_EXTENSION_SPEC[table_name] :
+                    check_file_name_and_extension = True
+                    break
+            if not check_file_name_and_extension:
+                #move_to_invalid_file_folder(bucket_name, blob_path)
+                move_to_invalid_file_folder(bucket_name, blob_path)
+                print("ERR 02 : file name or extension is not correct")
+            else:
+                try:
+                    res = bool(datetime.strptime(file_name_and_date[1], "%Y%m%d"))
+                except:
+                    res = False
+                if not res:
+                    #move_to_invalid_file_folder(bucket_name, blob_path)
+                    move_to_invalid_file_folder(bucket_name, blob_path)
+                    print("ERR 03 : Date format is not correct. Format : YYYYMMDD")
+                else :
+                    table_name = file_name_and_date[0]
+                    # if all checks are succesful then publish it to the PubSub topic
+                    publish_to_pubsub(
+                        data=table_name.encode('utf-8'),
+                        attributes={
+                            'bucket_name': bucket_name, 
+                            'blob_path': blob_path
+                        }
+                    )
+        else:
+            move_to_invalid_file_folder(bucket_name, blob_path)
+            print("ERR 01 : file name format is not correct. Format: <table_name>_<date>.extension")
     except Exception as e:
         print(e)
         # the file is moved to the invalid/ folder if one check is failed
@@ -145,7 +165,7 @@ if __name__ == '__main__':
     # it will have no impact on the Cloud Function when deployed.
     import os
     
-    project_id = '<YOUR-PROJECT-ID>'
+    project_id = 'sandbox-skone'
 
     realpath = os.path.realpath(__file__)
     material_path = os.sep.join(['', *realpath.split(os.sep)[:-4], '__materials__'])
