@@ -17,10 +17,10 @@ resource "google_storage_bucket_object" "zip" {
   bucket = google_storage_bucket.cloud_function_sources.name
 
   # Dependencies are automatically inferred so these lines can be deleted
-  depends_on = [
-    google_storage_bucket.cloud_function_sources, # declared in `cloud_storage.tf`
-    data.archive_file.source_code
-  ]
+  #depends_on = [
+  # google_storage_bucket.cloud_function_sources, # declared in `cloud_storage.tf`
+  # data.archive_file.source_code
+  #]
 }
 
 # Create the cloud function triggered by a Finalize event on the bucket
@@ -33,7 +33,7 @@ resource "google_cloudfunctions_function" "function" {
   source_archive_object = google_storage_bucket_object.zip.name
 
   # Must match the function name in the cloud function `main.py` source code
-  entry_point = "main"
+  entry_point = "check_file_format"
 
   # 
   event_trigger {
@@ -42,8 +42,7 @@ resource "google_cloudfunctions_function" "function" {
   }
 
   # Dependencies are automatically inferred so these lines can be deleted
-  depends_on = [
-    google_storage_bucket.cloud_function_sources, # declared in `cloud_storage.tf`
-    google_storage_bucket_object.zip
-  ]
+  #depends_on = [
+  #google_storage_bucket_object.zip
+  #]
 }

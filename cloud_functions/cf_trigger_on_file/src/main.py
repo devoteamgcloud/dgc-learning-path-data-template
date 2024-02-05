@@ -59,6 +59,7 @@ def check_file_format(event: dict, context: dict):
     
     # check if the file name has the good format
     # required format: <table_name>_<date>.<extension>
+
     try:
         # TODO: 
         # create some assertions here to validate your file. It is:
@@ -66,14 +67,20 @@ def check_file_format(event: dict, context: dict):
         #     - the first part is required to be an accepted table name
         #     - the second part is required to be a 'YYYYMMDD'-formatted date 
         #     - required to have the expected extension
-
-        first_file_part, second_file_part =  file_name.split('_')
         
-        assert FILES_AND_EXTENSION_SPEC[first_file_part] == file_extention, "File name and extension do not match" #move_to_invalid_file_folder(bucket_name, blob_path)
-        assert check_date_format(second_file_part) == True, "date format is not correct" # move_to_invalid_file_folder(bucket_name, blob_path)
+        # verifier split en deux parties
+        assert len(file_name.split('_')) == 2
+        table_name, date, *_ = file_name.split('_')
+
+        #first_file_part, *second_file_part =  file_name.split('_')
+        
+       
+        
+        assert FILES_AND_EXTENSION_SPEC[table_name] == file_extention, "File name and extension do not match" #move_to_invalid_file_folder(bucket_name, blob_path)
+        assert datetime.strptime(date, "%Y%m%d"), "date format is not correct" # move_to_invalid_file_folder(bucket_name, blob_path)
 
         
-        table_name = first_file_part
+        #table_name = first_file_part
 
         # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(
@@ -86,6 +93,7 @@ def check_file_format(event: dict, context: dict):
 
     except Exception as e:
         print(e)
+
         # the file is moved to the invalid/ folder if one check is failed
         move_to_invalid_file_folder(bucket_name, blob_path)
 
