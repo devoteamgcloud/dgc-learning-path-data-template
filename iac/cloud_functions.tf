@@ -41,8 +41,5 @@ resource "google_cloudfunctions_function" "function" {
     resource   = "${var.project_id}-input"
   }
 
-  # Dependencies are automatically inferred so these lines can be deleted
-  #depends_on = [
-  #google_storage_bucket_object.zip
-  #]
+
 }
