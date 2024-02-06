@@ -36,8 +36,7 @@ resource "google_cloudfunctions_function" "function" {
   entry_point           = "check_file_format"
   event_trigger {
     event_type = "google.storage.object.finalize"
-    resource   = google_storage_bucket.magasin_cie_landing.name
+    resource   = "${var.project_id}_magasin_cie_landing"
   }
-
 
 }
