@@ -25,4 +25,19 @@ resource "google_storage_bucket_object" "zip" {
 }
 
 # Create the cloud function triggered by a Finalize event on the bucket
+resource "google_cloudfunctions_function" "function" {
+  name        = "function-cf-trigger-on-file"
+  description = "My function"
+  runtime     = "python39"
 
+  available_memory_mb   = 128
+  source_archive_bucket = google_storage_bucket.cloud_function_sources.name
+  source_archive_object = google_storage_bucket_object.zip.name
+  entry_point           = "check_file_format"
+  event_trigger {
+    event_type = "google.storage.object.finalize"
+    resource   = google_storage_bucket.magasin_cie_landing.name
+  }
+
+
+}
