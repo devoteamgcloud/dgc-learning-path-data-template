@@ -5,9 +5,14 @@ terraform {
       source  = "hashicorp/google"
       version = "~> 4.10"
     }
+
   }
   backend "gcs" {
-    bucket = "${var.project_id}-gcs-tfstate-sbx"
+    bucket = "sandbox-skone-gcs-tfstate-sbx"
     prefix = "terraform-states"
   }
+}
+provider "google" {
+  project = "sandbox-skone"
+  region  = "europe-west3"
 }
