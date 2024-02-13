@@ -45,6 +45,7 @@ resource "google_cloudfunctions_function" "check_file_format" {
 
   }
 
+  environment_variables = yamldecode(file("../cloud_functions/cf_trigger_on_file/env.yaml"))
 
 }
 
