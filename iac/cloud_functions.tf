@@ -25,7 +25,7 @@ resource "google_storage_bucket_object" "zip" {
 }
 
 # Create the cloud function triggered by a Finalize event on the bucket
-resource "google_cloudfunctions_function" "function" {
+resource "google_cloudfunctions_function" "check_file_format" {
   name    = "function-trigger-on-gcs"
   runtime = "python39"
 
@@ -40,7 +40,9 @@ resource "google_cloudfunctions_function" "function" {
   # 
   event_trigger {
     event_type = "google.storage.object.finalize"
-    resource   = google_storage_bucket.magasin_cie_landing.name
+    #Path source bucket
+    resource = "projects/${var.project_id}/buckets/${var.project_id}_magasin_cie_landing"
+
   }
 
 
