@@ -10,12 +10,11 @@ resource "google_bigquery_dataset" "dataset" {
 
 resource "google_bigquery_table" "table" {
   for_each = {
-    "store" = { dataset_id = "raw", schema = "schemas/raw/store.json" },
-    "store" = { dataset_id = "cleaned", schema = "schemas/cleaned/store.json" }
+    "store" = { dataset_id = "raw", schema = "../schemas/raw/store.json" },
+    "store" = { dataset_id = "cleaned", schema = "../schemas/cleaned/store.json" }
   }
   dataset_id = each.value.dataset_id
   table_id   = each.key
-
-
+  #schema = file(each.value.schema)
 
 }
