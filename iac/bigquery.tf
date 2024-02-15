@@ -15,6 +15,6 @@ resource "google_bigquery_table" "table" {
   }
   dataset_id = each.value.dataset_id
   table_id   = each.key
-  #schema = file(each.value.schema)
+  schema     = file("${each.value.schema}")
 
 }
