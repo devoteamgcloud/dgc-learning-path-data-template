@@ -1,8 +1,8 @@
 
 resource "google_bigquery_dataset" "dataset" {
-  count = length(var.dataset_setting)
+  for_each = toset(var.bq_datasets)
 
-  dataset_id = count.index
+  dataset_id = each.value
   location   = var.location
 }
 
