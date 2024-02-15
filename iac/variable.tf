@@ -21,3 +21,14 @@ variable "region" {
   type        = string
   default     = "europe-west1"
 }
+variable "dataset_setting" {
+  default = ["raw", "cleaned"]
+}
+
+variable "table_setting" {
+  default = {
+    "store" = [{ dataset_id = "cleaned", schema = "../schemas/cleaned/store.json" },
+      { dataset_id = "raw", schema = "../schemas/raw/store.json" }
+    ]
+  }
+}
