@@ -18,3 +18,4 @@ resource "google_bigquery_table" "table" {
   schema     = file("${each.value.schema}")
 
 }
+#
