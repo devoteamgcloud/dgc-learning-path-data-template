@@ -6,6 +6,13 @@ resource "google_bigquery_dataset" "dataset" {
   location   = var.location
 }
 
+resource "google_bigquery_table" "table" {
+  for_each   = { for t in var.bq_tables : t.name => t }
+  dataset_id = each.value.datasets.dataset_id
+  table_id   = each.value.tables_name
+  #schema = 
+}
+
 #resource "google_bigquery_table" "table" {
 #  for_each = var.table_setting
 

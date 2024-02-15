@@ -26,10 +26,20 @@ variable "bq_datasets" {
   default = ["raw", "cleaned"]
 }
 
-variable "table_setting" {
-  default = {
-    "store" = [{ dataset_id = "cleaned", schema = "../schemas/cleaned/store.json" },
-      { dataset_id = "raw", schema = "../schemas/raw/store.json" }
-    ]
-  }
+variable "bq_tables" {
+  type = list(map(any))
+  default = [
+    {
+      tables_name = "store",
+      datasets = [
+        { dataset_id = "raw",
+          schema     = "../schemas/raw/store.json"
+        },
+        { dataset_id = "cleaned",
+          schema     = "../schemas/cleaned/store.json"
+        }
+      ]
+    }
+  ]
+
 }
