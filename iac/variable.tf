@@ -22,7 +22,7 @@ variable "region" {
   default     = "europe-west1"
 }
 variable "bq_datasets" {
-  type    = list("String")
+  type    = list(string)
   default = ["raw", "cleaned"]
 }
 
