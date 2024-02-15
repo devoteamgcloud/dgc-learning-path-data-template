@@ -21,7 +21,8 @@ variable "region" {
   type        = string
   default     = "europe-west1"
 }
-variable "dataset_setting" {
+variable "bq_datasets" {
+  type    = list("String")
   default = ["raw", "cleaned"]
 }
 
