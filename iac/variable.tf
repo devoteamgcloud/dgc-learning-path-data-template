@@ -21,6 +21,23 @@ variable "region" {
   type        = string
   default     = "europe-west1"
 }
+
+variable "bq_datasets_setting" {
+  default = {
+    raw = [
+      {
+        tables_name = "store",
+        schema      = "../schemas/raw/store.json"
+      }
+    ],
+    cleaned = [
+      {
+        tables_name = "store",
+        schema      = "../schemas/cleaned/store.json"
+      }
+    ]
+  }
+}
 variable "bq_datasets" {
   type    = list(string)
   default = ["raw", "cleaned"]
