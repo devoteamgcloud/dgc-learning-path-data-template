@@ -38,25 +38,3 @@ variable "bq_datasets_setting" {
     ]
   }
 }
-variable "bq_datasets" {
-  type    = list(string)
-  default = ["raw", "cleaned"]
-}
-
-variable "bq_tables" {
-  type = list(map(any))
-  default = [
-    {
-      tables_name = "store",
-      datasets = [
-        { dataset_id = "raw",
-          schema     = "../schemas/raw/store.json"
-        },
-        { dataset_id = "cleaned",
-          schema     = "../schemas/cleaned/store.json"
-        }
-      ]
-    }
-  ]
-
-}
