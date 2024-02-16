@@ -1,16 +1,37 @@
+locals {
+  bq_datasets_setting = {
+    "raw" = [
+      {
+        tables_name = "store",
+        schema      = "../schemas/raw/store.json"
+      }
+    ],
+    "cleaned" = [
+      {
+        tables_name = "store",
+        schema      = "../schemas/cleaned/store.json"
+      }
+    ]
+  }
+}
 
 resource "google_bigquery_dataset" "dataset" {
-  for_each = toset(var.bq_datasets)
+  for_each = locals.bq_datasets_setting
+  #toset(var.bq_datasets)
 
-  dataset_id = each.value
+  dataset_id = each.key
   location   = var.location
 }
 
 resource "google_bigquery_table" "table" {
-  for_each   = { for t in var.bq_tables : t.name => t }
-  dataset_id = each.value.datasets.dataset_id
-  table_id   = each.value.tables_name
-  #schema = 
+  for_each = locals.bq_datasets_setting
+  #{ for t in var.bq_tables, d in t.datasets : "${t.name}-${d.name}"=> d }
+  dataset_id = each.key
+  dynamic "tables" {
+    for_each = toset(each.value)
+  }
+  table_id = tables.value.tables_name
+  schema   = file("${tables.value.schema}")
 }
 
 #resource "google_bigquery_table" "table" {
