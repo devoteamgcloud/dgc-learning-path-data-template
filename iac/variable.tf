@@ -24,17 +24,13 @@ variable "region" {
 
 variable "bq_datasets_setting" {
   default = {
-    raw = [
-      {
-        tables_name = "store",
-        schema      = "../schemas/raw/store.json"
-      }
-    ],
-    cleaned = [
-      {
-        tables_name = "store",
-        schema      = "../schemas/cleaned/store.json"
-      }
-    ]
+    raw = {
+      tables_name = "store",
+      schema      = "../schemas/raw/store.json"
+    },
+    cleaned = {
+      tables_name = "store",
+      schema      = "../schemas/cleaned/store.json"
+    }
   }
 }
