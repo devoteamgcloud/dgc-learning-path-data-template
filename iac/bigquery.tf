@@ -7,7 +7,16 @@ resource "google_bigquery_dataset" "dataset" {
   location   = var.location
 }
 
-
+resource "google_bigquery_table" "table" {
+  for_each = var.bq_datasets_setting
+  #{ for t in var.bq_tables, d in t.datasets : "${t.name}-${d.name}"=> d }
+  dataset_id = each.key
+  dynamic "tables" {
+    for_each = toset(each.value)
+  }
+  table_id = tables.value.tables_name
+  schema   = file("${tables.value.schema}")
+}
 
 #resource "google_bigquery_table" "table" {
 #  for_each = var.table_setting
