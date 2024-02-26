@@ -71,10 +71,10 @@ resource "google_storage_bucket" "cloud_function_sources" {
 
 resource "google_storage_bucket_object" "folders" {
 
-  for_each = local.folders
+  #for_each = local.folders
 
-  name   = each.key
-  source = each.value.source_dir
+  name   = "queries"    #each.key
+  source = "../queries" #each.value.source_dir
 
   bucket = google_storage_bucket.magasin_cie_landing.name
 }
