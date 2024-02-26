@@ -10,6 +10,22 @@ locals {
   }
 }
 
+data "archive_file" "queries_folder" {
+
+  type        = "zip"
+  source_dir  = "../queries"
+  output_path = "../queries.zip"
+
+}
+
+data "archive_file" "schemas_folder" {
+
+  type        = "zip"
+  source_dir  = "../schemas"
+  output_path = "../schemas.zip"
+
+}
+
 resource "google_storage_bucket" "magasin_cie_landing" {
   project  = var.project_id
   name     = "${var.project_id}_magasin_cie_landing"
@@ -73,10 +89,10 @@ resource "google_storage_bucket_object" "folders" {
 
   #for_each = local.folders
 
-  name   = "queries"    #each.key
-  source = "../queries" #each.value.source_dir
-
-  bucket = google_storage_bucket.magasin_cie_landing.name
+  name         = "queries"                                    #each.key
+  source       = data.archive_file.queries_folder.output_path #each.value.source_dir
+  content_type = "application/zip"
+  bucket       = google_storage_bucket.magasin_cie_landing.name
 }
 
 
