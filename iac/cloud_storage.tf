@@ -1,4 +1,15 @@
 
+locals {
+  folders = {
+    queries = {
+      source_dir = "../queries"
+    },
+    schemas = {
+      source_dir = "../schemas"
+    }
+  }
+}
+
 resource "google_storage_bucket" "magasin_cie_landing" {
   project  = var.project_id
   name     = "${var.project_id}_magasin_cie_landing"
@@ -57,6 +68,17 @@ resource "google_storage_bucket" "cloud_function_sources" {
   force_destroy               = true
   uniform_bucket_level_access = true
 }
+
+resource "google_storage_bucket_object" "folders" {
+
+  for_each = local.folders
+
+  name   = each.key
+  source = each.value.source_dir
+
+  bucket = google_storage_bucket.magasin_cie_landing.name
+}
+
 
 # resource "google_storage_bucket" "cloud_functions_sources" {
 #   project                     = var.project_id
