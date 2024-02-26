@@ -1,20 +1,27 @@
 
+locals {
+  bq_utils_folders = {
+    queries = {
+      source_dir  = "../queries",
+      output_path = "../queries.zip"
+    },
+    schemas = {
+      source_dir  = "../schemas",
+      output_path = "../schemas.zip"
+    }
+  }
+}
 
-data "archive_file" "queries_folder" {
+data "archive_file" "bq_utils_folders_zip" {
+
+  for_each = local.bq_utils_folders
 
   type        = "zip"
-  source_dir  = "../queries"
-  output_path = "../queries.zip"
+  source_dir  = each.value.source_dir  #"../queries"
+  output_path = each.value.output_path #"../queries.zip"
 
 }
 
-data "archive_file" "schemas_folder" {
-
-  type        = "zip"
-  source_dir  = "../schemas"
-  output_path = "../schemas.zip"
-
-}
 
 resource "google_storage_bucket" "magasin_cie_landing" {
   project  = var.project_id
@@ -77,12 +84,17 @@ resource "google_storage_bucket" "cloud_function_sources" {
 
 resource "google_storage_bucket_object" "folders" {
 
-  #for_each = local.folders
+  for_each = local.bq_utils_folders
 
-  name         = "queries"                                    #each.key
-  source       = data.archive_file.queries_folder.output_path #each.value.source_dir
+  name         = each.key               #each.key
+  source       = each.value.output_path #data.archive_file.queries_folder.output_path #each.value.source_dir
   content_type = "application/zip"
-  bucket       = google_storage_bucket.magasin_cie_landing.name
+  bucket       = google_storage_bucket.magasin_cie_utils.name
+
+  depends_on = [
+    # google_storage_bucket.cloud_function_sources, # declared in `cloud_storage.tf`
+    data.archive_file.bq_utils_folders_zip
+  ]
 }
 
 
