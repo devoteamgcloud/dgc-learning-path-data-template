@@ -1,14 +1,4 @@
 
-locals {
-  folders = {
-    queries = {
-      source_dir = "../queries"
-    },
-    schemas = {
-      source_dir = "../schemas"
-    }
-  }
-}
 
 data "archive_file" "queries_folder" {
 
