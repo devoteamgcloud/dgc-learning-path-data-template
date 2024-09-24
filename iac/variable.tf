@@ -1,7 +1,8 @@
 variable "project_id" {
   type        = string
   description = "Project identifier"
-   default = "dgc-data-plp-pd"
+  default = "dgc-data-plp-pd"
+   
 }
 
 variable "location"{
