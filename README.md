@@ -5,6 +5,7 @@
 
 Open your VS Code and clone the repository in ssh mode `git@github.com:devoteamgcloud/dgc-learning-path-data-template.git`
 
+
 Or from your console. 
 
 ```bash
