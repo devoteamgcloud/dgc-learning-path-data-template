@@ -1,7 +1,7 @@
 resource "google_storage_bucket" "magasin_cie_landing" {
   project  = var.project_id
   name     = "${var.project_id}_magasin_cie_landing"
-  location = var.location
+  location = "europe-west1"
   lifecycle_rule {
     condition {
       age = 30
@@ -42,7 +42,7 @@ resource "google_storage_bucket" "magasin_cie_landing" {
 resource "google_storage_bucket" "magasin_cie_utils" {
   project  = var.project_id
   name     = "${var.project_id}_magasin_cie_utils"
-  location = var.location
+  location = "europe-west1"
 }
 
 
