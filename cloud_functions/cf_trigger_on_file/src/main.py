@@ -1,5 +1,5 @@
 import os
-import datetime
+from datetime import datetime
 from google.cloud import storage
 from google.cloud import pubsub_v1
 
@@ -60,11 +60,14 @@ def check_file_format(event: dict, context: dict):
         #     - the second part is required to be a 'YYYYMMDD'-formatted date 
         #     - required to have the expected extension
 
-        ...
+        assert len(file_name.split('_')) == 2, 'file must have two parts' 
+        #     table_name = "the_first_file_part_variable"
+        table_name, date = (file_name.split('_'))
+        assert datetime.strptime(date, "%Y%m%d"), 'date field have not the correct format'
+        assert FILES_AND_EXTENSION_SPEC[table_name]==file_extention, 'the extension of that file is not valid'
 
-        table_name = "<to_replace_with_your_first_file_part_variable>"
 
-        # if all checks are succesful then publish it to the PubSub topic
+    #     # if all checks are succesful then publish it to the PubSub topic
         publish_to_pubsub(
             data=table_name.encode('utf-8'),
             attributes={
@@ -121,12 +124,11 @@ def move_to_invalid_file_folder(bucket_name: str, blob_path: str):
 
     ## this small part is here to be able to simulate the function but
     ## remove this part when you are ready to deploy your Cloud Function. 
-    ## [start simulation]
-    print('Your file is considered as invalid. It will be moved to invalid/.')
-    return
-    ## [end simulation]
-    
-    
+    # ## [start simulation]
+    # print('Your file is considered as invalid. It will be moved to invalid/.')
+    # return
+    # ## [end simulation]
+
     # connect to the Cloud Storage client
     storage_client = storage.Client()
 
@@ -145,17 +147,17 @@ if __name__ == '__main__':
     # it will have no impact on the Cloud Function when deployed.
     import os
     
-    project_id = '<YOUR-PROJECT-ID>'
+    project_id = 'sandbox-skhila'
 
     realpath = os.path.realpath(__file__)
     material_path = os.sep.join(['', *realpath.split(os.sep)[:-4], '__materials__'])
-    init_files_path = os.path.join(material_path, 'data', 'init')
-
+    # init_files_path = os.path.join(material_path, 'data', 'init')
+    init_files_path ="C:/Users/soumaya.khila/Documents/training_path_new/dgc-learning-path-data-template/__materials__/data/init"
     # test your Cloud Function with each of the given files.
     for file_name in os.listdir(init_files_path):
         print(f'\nTesting your file {file_name}')
         mock_event = {
-            'bucket': f'{project_id}-magasin-cie-landing',
+            'bucket': f'{project_id}_magasin_cie_landing',
             'name': os.path.join('input', file_name)
         }
 
