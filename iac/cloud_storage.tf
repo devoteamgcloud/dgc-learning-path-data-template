@@ -45,6 +45,7 @@ resource "google_storage_bucket" "magasin_cie_utils" {
   location = var.location
 }
 
+
 # resource "google_storage_bucket" "cloud_functions_sources" {
 #   project                     = var.project_id
 #   name                        = "${var.project_id}_cloud_functions_sources"
