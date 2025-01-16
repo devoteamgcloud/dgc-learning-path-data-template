@@ -1,0 +1,1 @@
+ gcloud functions deploy check_file_format_cli --gen2 --runtime=python311 --source=./cloud_functions/cf_trigger_on_file/src --entry-point=check_file_format --trigger-bucket=sandbox-skhila_magasin_cie_utils --region=europe-west1

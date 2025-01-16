@@ -1,7 +1,7 @@
 variable "project_id" {
   type        = string
   description = "Project identifier"
-   default = "dgc-data-plp-pd"
+   default = "sandbox-skhila"
 }
 
 variable "location"{
@@ -20,4 +20,9 @@ variable "region"{
   description = "GCP region"
   type = string
   default = "europe-west1"
+}
+
+# déclarer une variable locale pour récupérer la liste des fichiers
+locals {
+  all_files   = fileset(path.module, "../{queries,schemas}/**")
 }
