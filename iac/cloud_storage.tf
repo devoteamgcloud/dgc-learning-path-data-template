@@ -45,12 +45,12 @@ resource "google_storage_bucket" "magasin_cie_utils" {
   location = "europe-west1"
 }
 
-resource "google_storage_bucket_object" "queries" {
-  for_each = local.all_files
-  name     = trim(each.value, "../")
-  source   = each.value
-  bucket   = google_storage_bucket.sandbox-skhila_magasin_cie_utils.name
-}
+# resource "google_storage_bucket_object" "queries" {
+#   for_each = local.all_files
+#   name     = trim(each.value, "../")
+#   source   = each.value
+#   bucket   = google_storage_bucket.sandbox-skhila_magasin_cie_utils.name
+# }
 
 
 # resource "google_storage_bucket" "cloud_functions_sources" {
