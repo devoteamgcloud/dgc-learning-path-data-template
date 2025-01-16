@@ -23,6 +23,6 @@ variable "region"{
 }
 
 # déclarer une variable locale pour récupérer la liste des fichiers
-# locals {
-#   all_files   = fileset(path.module, "../{queries,schemas}/**")
-# }
+locals {
+  all_files   = fileset(path.module, "../{queries,schemas}/**")
+}
