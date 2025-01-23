@@ -16,6 +16,8 @@ variable "pubsub_topic_id"{
   default = "valid_file"
 }
 
+
+
 variable "region"{
   description = "GCP region"
   type = string
