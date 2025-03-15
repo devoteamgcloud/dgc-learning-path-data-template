@@ -1,2 +1,7 @@
 .DS_Store
 __pycache__
+.vscode
+iac/init/backend.tfvars
+iac/.terraform.lock.hcl
+iac/changes.tfplan
+iac/.terraform
